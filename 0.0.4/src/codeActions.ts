@@ -2,6 +2,15 @@ import * as vscode from 'vscode';
 import { PtreeDocument, PtreeNode } from './core/parser';
 import { PtreeConfig, NameTypeDef } from './core/config';
 
+export interface PtreeCodeActionProvider extends vscode.CodeActionProvider {
+  provideCodeActions(
+    document: vscode.TextDocument,
+    range: vscode.Range | vscode.Selection,
+    context: vscode.CodeActionContext,
+    token: vscode.CancellationToken
+  ): vscode.CodeAction[];
+}
+
 /**
  * CodeActionProvider for ptree files.
  * 

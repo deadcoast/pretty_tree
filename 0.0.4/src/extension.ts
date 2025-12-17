@@ -6,6 +6,7 @@ import { validatePtreeDocument } from './core/validator';
 import { applyCanonicalFixes } from './core/fixer';
 import { buildSemanticLegend, PtreeSemanticTokensProvider } from './semanticTokens';
 import { PtreeCodeActionProvider } from './codeActions';
+import { PtreeFormattingProvider } from './formatter';
 
 /**
  * ptree is a text format for directory-tree representations.
@@ -271,6 +272,22 @@ export function activate(context: vscode.ExtensionContext) {
     )
   );
 
+  // Document Formatting
+  const formattingProvider = new PtreeFormattingProvider((document) => {
+    const workspaceFolder = vscode.workspace.getWorkspaceFolder(document.uri);
+    const workspaceRoot = workspaceFolder?.uri.fsPath;
+    const doc = parsePtreeDocument(document.getText());
+    const profile = (doc.directives['ptree'] ?? '').trim() === 'spec' ? 'spec' : 'default';
+    const { config } = loadEffectiveConfig(context.extensionPath, workspaceRoot, profile);
+    return { config, profile, doc };
+  });
+  context.subscriptions.push(
+    vscode.languages.registerDocumentFormattingEditProvider(
+      { language: 'ptree' },
+      formattingProvider
+    )
+  );
+
   // Semantic Tokens (dynamic highlighting based on NAME_TYPES)
   // We register a semantic tokens provider that reads the effective config (default/spec/user)
   // and emits semantic token modifiers like `nt_high_type` / `nt_smol_type`.
@@ -422,6 +439,21 @@ export function activate(context: vscode.ExtensionContext) {
       if (!editor) return;
       validate(editor.document);
       vscode.window.showInformationMessage('ptree: Validation complete.');
+    })
+  );
+
+  // Command: format document
+  context.subscriptions.push(
+    vscode.commands.registerCommand('ptree.formatDocument', async () => {
+      const editor = vscode.window.activeTextEditor;
+      if (!editor) return;
+
+      if (editor.document.languageId !== 'ptree') {
+        vscode.window.showInformationMessage('ptree: Active document is not a ptree file.');
+        return;
+      }
+
+      await vscode.commands.executeCommand('editor.action.formatDocument');
     })
   );
 

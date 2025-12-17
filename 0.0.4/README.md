@@ -163,6 +163,7 @@ PTREE-0.0.2//
 - **ptree: Copy Relative Path at Cursor** (`ptree.copyRelativePathAtCursor`)
 - **ptree: Validate Document** (`ptree.validateDocument`)
 - **ptree: Apply Canonical Fixes** (`ptree.fixDocument`)
+- **ptree: Format Document** (`ptree.formatDocument`) — or use VS Code's `Format Document` (Shift+Alt+F)
 
 Path commands infer the path by walking up the tree structure.
 

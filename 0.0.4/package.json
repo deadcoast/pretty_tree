@@ -64,6 +64,10 @@
       {
         "command": "ptree.fixDocument",
         "title": "ptree: Apply Canonical Fixes"
+      },
+      {
+        "command": "ptree.formatDocument",
+        "title": "ptree: Format Document"
       }
     ],
     "jsonValidation": [
@@ -162,13 +166,22 @@
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "vscode:prepublish": "npm run compile",
-    "lint": "echo \"(optional) add eslint\"",
-    "test": "echo \"No tests configured\"",
+    "lint": "eslint src --ext ts",
+    "test": "npm run compile && node ./out/test/runTests.js",
+    "test:unit": "npm run compile && mocha ./out/test/suite/**/*.test.js",
     "ptree": "node ./out/cli.js"
   },
   "devDependencies": {
+    "@types/glob": "^8.1.0",
+    "@types/mocha": "^10.0.6",
     "@types/node": "^20.11.30",
     "@types/vscode": "^1.85.0",
+    "@vscode/test-electron": "^2.3.9",
+    "eslint": "^8.57.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "glob": "^10.3.10",
+    "mocha": "^10.3.0",
     "typescript": "^5.5.4"
   },
   "bin": {

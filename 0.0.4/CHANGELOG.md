@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Document Formatter**: Canonical formatting for ptree files
+  - Sorts siblings (directories first, then files, alphabetically)
+  - Ensures consistent tree characters (unicode/ascii)
+  - Ensures directories end with `/`, root labels end with `//`
+  - Lowercases file extensions
+  - In spec mode: generates canonical header blocks
+  - Accessible via `Format Document` (Shift+Alt+F) or `ptree: Format Document`
 - **Semantic Tokens Provider**: Dynamic highlighting driven by `NAME_TYPES` config
   - Emits modifiers like `nt_high_type`, `nt_smol_type`, `nt_scream_type`
   - `mismatch` modifier when names violate allowed types
@@ -28,6 +35,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `--profile spec|default` flag
   - `--version` flag for spec header generation
   - `--fix` and `--write` flags for auto-fixing
+- **Test infrastructure**:
+  - Unit tests for parser (11 tests) and validator (10 tests)
+  - VS Code integration test runner
+  - ESLint configuration for TypeScript
+  - `.vscodeignore` for clean extension packaging
 
 ### Changed
 
