@@ -82,7 +82,88 @@
         ],
         "url": "./config/ptreeconfig.schema.json"
       }
-    ]
+    ],
+    "semanticTokenTypes": [
+      "ptreeScaffold",
+      "ptreeDirective",
+      "ptreeDirectiveValue",
+      "ptreeRoot",
+      "ptreeDir",
+      "ptreeFile",
+      "ptreeExtension",
+      "ptreeMeta",
+      "ptreeSemver",
+      "ptreeNameType"
+    ],
+    "semanticTokenModifiers": [
+      "mismatch",
+      "unknown",
+      "nt_custom",
+      "nt_scream_type",
+      "nt_high_type",
+      "nt_cap_type",
+      "nt_cameltype",
+      "nt_smol_type",
+      "nt_snake_type",
+      "nt_dotfile",
+      "nt_dotdir",
+      "nt_dot_smol_type"
+    ],
+    "semanticTokenScopes": {
+      "ptreeScaffold": [
+        "comment.line.character.tree",
+        "comment.line"
+      ],
+      "ptreeDirective": [
+        "keyword.control.directive",
+        "keyword"
+      ],
+      "ptreeDirectiveValue": [
+        "string.unquoted",
+        "string"
+      ],
+      "ptreeRoot": [
+        "entity.name.namespace",
+        "entity.name.section"
+      ],
+      "ptreeDir": [
+        "entity.name.folder"
+      ],
+      "ptreeFile": [
+        "entity.name.filename"
+      ],
+      "ptreeExtension": [
+        "support.type.property-name"
+      ],
+      "ptreeMeta": [
+        "comment.line",
+        "comment.block"
+      ],
+      "ptreeSemver": [
+        "constant.numeric"
+      ],
+      "ptreeNameType": [
+        "support.type",
+        "entity.name.type"
+      ],
+      "ptreeRoot.mismatch": [
+        "invalid.deprecated"
+      ],
+      "ptreeDir.mismatch": [
+        "invalid.deprecated"
+      ],
+      "ptreeFile.mismatch": [
+        "invalid.deprecated"
+      ],
+      "ptreeNameType.unknown": [
+        "invalid.illegal"
+      ]
+    },
+    "configurationDefaults": {
+      "[ptree]": {
+        "editor.semanticHighlighting.enabled": true
+      }
+    }
   },
   "scripts": {
     "compile": "tsc -p ./",

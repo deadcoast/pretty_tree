@@ -73,6 +73,43 @@ The default naming grammar is documented in:
 
 - `docs/GRAMMAR.md`
 
+### 5) Dynamic Semantic Highlighting (NAME_TYPES-aware)
+
+TextMate grammars are **static**; they can't read your workspace config to decide how to colorize
+custom `[NAME_TYPES]`.
+
+`ptree` now includes a **Semantic Tokens Provider** that:
+
+- reads the effective config (default/spec + optional user config)
+- classifies each [ROOT]/[DIR]/[FILE] name against your `[NAME_TYPES]` regex registry
+- emits semantic token modifiers like:
+  - `nt_high_type`
+  - `nt_smol_type`
+  - `nt_scream_type`
+- emits a `mismatch` modifier when a name does not conform to the allowed types for that entity
+
+This is the mechanism that makes **"central NAME_TYPES drives highlighting"** real.
+
+You can customize colors via:
+
+```json
+// settings.json
+{
+  "editor.semanticTokenColorCustomizations": {
+    "rules": {
+      "ptreeScaffold": {},
+      "ptreeDir.nt_high_type": {},
+      "ptreeFile.nt_smol_type": {},
+      "ptreeDir.mismatch": {}
+    }
+  }
+}
+```
+
+See also:
+
+- `docs/SEMANTIC_TOKENS.md`
+
 ---
 
 ## Supported Syntax
@@ -125,10 +162,6 @@ PTREE-0.0.2//
 - **ptree: Copy Relative Path at Cursor** (`ptree.copyRelativePathAtCursor`)
 - **ptree: Validate Document** (`ptree.validateDocument`)
 - **ptree: Apply Canonical Fixes** (`ptree.fixDocument`)
-
-- **ptree: Copy Full Path at Cursor** (`ptree.copyPathAtCursor`)
-- **ptree: Copy Relative Path at Cursor** (`ptree.copyRelativePathAtCursor`)
-- **ptree: Validate Document** (`ptree.validateDocument`)
 
 Path commands infer the path by walking up the tree structure.
 

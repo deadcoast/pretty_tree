@@ -4,6 +4,7 @@ import { parsePtreeDocument } from './core/parser';
 import { loadEffectiveConfig } from './core/config';
 import { validatePtreeDocument } from './core/validator';
 import { applyCanonicalFixes } from './core/fixer';
+import { buildSemanticLegend, PtreeSemanticTokensProvider } from './semanticTokens';
 
 /**
  * ptree is a text format for directory-tree representations.
@@ -252,6 +253,84 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.languages.registerFoldingRangeProvider({ language: 'ptree' }, foldingProvider)
   );
 
+  // Semantic Tokens (dynamic highlighting based on NAME_TYPES)
+  // We register a semantic tokens provider that reads the effective config (default/spec/user)
+  // and emits semantic token modifiers like `nt_high_type` / `nt_smol_type`.
+  const semanticManager = (() => {
+    let currentLegendKey = '';
+    let currentProvider: PtreeSemanticTokensProvider | undefined;
+    let currentRegistration: vscode.Disposable | undefined;
+
+    const dispose = () => {
+      currentRegistration?.dispose();
+      currentRegistration = undefined;
+      currentProvider = undefined;
+    };
+
+    const collectNameTypeIds = (): string[] => {
+      const ids = new Set<string>();
+      const folders = vscode.workspace.workspaceFolders ?? [];
+
+      // If no workspace folder is open, still include built-in configs.
+      const roots = folders.length > 0 ? folders.map(f => f.uri.fsPath) : [undefined];
+
+      for (const root of roots) {
+        for (const profile of ['default', 'spec'] as const) {
+          try {
+            const { config } = loadEffectiveConfig(context.extensionPath, root as any, profile);
+            for (const id of Object.keys(config.NAME_TYPES ?? {})) ids.add(id);
+          } catch {
+            // Ignore config load errors here; validator will surface them.
+          }
+        }
+      }
+
+      return Array.from(ids);
+    };
+
+    const register = () => {
+      const { legend, knownModifiers, legendKey } = buildSemanticLegend(collectNameTypeIds());
+
+      // If legend hasn't changed, just refresh tokens.
+      if (currentProvider && currentLegendKey === legendKey) {
+        currentProvider.refresh();
+        return;
+      }
+
+      dispose();
+
+      currentLegendKey = legendKey;
+
+      const provider = new PtreeSemanticTokensProvider(legend, knownModifiers, (document, parsed) => {
+        const workspaceFolder = vscode.workspace.getWorkspaceFolder(document.uri);
+        const workspaceRoot = workspaceFolder?.uri.fsPath;
+        const profile = (parsed.directives['ptree'] ?? '').trim() === 'spec' ? 'spec' : 'default';
+        const { config } = loadEffectiveConfig(context.extensionPath, workspaceRoot, profile);
+        return { config, profile };
+      });
+
+      currentProvider = provider;
+      currentRegistration = vscode.languages.registerDocumentSemanticTokensProvider(
+        { language: 'ptree' },
+        provider,
+        legend
+      );
+      context.subscriptions.push(currentRegistration);
+    };
+
+    register();
+
+    return { refresh: register, dispose };
+  })();
+  context.subscriptions.push({ dispose: () => semanticManager.dispose() });
+
+  // If workspace folders change, NAME_TYPES unions may change too.
+  context.subscriptions.push(
+    vscode.workspace.onDidChangeWorkspaceFolders(() => {
+      semanticManager.refresh();
+    })
+  );
+
   // Diagnostics (lint)
   const diagnostics = vscode.languages.createDiagnosticCollection('ptree');
   context.subscriptions.push(diagnostics);
@@ -308,6 +387,9 @@ export function activate(context: vscode.ExtensionContext) {
         for (const openDoc of vscode.workspace.textDocuments) {
           validate(openDoc);
         }
+
+        // Config changed: refresh semantic highlighting too.
+        semanticManager.refresh();
       }
     }),
     vscode.workspace.onDidChangeTextDocument(e => {
