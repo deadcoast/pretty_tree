@@ -25,13 +25,6 @@
     "markdown",
     "ptree"
   ],
-  "activationEvents": [
-    "onLanguage:ptree",
-    "onCommand:ptree.copyPathAtCursor",
-    "onCommand:ptree.copyRelativePathAtCursor",
-    "onCommand:ptree.validateDocument",
-    "onCommand:ptree.fixDocument"
-  ],
   "main": "./out/extension.js",
   "contributes": {
     "languages": [
