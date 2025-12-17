@@ -1,0 +1,22 @@
+version = 1
+revision = 3
+requires-python = ">=3.13"
+
+[[package]]
+name = "hookify"
+version = "1.1.4"
+source = { registry = "https://pypi.org/simple" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/d4/1b/dae8a05114716d768535c2bcfd160519c6289620c2036405ecf054672569/hookify-1.1.4-py3-none-any.whl", hash = "sha256:bf940f3de0ce869c8f09078b993086ca285c9e15a8b671d131099e094c869874", size = 2827, upload-time = "2024-11-19T19:43:04.334Z" },
+]
+
+[[package]]
+name = "ptree"
+version = "0.0.4"
+source = { virtual = "." }
+dependencies = [
+    { name = "hookify" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "hookify", specifier = ">=0.0.1" }]

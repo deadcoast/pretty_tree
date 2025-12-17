@@ -1,0 +1,8 @@
+README.md
+main.py
+pyproject.toml
+ptree.egg-info/PKG-INFO
+ptree.egg-info/SOURCES.txt
+ptree.egg-info/dependency_links.txt
+ptree.egg-info/requires.txt
+ptree.egg-info/top_level.txt

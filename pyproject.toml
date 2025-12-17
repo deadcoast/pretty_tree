@@ -1,0 +1,9 @@
+[project]
+name = "ptree"
+version = "0.0.4"
+description = "Pretty Tree is a VS Code extension for pretty tree directory data structures."
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "hookify>=0.0.1",
+]
