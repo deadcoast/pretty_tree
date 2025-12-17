@@ -1,0 +1,270 @@
+{
+  "$schema": "./ptreeconfig.schema.json",
+  "ptree": "spec",
+  "style": "unicode",
+  "NAME_TYPES": {
+    "SCREAM_TYPE": {
+      "description": "SCREAMING_SNAKE_CASE (uppercase words separated by underscores).",
+      "word_delimiter": "_",
+      "allowed_version_delimiters": [
+        "-"
+      ],
+      "pattern": "^[A-Z0-9]+(?:_[A-Z0-9]+)*$",
+      "examples": [
+        "PTREE",
+        "API_CLIENT",
+        "MY_TOOL"
+      ],
+      "with_number_examples": [
+        "PTREE-0.0.2",
+        "API_CLIENT-1.2.3"
+      ]
+    },
+    "High_Type": {
+      "description": "Pascal_Snake_Case (TitleCase words separated by underscores).",
+      "word_delimiter": "_",
+      "allowed_version_delimiters": [
+        "-"
+      ],
+      "pattern": "^[A-Z][A-Za-z0-9]*(?:_[A-Z][A-Za-z0-9]*)*$",
+      "examples": [
+        "Front_Matter",
+        "User_Guide",
+        "I_Introduction"
+      ],
+      "with_number_examples": [
+        "User_Guide-1.0.0",
+        "I_Introduction-0.1.0"
+      ]
+    },
+    "Cap-Type": {
+      "description": "Title-Kebab-Case (TitleCase words separated by hyphens).",
+      "word_delimiter": "-",
+      "allowed_version_delimiters": [
+        "_"
+      ],
+      "pattern": "^[A-Z][A-Za-z0-9]*(?:-[A-Z][A-Za-z0-9]*)*$",
+      "examples": [
+        "User-Guide",
+        "Api-Docs",
+        "Project-Notes"
+      ],
+      "with_number_examples": [
+        "User-Guide_1.0.0",
+        "Api-Docs_0.2.0"
+      ]
+    },
+    "CamelType": {
+      "description": "PascalCase (no separators).",
+      "word_delimiter": null,
+      "allowed_version_delimiters": [
+        "-",
+        "_"
+      ],
+      "pattern": "^[A-Z][a-z0-9]*(?:[A-Z][a-z0-9]*)*$",
+      "examples": [
+        "ProjectDocs",
+        "PtreeConfig",
+        "BuildTools"
+      ],
+      "with_number_examples": [
+        "ProjectDocs-1.0.0",
+        "BuildTools_0.3.1"
+      ]
+    },
+    "smol-type": {
+      "description": "kebab-case (lowercase words separated by hyphens).",
+      "word_delimiter": "-",
+      "allowed_version_delimiters": [
+        "_"
+      ],
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "examples": [
+        "readme",
+        "data-dictionary",
+        "tree-parser"
+      ],
+      "with_number_examples": [
+        "readme_1.0.0",
+        "tree-parser_0.2.1"
+      ]
+    },
+    "snake_type": {
+      "description": "snake_case (lowercase words separated by underscores).",
+      "word_delimiter": "_",
+      "allowed_version_delimiters": [
+        "-"
+      ],
+      "pattern": "^[a-z0-9]+(?:_[a-z0-9]+)*$",
+      "examples": [
+        "data_dictionary",
+        "tree_parser",
+        "user_guide"
+      ],
+      "with_number_examples": [
+        "data_dictionary-1.0.0",
+        "tree_parser-0.2.1"
+      ]
+    },
+    "dotfile": {
+      "description": "Dotfile (leading dot), e.g. .gitignore, .env, .editorconfig.",
+      "word_delimiter": null,
+      "allowed_version_delimiters": [
+        "-",
+        "_"
+      ],
+      "pattern": "^\\.[A-Za-z0-9][A-Za-z0-9._-]*$",
+      "examples": [
+        ".gitignore",
+        ".env",
+        ".editorconfig"
+      ],
+      "with_number_examples": []
+    },
+    "dotdir": {
+      "description": "Dot-directory (leading dot), e.g. .github, .vscode.",
+      "word_delimiter": null,
+      "allowed_version_delimiters": [
+        "-",
+        "_"
+      ],
+      "pattern": "^\\.[A-Za-z0-9][A-Za-z0-9._-]*$",
+      "examples": [
+        ".github",
+        ".vscode"
+      ],
+      "with_number_examples": []
+    },
+    "dot.smol-type": {
+      "description": "Dot-separated kebab segments, e.g. tsconfig.base, vite.config.",
+      "word_delimiter": ".",
+      "allowed_version_delimiters": [
+        "_",
+        "-"
+      ],
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*(?:\\.[a-z0-9]+(?:-[a-z0-9]+)*)+$",
+      "examples": [
+        "tsconfig.base",
+        "vite.config"
+      ],
+      "with_number_examples": [
+        "tsconfig.base_1.0.0"
+      ]
+    }
+  },
+  "SEPERATION_DELIMITERS": [
+    "-",
+    "_",
+    "."
+  ],
+  "ENTITY_NAME_TYPES": {
+    "ROOT": [
+      "SCREAM_TYPE"
+    ],
+    "DIR": [
+      "High_Type"
+    ],
+    "FILE": [
+      "smol-type"
+    ],
+    "META": [
+      "SCREAM_TYPE"
+    ]
+  },
+  "RULES": {
+    "default": true,
+    "PT001": {
+      "description": "Root label must end with // (default opinionated style).",
+      "enabled": true,
+      "severity": "error",
+      "root_marker": "//"
+    },
+    "PT002": {
+      "description": "Parent nodes (nodes with children) must end with /.",
+      "enabled": true,
+      "severity": "error",
+      "mode": "parents"
+    },
+    "PT003": {
+      "description": "Require @ptree directive in the header.",
+      "enabled": true,
+      "severity": "error"
+    },
+    "PT004": {
+      "description": "Enforce allowed NAME_TYPES by entity (ROOT/DIR/FILE/META).",
+      "enabled": true,
+      "severity": "error"
+    },
+    "PT005": {
+      "description": "Version delimiter must not match the NAME_TYPE word delimiter (UniRule_1).",
+      "enabled": true,
+      "severity": "error"
+    },
+    "PT006": {
+      "description": "Disallow spaces in node names (recommend hyphen/underscore instead).",
+      "enabled": true,
+      "severity": "error"
+    },
+    "PT007": {
+      "description": "File extensions should be lowercase.",
+      "enabled": true,
+      "severity": "warning"
+    },
+    "PT008": {
+      "description": "Disallow mixing '-' and '_' inside the same bare name.",
+      "enabled": true,
+      "severity": "warning"
+    },
+    "PT009": {
+      "description": "Within each directory, list directories first then files; each group lexicographically.",
+      "enabled": false,
+      "severity": "warning",
+      "case_sensitive": false
+    },
+    "PT010": {
+      "description": "In spec profile, @ptree directive value must be \"spec\".",
+      "enabled": true,
+      "severity": "error",
+      "expected": "spec"
+    },
+    "PT011": {
+      "description": "In spec profile, @style directive must be \"unicode\" (canonical).",
+      "enabled": true,
+      "severity": "error",
+      "expected": "unicode"
+    },
+    "PT012": {
+      "description": "In spec profile, @version directive is required and must be SEMVER.",
+      "enabled": true,
+      "severity": "error"
+    },
+    "PT013": {
+      "description": "In spec profile, @name_type block is required and must declare canonical NAME_TYPES for ROOT/DIR/FILE.",
+      "enabled": true,
+      "severity": "error",
+      "expected": {
+        "ROOT": "SCREAM_TYPE",
+        "DIR": "High_Type",
+        "FILE": "smol-type"
+      }
+    },
+    "PT014": {
+      "description": "In spec profile, @seperation_delimiters block is required and must declare canonical delimiter set.",
+      "enabled": true,
+      "severity": "error",
+      "expected": [
+        "-",
+        "_",
+        "."
+      ]
+    },
+    "PT015": {
+      "description": "In spec profile, root label must be \"PTREE-<@version>//\" (version must match @version).",
+      "enabled": true,
+      "severity": "error",
+      "expected_root_base": "PTREE"
+    }
+  },
+  "FILE_EXTENSION_SPLIT": "firstDot",
+  "profile": "spec"
+}

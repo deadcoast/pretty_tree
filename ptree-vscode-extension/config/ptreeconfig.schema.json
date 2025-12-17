@@ -1,0 +1,97 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ptree configuration",
+  "type": "object",
+  "additionalProperties": true,
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "ptree": {
+      "type": "string"
+    },
+    "style": {
+      "type": "string",
+      "enum": [
+        "unicode",
+        "ascii"
+      ]
+    },
+    "NAME_TYPES": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "word_delimiter": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "allowed_version_delimiters": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "pattern": {
+            "type": "string"
+          },
+          "examples": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "with_number_examples": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "SEPERATION_DELIMITERS": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "ENTITY_NAME_TYPES": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "RULES": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "FILE_EXTENSION_SPLIT": {
+      "type": "string",
+      "description": "How to determine the 'file base' when validating FILE NAME_TYPES. 'lastDot' treats the last segment as extension; 'firstDot' applies NAME_TYPE to the stem before the first dot and treats the remainder as (possibly multi-part) extension.",
+      "enum": [
+        "lastDot",
+        "firstDot"
+      ],
+      "default": "lastDot"
+    },
+    "profile": {
+      "type": "string",
+      "description": "Built-in config profile to use as the base ruleset when no workspace config is provided. 'default' is flexible; 'spec' is the canonical opinionated ruleset.",
+      "enum": [
+        "default",
+        "spec"
+      ],
+      "default": "default"
+    }
+  }
+}

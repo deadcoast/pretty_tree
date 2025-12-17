@@ -1,0 +1,103 @@
+{
+  "name": "ptree",
+  "displayName": "ptree (Pretty Tree)",
+  "description": "Standardized directory-tree files (.ptree): syntax highlighting, smart folding, and Markdown fenced-code support.",
+  "version": "0.2.0",
+  "publisher": "ptree",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://example.com/ptree/ptree-vscode-extension.git"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Formatters",
+    "Other"
+  ],
+  "keywords": [
+    "tree",
+    "directory",
+    "filesystem",
+    "documentation",
+    "markdown",
+    "ptree"
+  ],
+  "activationEvents": [
+    "onLanguage:ptree",
+    "onCommand:ptree.copyPathAtCursor",
+    "onCommand:ptree.copyRelativePathAtCursor",
+    "onCommand:ptree.validateDocument",
+    "onCommand:ptree.fixDocument"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "ptree",
+        "aliases": [
+          "ptree",
+          "Pretty Tree",
+          "Directory Tree"
+        ],
+        "extensions": [
+          ".ptree"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "ptree",
+        "scopeName": "source.ptree",
+        "path": "./syntaxes/ptree.tmLanguage.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "ptree.copyPathAtCursor",
+        "title": "ptree: Copy Full Path at Cursor"
+      },
+      {
+        "command": "ptree.copyRelativePathAtCursor",
+        "title": "ptree: Copy Relative Path at Cursor"
+      },
+      {
+        "command": "ptree.validateDocument",
+        "title": "ptree: Validate Document"
+      },
+      {
+        "command": "ptree.fixDocument",
+        "title": "ptree: Apply Canonical Fixes"
+      }
+    ],
+    "jsonValidation": [
+      {
+        "fileMatch": [
+          ".ptreerc.json",
+          ".ptree.json",
+          "ptree.config.json"
+        ],
+        "url": "./config/ptreeconfig.schema.json"
+      }
+    ]
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "vscode:prepublish": "npm run compile",
+    "lint": "echo \"(optional) add eslint\"",
+    "test": "echo \"No tests configured\"",
+    "ptree": "node ./out/cli.js"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.30",
+    "@types/vscode": "^1.85.0",
+    "typescript": "^5.5.4"
+  },
+  "bin": {
+    "ptree": "bin/ptree.js"
+  }
+}

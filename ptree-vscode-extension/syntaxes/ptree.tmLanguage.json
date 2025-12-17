@@ -1,0 +1,312 @@
+{
+  "name": "ptree",
+  "scopeName": "source.ptree",
+  "fileTypes": [
+    "ptree"
+  ],
+  "patterns": [
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#name_type_block"
+    },
+    {
+      "include": "#seperation_delimiters_block"
+    },
+    {
+      "include": "#directives"
+    },
+    {
+      "include": "#rootLabel"
+    },
+    {
+      "include": "#rootPath"
+    },
+    {
+      "include": "#nodeLine"
+    },
+    {
+      "include": "#summary"
+    }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.number-sign.ptree",
+          "match": "^\\s*#.*$"
+        }
+      ]
+    },
+    "directives": {
+      "patterns": [
+        {
+          "name": "meta.directive.ptree",
+          "match": "^\\s*(@[A-Za-z][A-Za-z0-9_-]*)(\\s*[:=])?(.*)$",
+          "captures": {
+            "1": {
+              "name": "keyword.control.directive.ptree"
+            },
+            "2": {
+              "name": "punctuation.separator.key-value.ptree"
+            },
+            "3": {
+              "name": "string.unquoted.directive-value.ptree"
+            }
+          }
+        }
+      ]
+    },
+    "rootLabel": {
+      "patterns": [
+        {
+          "comment": "Root label line ending with // (opinionated default).",
+          "name": "meta.root.label.ptree",
+          "match": "^(?!\\s*(?:#|@))(?!\\s*(?:(?:(?:\\u2502|\\|) {3}| {4})*)(?:\\u251C\\u2500\\u2500|\\u2514\\u2500\\u2500|\\|--|`--))\\s*([A-Z0-9]+(?:_[A-Z0-9]+)*)([-_])(\\d+\\.\\d+\\.\\d+(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?)(\\/\\/)\\s*$",
+          "captures": {
+            "1": {
+              "name": "entity.name.type.root.ptree"
+            },
+            "2": {
+              "name": "punctuation.separator.version.ptree"
+            },
+            "3": {
+              "name": "constant.numeric.version.semver.ptree"
+            },
+            "4": {
+              "name": "punctuation.definition.root-marker.ptree"
+            }
+          }
+        },
+        {
+          "comment": "Root label line without an explicit version.",
+          "name": "meta.root.label.ptree",
+          "match": "^(?!\\s*(?:#|@))(?!\\s*(?:(?:(?:\\u2502|\\|) {3}| {4})*)(?:\\u251C\\u2500\\u2500|\\u2514\\u2500\\u2500|\\|--|`--))\\s*([^\\r\\n]*?)(\\/\\/)\\s*$",
+          "captures": {
+            "1": {
+              "name": "entity.name.type.root.ptree"
+            },
+            "2": {
+              "name": "punctuation.definition.root-marker.ptree"
+            }
+          }
+        }
+      ]
+    },
+    "rootPath": {
+      "patterns": [
+        {
+          "comment": "Root path line ending with a single /.",
+          "name": "meta.root.path.ptree",
+          "match": "^(?!\\s*(?:#|@))(?!\\s*(?:(?:(?:\\u2502|\\|) {3}| {4})*)(?:\\u251C\\u2500\\u2500|\\u2514\\u2500\\u2500|\\|--|`--))\\s*(.+?\\/)(?!\\/)\\s*$",
+          "captures": {
+            "1": {
+              "name": "entity.name.type.root.ptree"
+            }
+          }
+        }
+      ]
+    },
+    "nodeLine": {
+      "patterns": [
+        {
+          "comment": "A tree node line (unicode or ASCII).",
+          "begin": "^((?:(?:(?:\\u2502|\\|) {3}| {4})*))((?:\\u251C\\u2500\\u2500|\\u2514\\u2500\\u2500|\\|--|`--))(\\s+)",
+          "beginCaptures": {
+            "1": {
+              "name": "comment.block.tree-scaffold.ptree"
+            },
+            "2": {
+              "name": "comment.block.tree-branch.ptree"
+            },
+            "3": {
+              "name": "comment.block.tree-space.ptree"
+            }
+          },
+          "end": "$",
+          "patterns": [
+            {
+              "include": "#inlineMeta"
+            },
+            {
+              "include": "#symlink"
+            },
+            {
+              "include": "#version"
+            },
+            {
+              "include": "#metaNode"
+            },
+            {
+              "include": "#directoryName"
+            },
+            {
+              "include": "#fileName"
+            }
+          ]
+        }
+      ]
+    },
+    "version": {
+      "patterns": [
+        {
+          "comment": "Semantic version highlighting anywhere on a node line.",
+          "name": "constant.numeric.version.semver.ptree",
+          "match": "\\b\\d+\\.\\d+\\.\\d+(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?\\b"
+        }
+      ]
+    },
+    "inlineMeta": {
+      "patterns": [
+        {
+          "comment": "Bracket attributes, separated from the name by 2+ spaces.",
+          "name": "meta.annotation.attributes.ptree",
+          "match": "\\s{2,}(\\[)([^\\]]*)(\\])",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.bracket.begin.ptree"
+            },
+            "2": {
+              "name": "string.unquoted.attributes.ptree"
+            },
+            "3": {
+              "name": "punctuation.definition.bracket.end.ptree"
+            }
+          }
+        },
+        {
+          "comment": "Inline comment, separated from the name by 2+ spaces.",
+          "name": "comment.line.number-sign.ptree",
+          "match": "\\s{2,}#.*$"
+        }
+      ]
+    },
+    "symlink": {
+      "patterns": [
+        {
+          "comment": "Symlink arrow and target (name -> target).",
+          "match": "\\s+(->)\\s+",
+          "captures": {
+            "1": {
+              "name": "keyword.operator.symlink.ptree"
+            }
+          }
+        }
+      ]
+    },
+    "metaNode": {
+      "patterns": [
+        {
+          "comment": "Meta nodes end with //.",
+          "match": "\\G([^\\r\\n]*?)(\\/\\/)(?=(?:\\s+->\\s+|\\s{2,}(?:#|\\[)|$))",
+          "captures": {
+            "1": {
+              "name": "entity.name.type.meta.ptree"
+            },
+            "2": {
+              "name": "punctuation.definition.meta-marker.ptree"
+            }
+          }
+        }
+      ]
+    },
+    "directoryName": {
+      "patterns": [
+        {
+          "comment": "Directory names end with /.",
+          "match": "\\G([^\\r\\n]*?)(\\/)(?=(?:\\s+->\\s+|\\s{2,}(?:#|\\[)|$))",
+          "captures": {
+            "1": {
+              "name": "entity.name.type.namespace.ptree"
+            },
+            "2": {
+              "name": "punctuation.definition.path.ptree"
+            }
+          }
+        }
+      ]
+    },
+    "fileName": {
+      "patterns": [
+        {
+          "comment": "File name with optional multi-part extension (.tar.gz).",
+          "match": "\\G(.+?)(?:((?:\\.[A-Za-z0-9][A-Za-z0-9_-]*)+))?(?=(?:\\s+->\\s+|\\s{2,}(?:#|\\[)|$))",
+          "captures": {
+            "1": {
+              "name": "string.unquoted.filename.ptree"
+            },
+            "2": {
+              "name": "support.type.extension.ptree"
+            }
+          }
+        }
+      ]
+    },
+    "summary": {
+      "patterns": [
+        {
+          "comment": "Common tree summary lines like: '12 directories, 48 files'",
+          "name": "meta.summary.ptree",
+          "match": "^\\s*\\d+\\s+directories?,\\s+\\d+\\s+files?\\s*$"
+        }
+      ]
+    },
+    "name_type_block": {
+      "begin": "^\\s*(@name_type)\\s*[:=]\\s*\\[\\s*$",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.other.directive.ptree"
+        }
+      },
+      "end": "^\\s*\\]\\s*$",
+      "name": "meta.directive.block.name_type.ptree",
+      "patterns": [
+        {
+          "match": "\\b(ROOT|DIR|FILE|EXT|META)\\b",
+          "name": "variable.other.constant.ptree"
+        },
+        {
+          "match": ":",
+          "name": "punctuation.separator.key-value.ptree"
+        },
+        {
+          "match": ",",
+          "name": "punctuation.separator.sequence.ptree"
+        },
+        {
+          "match": "'[^']*'",
+          "name": "string.quoted.single.ptree"
+        },
+        {
+          "match": "\"[^\"]*\"",
+          "name": "string.quoted.double.ptree"
+        }
+      ]
+    },
+    "seperation_delimiters_block": {
+      "begin": "^\\s*(@seperation_delimiters|@separation_delimiters)\\s*[:=]\\s*\\[\\s*$",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.other.directive.ptree"
+        }
+      },
+      "end": "^\\s*\\]\\s*$",
+      "name": "meta.directive.block.seperation_delimiters.ptree",
+      "patterns": [
+        {
+          "match": "'[\\-_.]'",
+          "name": "constant.character.delimiter.ptree"
+        },
+        {
+          "match": "\"[\\-_.]\"",
+          "name": "constant.character.delimiter.ptree"
+        },
+        {
+          "match": ",",
+          "name": "punctuation.separator.sequence.ptree"
+        }
+      ]
+    }
+  }
+}
