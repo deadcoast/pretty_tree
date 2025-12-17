@@ -42,14 +42,14 @@ This extension includes a FoldingRangeProvider that:
 
 Once installed, you can write:
 
-```markdown
+````markdown
 ```ptree
 PTREE-0.0.2//
 ├── readme.md
 └── Src/
     └── index.ts
 ```
-```
+````
 
 …and VS Code will highlight the fenced block with the `ptree` grammar.
 
@@ -158,6 +158,7 @@ PTREE-0.0.2//
 ---
 
 ## Commands
+
 - **ptree: Copy Full Path at Cursor** (`ptree.copyPathAtCursor`)
 - **ptree: Copy Relative Path at Cursor** (`ptree.copyRelativePathAtCursor`)
 - **ptree: Validate Document** (`ptree.validateDocument`)
@@ -185,7 +186,6 @@ VS Code validates these JSON config files using:
 
 - `config/ptreeconfig.schema.json`
 
-
 ### Profiles
 
 `ptree` ships with **two built-in rulesets**:
@@ -203,7 +203,6 @@ How the profile is chosen:
 The canonical **spec** profile also changes one important parsing detail:
 
 - FILE naming rules apply to the **stem before the first dot** (e.g. `vite.config.ts` → stem `vite`, extension `config.ts`).
-
 
 ---
 

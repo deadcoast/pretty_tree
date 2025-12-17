@@ -57,7 +57,7 @@ The extension contributes these token types:
 
 For each name type ID in your config, the provider produces a modifier:
 
-```
+```nt
 nt_<sanitized_name_type>
 ```
 

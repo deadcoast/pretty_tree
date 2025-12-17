@@ -40,7 +40,6 @@ PTREE-0.0.2//
 
 Tooling may use this header to select the ruleset and validate that the tree is canonical.
 
-
 ### 1.1 Encoding
 
 - A ptree document **MUST** be UTF-8.
@@ -95,8 +94,6 @@ Example:
 
 These blocks are optional in the general format, but they are **required** by the canonical **spec** profile (`@ptree: spec`).
 
-
-
 ### 2.2 Directive line (optional)
 
 Directive lines allow metadata without changing tree structure.
@@ -122,7 +119,7 @@ The root line represents the conceptual root of the displayed tree.
 
 A ptree document MAY use either of these conventions:
 
-1) **Root path** (filesystem-like)
+#### **Root path** (filesystem-like)
 
 - The root line **SHOULD** appear once (commonly the first non-comment, non-directive line).
 - The root line **SHOULD** end in `/`.
@@ -133,7 +130,7 @@ Example:
 my-project/
 ```
 
-2) **Root label** (meta root marker)
+#### **Root label** (meta root marker)
 
 - The root line **MAY** end in `//` to indicate it is a **label**, not a filesystem directory.
 - When using a root label, tools SHOULD use the `@root:` directive (if present) to determine the real filesystem root path.
@@ -154,7 +151,7 @@ A node line represents a file or directory.
 
 A node line has the general structure:
 
-```
+```ptree
 <indent><connector><space><name><optional-symlink><optional-metadata>
 ```
 
@@ -216,8 +213,8 @@ my-project/
 Examples:
 
 - Depth 0 (top-level nodes): `├── name`
-- Depth 1: `    ├── name`
-- Depth 2: `    │   ├── name`
+- Depth 1: `├── name`
+- Depth 2: `│   ├── name`
 
 ### 3.2 Structural meaning
 
@@ -259,7 +256,7 @@ The trailing `/` makes directory detection trivial and improves syntax highlight
 
 Symlinks are represented using an arrow:
 
-```
+```ptree
 <name> -> <target>
 ```
 
@@ -285,7 +282,7 @@ To avoid ambiguity when names contain `#` or `[`, metadata **SHOULD** be separat
 
 Attributes are written as:
 
-```
+```ptree
   [key=value, key2=value2]
 ```
 
@@ -300,7 +297,7 @@ Example:
 
 Comments are written as:
 
-```
+```ptree
   # comment
 ```
 
@@ -346,7 +343,7 @@ For a consistent ecosystem, generators **SHOULD**:
 
 A tolerant unicode/ascii node matcher:
 
-```
+```ptree
 ^((?:(?:│|\|) {3}| {4})*)(?:├──|└──|\|--|`--)(?:\s+)(.*)$
 ```
 

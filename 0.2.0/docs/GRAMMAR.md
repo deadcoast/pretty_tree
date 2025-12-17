@@ -48,10 +48,10 @@ This “first-dot stem” behavior keeps the rules usable for real-world files (
 
 ---
 
-
 ## DICTIONARY
 
 ### [NAME_TYPES]
+
 A **central registry** of naming styles used to classify names for:
 
 - **[ROOT]** labels
@@ -69,6 +69,7 @@ Each name type defines:
 This registry is the *central point of reference* for config, linting, and examples.
 
 ### [SEPERATION_DELIMITERS]
+
 Seperation delimiters are characters used to separate:
 
 - **words** inside a name (e.g. `data-dictionary`)
@@ -81,9 +82,11 @@ Default delimiter set:
 - `.` (dot — restricted; see rules)
 
 ### [NUMBER]
+
 A numeric token. In `ptree`, the primary number format is **[SEMVER]**.
 
 ### [SEMVER]
+
 A semantic-version-like string:
 
 - `MAJOR.MINOR.PATCH`
@@ -97,12 +100,14 @@ Examples:
 - `2.1.0+build.20251217`
 
 ### [WORD_DELIMITER]
+
 The delimiter used **inside** a `[NAME_TYPE]` to separate words, e.g.:
 
 - `SCREAM_TYPE`: `_`
 - `smol-type`: `-`
 
 ### [VERSION_DELIMITER]
+
 The delimiter used to append a version to a name, e.g.:
 
 - `PTREE-0.0.2`
@@ -113,6 +118,7 @@ The delimiter used to append a version to a name, e.g.:
 ## UNIVERSAL RULES
 
 ### [UniRule_1]
+
 [NAME_TYPE] and [VERSION_DELIMITER] MUST NEVER use the same delimiter character **when the NAME_TYPE has a WORD_DELIMITER**.
 
 - If the NAME_TYPE uses `_` inside the name, the version delimiter MUST be `-`.
@@ -127,10 +133,12 @@ The delimiter used to append a version to a name, e.g.:
 [E01] SCREAM_TYPE
 
 INCORRECT:
+
 - `[SCREAM_TYPE]_[SEMVER]`
 - output: `API_CLIENT_1.0.0`
 
 CORRECT:
+
 - `[SCREAM_TYPE]-[SEMVER]`
 - output: `API_CLIENT-1.0.0`
 
@@ -138,10 +146,12 @@ CORRECT:
 [E02] Cap-Type
 
 INCORRECT:
+
 - `[Cap-Type]-[SEMVER]`
 - output: `User-Guide-1.0.0`
 
 CORRECT:
+
 - `[Cap-Type]_[SEMVER]`
 - output: `User-Guide_1.0.0`
 
@@ -149,10 +159,12 @@ CORRECT:
 [E03] snake_type
 
 INCORRECT:
+
 - `[snake_type]_[SEMVER]`
 - output: `user_guide_1.0.0`
 
 CORRECT:
+
 - `[snake_type]-[SEMVER]`
 - output: `user_guide-1.0.0`
 
@@ -160,6 +172,7 @@ CORRECT:
 [E04] CamelType
 
 CORRECT (both allowed):
+
 - `[CamelType]-[SEMVER]` → `BuildTools-1.0.0`
 - `[CamelType]_[SEMVER]` → `BuildTools_1.0.0`
 
@@ -167,14 +180,17 @@ CORRECT (both allowed):
 [E05] smol-type
 
 INCORRECT:
+
 - `[smol-type]-[SEMVER]` → `data-dictionary-1.0.0`
 
 CORRECT:
+
 - `[smol-type]_[SEMVER]` → `data-dictionary_1.0.0`
 
 ---
 
 ### [UniRule_2]
+
 [DIR] nodes MUST end with `/`.
 
 This is the opinionated choice `(A)`:
@@ -186,6 +202,7 @@ This is the opinionated choice `(A)`:
 ---
 
 ### [UniRule_3]
+
 [ROOT] label MUST end with `//` in the **default ruleset**.
 
 This makes the root label visually distinct from real filesystem directories (which end with `/`).
@@ -197,6 +214,7 @@ Example:
 ---
 
 ### [UniRule_4]
+
 Node names MUST NOT contain spaces in the default ruleset.
 
 Use:
@@ -207,6 +225,7 @@ Use:
 ---
 
 ### [UniRule_5]
+
 [NAME_TYPE] MUST NOT mix `-` and `_` in a single bare name.
 
 Examples:
@@ -218,6 +237,7 @@ Examples:
 ---
 
 ### [UniRule_6]
+
 `.` is reserved for:
 
 1. [SEMVER] internal dots (`1.2.3`)
@@ -242,104 +262,123 @@ Each definition includes:
 - canonical examples
 
 ### [SCREAM_TYPE]
+
 - DESCRIPTION: `SCREAMING_SNAKE_CASE`
 - WORD_DELIMITER: `_`
 - ALLOWED_VERSION_DELIMITERS: `-`
 - REGEX: `^[A-Z0-9]+(?:_[A-Z0-9]+)*$`
 
 EXAMPLES:
+
 - `PTREE`
 - `API_CLIENT`
 - `MY_TOOL`
 
 WITH_NUMBER:
+
 - `PTREE-0.0.2`
 - `API_CLIENT-1.2.3`
 
 ---
 
 ### [High_Type]
+
 - DESCRIPTION: `Pascal_Snake_Case`
 - WORD_DELIMITER: `_`
 - ALLOWED_VERSION_DELIMITERS: `-`
 - REGEX: `^[A-Z][A-Za-z0-9]*(?:_[A-Z][A-Za-z0-9]*)*$`
 
 EXAMPLES:
+
 - `Front_Matter`
 - `User_Guide`
 - `I_Introduction`
 
 WITH_NUMBER:
+
 - `User_Guide-1.0.0`
 - `I_Introduction-0.1.0`
 
 ---
 
 ### [Cap-Type]
+
 - DESCRIPTION: `Title-Kebab-Case`
 - WORD_DELIMITER: `-`
 - ALLOWED_VERSION_DELIMITERS: `_`
 - REGEX: `^[A-Z][A-Za-z0-9]*(?:-[A-Z][A-Za-z0-9]*)*$`
 
 EXAMPLES:
+
 - `User-Guide`
 - `Api-Docs`
 - `Project-Notes`
 
 WITH_NUMBER:
+
 - `User-Guide_1.0.0`
 - `Api-Docs_0.2.0`
 
 ---
 
 ### [CamelType]
+
 - DESCRIPTION: `PascalCase`
 - WORD_DELIMITER: none
 - ALLOWED_VERSION_DELIMITERS: `-`, `_`
 - REGEX: `^[A-Z][a-z0-9]*(?:[A-Z][a-z0-9]*)*$`
 
 EXAMPLES:
+
 - `BuildTools`
 - `PtreeConfig`
 
 WITH_NUMBER:
+
 - `BuildTools-1.0.0`
 - `BuildTools_1.0.0`
 
 ---
 
 ### [smol-type]
+
 - DESCRIPTION: `kebab-case`
 - WORD_DELIMITER: `-`
 - ALLOWED_VERSION_DELIMITERS: `_`
 - REGEX: `^[a-z0-9]+(?:-[a-z0-9]+)*$`
 
 EXAMPLES:
+
 - `readme`
 - `data-dictionary`
 - `tree-parser`
 
 WITH_NUMBER:
+
 - `data-dictionary_1.0.0`
 
 ---
 
 ### [snake_type]
+
 - DESCRIPTION: `snake_case`
 - WORD_DELIMITER: `_`
 - ALLOWED_VERSION_DELIMITERS: `-`
 - REGEX: `^[a-z0-9]+(?:_[a-z0-9]+)*$`
 
 EXAMPLES:
+
 - `data_dictionary`
 - `tree_parser`
 
 WITH_NUMBER:
+
 - `data_dictionary-1.0.0`
 
 ---
 
 ### (Default registry additions)
+
 These are included by default for real-world compatibility:
 
 - `[dotfile]`: `.gitignore`, `.env`, `.editorconfig`
