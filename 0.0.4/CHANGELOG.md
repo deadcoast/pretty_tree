@@ -68,7 +68,7 @@ Note: 0.0.4 is the current draft. Wording and docs may evolve while the feature 
 ### Added
 
 - **Opinionated grammar framework**: NAME_TYPES, ENTITY_NAME_TYPES, RULES
-- **SEPERATION_DELIMITERS**: `-`, `_`, `.` with usage rules
+- **SEPARATION_DELIMITERS**: `-`, `_`, `.` with usage rules
 - **Universal rules**: UniRule_1 through UniRule_6
 
 ### Changed
@@ -105,5 +105,15 @@ Note: 0.0.4 is the current draft. Wording and docs may evolve while the feature 
 | PT011 | (spec) `@style` must equal "unicode"                  | error    |
 | PT012 | (spec) `@version` must be SEMVER                      | error    |
 | PT013 | (spec) `@name_type` block required                    | error    |
-| PT014 | (spec) `@seperation_delimiters` list required         | error    |
+| PT014 | (spec) `@separation_delimiters` list required         | error    |
 | PT015 | (spec) Root label must be `PTREE-<@version>//`        | error    |
+
+## 0.0.4
+
+- [x] Draft a short message map (purpose, non-goals, user value) to reuse across all docs.
+- [x] Update README.md to foreground the "no syntax highlighting for trees" problem and the minimal ptree solution.
+- [x] Update 0.0.4/README.md to prioritize syntax highlighting, simplify feature text, and add a quick start.
+- [x] Tighten SPEC.md with a brief "Design Goals" section and clearer MUST/SHOULD wording.
+- [x] Develop GRAMMAR.md with a "Default vs spec profile" summary and current 0.0.4 examples.
+- [x] Shorten SEMANTIC_TOKENS.md to benefits + minimal customization guidance.
+- [x] Adjust 0.0.4/CHANGELOG.md wording if needed to match the "draft" positioning.

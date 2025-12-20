@@ -1,6 +1,6 @@
 # ptree (Pretty Tree) — VS Code Extension + CLI (Optional)
 
-`ptree` is a **standardized, human-friendly directory tree format** (`.ptree`). 0.0.4 is the current draft. The core goal is simple: make directory trees readable with syntax highlighting across editors and docs, without forcing extra complexity.
+`ptree` is a **standardized, human-friendly directory tree format** (`.ptree`). Spec 1.0.0 is the current draft, implemented by extension/CLI 0.0.4. The core goal is simple: make directory trees readable with syntax highlighting across editors and docs, without forcing extra complexity.
 
 ## Design goals (0.0.4 draft)
 
@@ -11,11 +11,12 @@
 
 Designed for:
 
-- fast visual parsing (folders vs files vs extensions)
-- reliable copy/paste into documentation
-- editor ergonomics (folding / collapsing)
+- Fast visual parsing (folders vs files vs extensions)
+- Reliable copy/paste into documentation
+- Editor ergonomics (folding / collapsing)
 - Fenced code blocks (```ptree) for docs
-- optional naming + validation rules
+- File Extension `.ptree`
+- Optional naming + validation rules
 
 ## Vision (draft)
 
@@ -69,7 +70,7 @@ Once installed, you can write:
 
 ````markdown
 ```ptree
-PTREE-0.0.2//
+PTREE-1.0.0//
 ├── readme.md
 └── Src/
     └── index.ts
@@ -158,7 +159,7 @@ my-project/
 @style: unicode
 @root: ./
 
-PTREE-0.0.2//
+PTREE-1.0.0//
 ├── readme.md
 ├── changelog.md
 └── Src/
@@ -178,7 +179,7 @@ my-project/
 ### Inline metadata
 
 ```ptree
-PTREE-0.0.2//
+PTREE-1.0.0//
 ├── readme.md  # docs entry
 ├── package.json  [type=node]
 └── Src/  [lang=ts]
@@ -188,7 +189,7 @@ PTREE-0.0.2//
 ### Symlinks
 
 ```ptree
-PTREE-0.0.2//
+PTREE-1.0.0//
 └── current -> releases/2025-12-17/
 ```
 
@@ -269,7 +270,7 @@ npm run compile
 node bin/ptree.js gen . --style unicode --max-depth 5
 
 # Generate a canonical spec header + tree
-node bin/ptree.js gen . --profile spec --version 0.0.2 --max-depth 5
+node bin/ptree.js gen . --profile spec --version 1.0.0 --max-depth 5
 
 # Validate a ptree file (auto-detects profile from @ptree: ...)
 node bin/ptree.js validate samples/example.ptree

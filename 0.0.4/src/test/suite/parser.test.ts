@@ -113,6 +113,22 @@ suite('Parser Tests', () => {
     assert.strictEqual(doc.nodes[0].name, 'link');
   });
 
+  test('captures trailing metadata and symlink targets', () => {
+    const text = `ROOT//
+├── file.txt  # comment
+└── link -> target/  [attr=value]`;
+    const doc = parsePtreeDocument(text);
+
+    const file = doc.nodes[0];
+    const link = doc.nodes[1];
+
+    assert.strictEqual(file.trailing, '  # comment');
+    assert.strictEqual(file.symlinkTarget, undefined);
+
+    assert.strictEqual(link.trailing, ' -> target/  [attr=value]');
+    assert.strictEqual(link.symlinkTarget, 'target/');
+  });
+
   test('detects depth jumps', () => {
     const text = `ROOT//
 ├── file.txt

@@ -12,7 +12,7 @@
       "include": "#name_type_block"
     },
     {
-      "include": "#seperation_delimiters_block"
+      "include": "#separation_delimiters_block"
     },
     {
       "include": "#directives"
@@ -284,15 +284,15 @@
         }
       ]
     },
-    "seperation_delimiters_block": {
-      "begin": "^\\s*(@seperation_delimiters|@separation_delimiters)\\s*[:=]\\s*\\[\\s*$",
+    "separation_delimiters_block": {
+      "begin": "^\\s*(@separation_delimiters|@seperation_delimiters)\\s*[:=]\\s*\\[\\s*$",
       "beginCaptures": {
         "1": {
           "name": "keyword.other.directive.ptree"
         }
       },
       "end": "^\\s*\\]\\s*$",
-      "name": "meta.directive.block.seperation_delimiters.ptree",
+      "name": "meta.directive.block.separation_delimiters.ptree",
       "patterns": [
         {
           "match": "'[\\-_.]'",

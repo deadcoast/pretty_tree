@@ -111,7 +111,7 @@ export class PtreeFormattingProvider implements vscode.DocumentFormattingEditPro
       lines.push('@ptree: spec');
       lines.push('@style: unicode');
       
-      const version = doc.directives['version'] ?? '0.0.1';
+      const version = doc.directives['version'] ?? '1.0.0';
       lines.push(`@version: ${version}`);
       
       lines.push('@name_type:[');
@@ -120,7 +120,7 @@ export class PtreeFormattingProvider implements vscode.DocumentFormattingEditPro
       lines.push("    FILE: 'smol-type'");
       lines.push(']');
       
-      lines.push('@seperation_delimiters: [');
+      lines.push('@separation_delimiters: [');
       lines.push("    '-',");
       lines.push("    '_',");
       lines.push("    '.'");
@@ -197,6 +197,7 @@ export class PtreeFormattingProvider implements vscode.DocumentFormattingEditPro
         name: node.name,
         raw: node.raw,
         depth: node.depth,
+        trailing: node.trailing,
         children: [],
         isDir: node.name.endsWith('/') || node.name.endsWith('//') || node.hasChildren
       };
@@ -254,7 +255,8 @@ export class PtreeFormattingProvider implements vscode.DocumentFormattingEditPro
           }
         }
         
-        lines.push(`${prefix}${connector} ${name}`);
+        const suffix = node.trailing ?? '';
+        lines.push(`${prefix}${connector} ${name}${suffix}`);
         
         // Render children
         if (node.children.length > 0) {
@@ -307,6 +309,7 @@ interface TreeNode {
   name: string;
   raw: string;
   depth: number;
+  trailing: string;
   children: TreeNode[];
   isDir: boolean;
 }

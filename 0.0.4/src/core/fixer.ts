@@ -63,6 +63,17 @@ function hasDirective(lines: string[], key: string): boolean {
   return lines.some(l => re.test(l));
 }
 
+function renameDirective(lines: string[], from: string, to: string): boolean {
+  const re = new RegExp(`^(\\s*)@${from}\\b`, 'i');
+  for (let i = 0; i < lines.length; i++) {
+    if (re.test(lines[i])) {
+      lines[i] = lines[i].replace(re, `$1@${to}`);
+      return true;
+    }
+  }
+  return false;
+}
+
 export function applyCanonicalFixes(text: string, doc: PtreeDocument, config: PtreeConfig): FixResult {
   const lines = text.split(/\r?\n/);
   const applied: string[] = [];
@@ -109,17 +120,25 @@ export function applyCanonicalFixes(text: string, doc: PtreeDocument, config: Pt
       applied.push('Inserted @name_type block');
     }
 
-    const hasSep = hasDirective(lines, 'seperation_delimiters') || hasDirective(lines, 'separation_delimiters');
-    if (!hasSep) {
+    const hasSepCanonical = hasDirective(lines, 'separation_delimiters');
+    const hasSepLegacy = hasDirective(lines, 'seperation_delimiters');
+
+    if (!hasSepCanonical && hasSepLegacy) {
+      if (renameDirective(lines, 'seperation_delimiters', 'separation_delimiters')) {
+        applied.push('Renamed @seperation_delimiters to @separation_delimiters');
+      }
+    }
+
+    if (!hasSepCanonical && !hasSepLegacy) {
       const block = [
-        '@seperation_delimiters: [',
+        '@separation_delimiters: [',
         "    '-',",
         "    '_',",
         "    '.'",
         ']'
       ];
       lines.splice(headerEnd, 0, ...block);
-      applied.push('Inserted @seperation_delimiters list');
+      applied.push('Inserted @separation_delimiters list');
     }
   }
 

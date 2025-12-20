@@ -95,8 +95,8 @@ function parseNameTypeDirective(raw: string): Record<string, string> | null {
 
 function parseDelimiterListDirective(raw: string): string[] | null {
   // Accept:
-  // @seperation_delimiters: ['-','_','.']
-  // @seperation_delimiters: [
+  // @separation_delimiters: ['-','_','.']
+  // @separation_delimiters: [
   //   '-',
   //   '_',
   //   '.'
@@ -233,9 +233,9 @@ export function validatePtreeDocument(doc: PtreeDocument, config: PtreeConfig): 
       }
     }
 
-    // PT014: @seperation_delimiters list must exist and match expected set
+    // PT014: @separation_delimiters list must exist and match expected set
     if (rules.PT014.enabled) {
-      const raw = doc.directives['seperation_delimiters'] ?? doc.directives['separation_delimiters'];
+      const raw = doc.directives['separation_delimiters'] ?? doc.directives['seperation_delimiters'];
       const parsed = raw ? parseDelimiterListDirective(raw) : null;
 
       const expected = (rules.PT014.raw && typeof rules.PT014.raw === 'object' && 'expected' in rules.PT014.raw)
@@ -243,7 +243,7 @@ export function validatePtreeDocument(doc: PtreeDocument, config: PtreeConfig): 
         : ['-', '_', '.'];
 
       if (!raw || !parsed) {
-        msgs.push(mkMsg('PT014', rules.PT014.severity, 'Missing or invalid @seperation_delimiters list.', 0, 0, 1));
+        msgs.push(mkMsg('PT014', rules.PT014.severity, 'Missing or invalid @separation_delimiters list.', 0, 0, 1));
       } else {
         const a = [...new Set(parsed)];
         const exp = [...new Set(expected)];
@@ -251,10 +251,10 @@ export function validatePtreeDocument(doc: PtreeDocument, config: PtreeConfig): 
         const extra = a.filter(d => !exp.includes(d));
 
         if (missing.length > 0) {
-          msgs.push(mkMsg('PT014', rules.PT014.severity, `@seperation_delimiters missing: ${missing.join(', ')}`, 0, 0, 1));
+          msgs.push(mkMsg('PT014', rules.PT014.severity, `@separation_delimiters missing: ${missing.join(', ')}`, 0, 0, 1));
         }
         if (extra.length > 0) {
-          msgs.push(mkMsg('PT014', rules.PT014.severity, `@seperation_delimiters contains unknown delimiters: ${extra.join(', ')}`, 0, 0, 1));
+          msgs.push(mkMsg('PT014', rules.PT014.severity, `@separation_delimiters contains unknown delimiters: ${extra.join(', ')}`, 0, 0, 1));
         }
       }
     }

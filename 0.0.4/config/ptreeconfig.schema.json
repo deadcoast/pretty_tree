@@ -57,6 +57,14 @@
       }
     },
     "SEPERATION_DELIMITERS": {
+      "description": "Legacy spelling. Prefer SEPARATION_DELIMITERS.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "SEPARATION_DELIMITERS": {
+      "description": "Canonical delimiter list (preferred spelling).",
       "type": "array",
       "items": {
         "type": "string"

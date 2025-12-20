@@ -36,7 +36,7 @@ Notes:
   - In "spec" profile, the CLI emits/validates the canonical header directives.
 
 Examples:
-  ptree gen . --profile spec --version 0.0.2
+  ptree gen . --profile spec --version 1.0.0
   ptree validate samples/example.ptree
   ptree validate samples/example.ptree --fix --write
 `;
@@ -146,7 +146,7 @@ function cmdGen(positionals: string[], flags: Record<string, string | boolean>) 
   const style = (profile === 'spec' ? 'unicode' : (String(flags.style ?? 'unicode') as Style));
   const maxDepth = Math.max(1, parseInt(String(flags['max-depth'] ?? '25'), 10) || 25);
 
-  const version = String(flags.version ?? (profile === 'spec' ? '0.0.2' : '0.0.0')).trim();
+  const version = String(flags.version ?? (profile === 'spec' ? '1.0.0' : '0.0.0')).trim();
 
   const out: string[] = [];
 
@@ -159,7 +159,7 @@ function cmdGen(positionals: string[], flags: Record<string, string | boolean>) 
     out.push("    DIR: 'High_Type',");
     out.push("    FILE: 'smol-type'");
     out.push(']');
-    out.push('@seperation_delimiters: [');
+    out.push('@separation_delimiters: [');
     out.push("    '-',");
     out.push("    '_',");
     out.push("    '.'");

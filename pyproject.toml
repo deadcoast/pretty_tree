@@ -1,3 +1,7 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "ptree"
 version = "0.0.4"
@@ -7,3 +11,9 @@ requires-python = ">=3.13"
 dependencies = [
     "hookify>=0.0.1",
 ]
+
+[project.scripts]
+ptree = "main:main"
+
+[tool.setuptools]
+py-modules = ["main"]

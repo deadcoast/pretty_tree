@@ -16,7 +16,7 @@
         "MY_TOOL"
       ],
       "with_number_examples": [
-        "PTREE-0.0.2",
+        "PTREE-1.0.0",
         "API_CLIENT-1.2.3"
       ]
     },
@@ -152,7 +152,7 @@
       ]
     }
   },
-  "SEPERATION_DELIMITERS": [
+  "SEPARATION_DELIMITERS": [
     "-",
     "_",
     "."

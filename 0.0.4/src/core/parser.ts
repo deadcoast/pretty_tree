@@ -19,6 +19,8 @@ export type PtreeNode = {
   raw: string;
   depth: number;
   name: string; // includes trailing / or // if present
+  trailing: string; // raw tail after name (symlink/metadata/comment), includes leading spaces
+  symlinkTarget?: string;
   startCol: number; // start of name in the raw line
   endCol: number; // end of name in the raw line
   hasChildren: boolean;
@@ -55,14 +57,31 @@ function countDepth(prefix: string): number {
   return depth;
 }
 
-function stripInlineMeta(nameAndMaybeMeta: string): string {
-  // Remove: "  [..]" and "  #comment" and symlink target.
-  // This is intentionally conservative: it only strips if separated by 2+ spaces.
-  return nameAndMaybeMeta
-    .replace(/\s{2,}(\[.*\])\s*$/, '')
-    .replace(/\s{2,}#.*$/, '')
-    .split(/\s+->\s+/)[0]
-    .trimEnd();
+function splitNodeRemainder(remainder: string): { name: string; trailing: string; symlinkTarget?: string } {
+  // Split into name and trailing metadata/comment/symlink suffix.
+  // Metadata/comments require 2+ spaces before "#" or "[".
+  const metaMatch = remainder.match(/\s{2,}(#|\[)/);
+  const metaIndex = metaMatch?.index ?? -1;
+  const beforeMeta = metaIndex >= 0 ? remainder.slice(0, metaIndex) : remainder;
+  const metaSuffix = metaIndex >= 0 ? remainder.slice(metaIndex) : '';
+
+  const arrowToken = ' -> ';
+  const arrowIdx = beforeMeta.indexOf(arrowToken);
+  if (arrowIdx !== -1) {
+    const name = beforeMeta.slice(0, arrowIdx).trimEnd();
+    const symlinkPart = beforeMeta.slice(arrowIdx);
+    const target = beforeMeta.slice(arrowIdx + arrowToken.length).trim();
+    return {
+      name,
+      trailing: `${symlinkPart}${metaSuffix}`,
+      symlinkTarget: target.length > 0 ? target : undefined
+    };
+  }
+
+  return {
+    name: beforeMeta.trimEnd(),
+    trailing: metaSuffix
+  };
 }
 
 function isNodeLine(line: string): boolean {
@@ -166,7 +185,7 @@ export function parsePtreeDocument(text: string): PtreeDocument {
       const remainder = nm[3] ?? '';
       const depth = countDepth(prefix);
 
-      const name = stripInlineMeta(remainder);
+      const { name, trailing, symlinkTarget } = splitNodeRemainder(remainder);
       const startCol = line.indexOf(remainder);
       const endCol = startCol + name.length;
 
@@ -175,6 +194,8 @@ export function parsePtreeDocument(text: string): PtreeDocument {
         raw: line,
         depth,
         name,
+        trailing,
+        symlinkTarget,
         startCol,
         endCol,
         hasChildren: false

@@ -11,11 +11,11 @@ This document defines the **opinionated, default grammar + ruleset** that `ptree
   - a config file that users can override per repo/workspace
   - centrally managed definitions (especially `[NAME_TYPES]`) so highlighting, validation, and samples stay consistent
 
-> Note on spelling: the original framework uses `[SEPERATION_DELIMITERS]`. This draft keeps that key for compatibility, but tools MAY also accept the corrected spelling `SEPARATION_DELIMITERS`.
+> Note on spelling: the canonical key is `[SEPARATION_DELIMITERS]`. The legacy spelling `[SEPERATION_DELIMITERS]` remains accepted for compatibility.
 
 ---
 
-## Status and profiles (0.0.4 draft)
+## Status and profiles (1.0.0 draft)
 
 - **default profile**: friendly, low-friction rules meant to keep trees readable without extra work (this document)
 - **spec profile**: canonical, stricter rules for shared docs and tooling; opt-in via `@ptree: spec`
@@ -23,7 +23,7 @@ This document defines the **opinionated, default grammar + ruleset** that `ptree
 
 ---
 
-## Canonical Profile: `@ptree: spec` (v0.0.2)
+## Canonical Profile: `@ptree: spec` (v1.0.0)
 
 The **spec** profile is the opinionated, canonical ruleset meant to be shared in docs and tooling.
 It matches the canonical header:
@@ -31,13 +31,13 @@ It matches the canonical header:
 ```ptree
 @ptree: spec
 @style: unicode
-@version: 0.0.2
+@version: 1.0.0
 @name_type:[
     ROOT: 'SCREAM_TYPE',
     DIR: 'High_Type',
     FILE: 'smol-type'
 ]
-@seperation_delimiters: [
+@separation_delimiters: [
     '-',
     '_',
     '.'
@@ -76,12 +76,12 @@ Each name type defines:
 
 This registry is the *central point of reference* for config, linting, and examples.
 
-### [SEPERATION_DELIMITERS]
+### [SEPARATION_DELIMITERS]
 
-Seperation delimiters are characters used to separate:
+Separation delimiters are characters used to separate:
 
 - **words** inside a name (e.g. `data-dictionary`)
-- a **name** from an appended **version** (e.g. `PTREE-0.0.2`)
+- a **name** from an appended **version** (e.g. `PTREE-1.0.0`)
 
 Default delimiter set:
 
@@ -118,7 +118,7 @@ The delimiter used **inside** a `[NAME_TYPE]` to separate words, e.g.:
 
 The delimiter used to append a version to a name, e.g.:
 
-- `PTREE-0.0.2`
+- `PTREE-1.0.0`
 - `User-Guide_1.0.0`
 
 ---
@@ -217,7 +217,7 @@ This makes the root label visually distinct from real filesystem directories (wh
 
 Example:
 
-- `PTREE-0.0.2//`
+- `PTREE-1.0.0//`
 
 ---
 
@@ -284,7 +284,7 @@ EXAMPLES:
 
 WITH_NUMBER:
 
-- `PTREE-0.0.2`
+- `PTREE-1.0.0`
 - `API_CLIENT-1.2.3`
 
 ---
@@ -395,7 +395,7 @@ These are included by default for real-world compatibility:
 
 ---
 
-## [ptree_default_config] - 0.0.2
+## [ptree_default_config] - 1.0.0
 
 The default configuration is shipped as:
 
@@ -420,7 +420,7 @@ Example:
 @style: unicode
 @root: ./
 
-PTREE-0.0.2//
+PTREE-1.0.0//
 ```
 
 ### [DIR] DIRECTORIES

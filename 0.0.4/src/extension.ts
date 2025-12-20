@@ -18,92 +18,6 @@ import { PtreeFormattingProvider } from './formatter';
  * - Convenience commands to copy the path at the cursor
  */
 
-type LineKind = 'root' | 'node' | 'directive' | 'comment' | 'blank' | 'other';
-
-interface ParsedLine {
-  kind: LineKind;
-  depth: number; // root = -1, top-level node = 0
-  /** Visible label/name (without inline metadata/comment, without symlink target) */
-  name?: string;
-  /** Raw remainder (after connector) */
-  raw?: string;
-  /** Directive key/value (if directive) */
-  directiveKey?: string;
-  directiveValue?: string;
-}
-
-// Supports the common unicode tree style and a simple ASCII alternative.
-// Prefix is made of repeating 4-char segments: "│   " or "    " (unicode) OR "|   " or "    " (ascii)
-// Connector is: "├──" | "└──" (unicode) OR "|--" | "`--" (ascii)
-const NODE_RE = /^((?:(?:│|\|) {3}| {4})*)(?:├──|└──|\|--|`--)(?:\s+)(.*)$/u;
-
-// Directive lines: start with '@' (used by the ptree spec, but optional)
-const DIRECTIVE_RE = /^\s*@([A-Za-z][A-Za-z0-9_-]*)(?:\s*[:=]\s*(.*))?$/u;
-
-// Root line: first non-blank, non-directive, non-comment line that doesn't look like a node.
-// We intentionally keep this permissive.
-const ROOT_LIKE_RE = /^\s*[^#\s].*$/u;
-
-function countDepth(prefix: string): number {
-  // Count in 4-character chunks, but be tolerant of oddities.
-  let depth = 0;
-  for (let i = 0; i + 3 < prefix.length; i += 4) {
-    const seg = prefix.slice(i, i + 4);
-    if (seg === '│   ' || seg === '|   ' || seg === '    ') {
-      depth += 1;
-    } else {
-      // If someone used weird spacing, fall back to an approximation.
-      break;
-    }
-  }
-  return depth;
-}
-
-function stripInlineMeta(namePart: string): string {
-  let s = namePart;
-
-  // If this looks like a symlink, keep only the LHS name.
-  const arrowIdx = s.indexOf(' -> ');
-  if (arrowIdx !== -1) s = s.slice(0, arrowIdx);
-
-  // Remove inline metadata/comments starting with 2+ spaces then # or [
-  const metaMatch = s.match(/\s{2,}(#|\[)/u);
-  if (metaMatch?.index !== undefined) {
-    s = s.slice(0, metaMatch.index);
-  }
-
-  return s.trim();
-}
-
-function parseLine(text: string, isFirstRootCandidate: boolean): ParsedLine {
-  const trimmed = text.trim();
-  if (trimmed.length === 0) return { kind: 'blank', depth: 0 };
-  if (trimmed.startsWith('#')) return { kind: 'comment', depth: 0 };
-
-  const dm = text.match(DIRECTIVE_RE);
-  if (dm) {
-    const key = dm[1];
-    const value = (dm[2] ?? '').trim();
-    return { kind: 'directive', depth: 0, directiveKey: key, directiveValue: value };
-  }
-
-  const m = text.match(NODE_RE);
-  if (m) {
-    const prefix = m[1] ?? '';
-    const remainder = m[2] ?? '';
-    const depth = countDepth(prefix);
-    const name = stripInlineMeta(remainder);
-    return { kind: 'node', depth, name, raw: remainder };
-  }
-
-  if (isFirstRootCandidate && ROOT_LIKE_RE.test(text)) {
-    const name = stripInlineMeta(text);
-    return { kind: 'root', depth: -1, name, raw: text };
-  }
-
-  return { kind: 'other', depth: 0 };
-}
-
 class PtreeFoldingProvider implements vscode.FoldingRangeProvider {
   provideFoldingRanges(
     document: vscode.TextDocument,
@@ -112,47 +26,40 @@ class PtreeFoldingProvider implements vscode.FoldingRangeProvider {
   ): vscode.ProviderResult<vscode.FoldingRange[]> {
     const ranges: vscode.FoldingRange[] = [];
 
-    // Track whether we've already treated a line as the root.
-    let rootSeen = false;
+    const doc = parsePtreeDocument(document.getText());
+    const items: Array<{ line: number; depth: number; hasChildren: boolean }> = [];
 
-    // Stack of open nodes.
-    const stack: Array<{ line: number; depth: number; hasChild: boolean }> = [];
+    if (doc.root) {
+      items.push({ line: doc.root.line, depth: -1, hasChildren: doc.nodes.length > 0 });
+    }
+    for (const node of doc.nodes) {
+      items.push({ line: node.line, depth: node.depth, hasChildren: node.hasChildren });
+    }
+
+    items.sort((a, b) => a.line - b.line);
+
+    const stack: Array<{ line: number; depth: number; hasChildren: boolean }> = [];
 
     const closeUntilDepth = (depth: number, endLineExclusive: number) => {
       while (stack.length > 0 && stack[stack.length - 1].depth >= depth) {
         const node = stack.pop()!;
         const endLine = endLineExclusive - 1;
-        if (node.hasChild && node.line < endLine) {
+        if (node.hasChildren && node.line < endLine) {
           ranges.push(new vscode.FoldingRange(node.line, endLine, vscode.FoldingRangeKind.Region));
         }
       }
     };
 
-    for (let i = 0; i < document.lineCount; i++) {
+    for (const item of items) {
       if (token.isCancellationRequested) return [];
-
-      const text = document.lineAt(i).text;
-      const parsed = parseLine(text, !rootSeen);
-
-      if (parsed.kind === 'root') {
-        rootSeen = true;
-        closeUntilDepth(parsed.depth, i);
-        if (stack.length > 0) stack[stack.length - 1].hasChild = true;
-        stack.push({ line: i, depth: parsed.depth, hasChild: false });
-        continue;
-      }
-
-      if (parsed.kind !== 'node') continue;
-
-      closeUntilDepth(parsed.depth, i);
-      if (stack.length > 0) stack[stack.length - 1].hasChild = true;
-      stack.push({ line: i, depth: parsed.depth, hasChild: false });
+      closeUntilDepth(item.depth, item.line);
+      stack.push(item);
     }
 
     const lastLine = document.lineCount - 1;
     while (stack.length > 0) {
       const node = stack.pop()!;
-      if (node.hasChild && node.line < lastLine) {
+      if (node.hasChildren && node.line < lastLine) {
         ranges.push(new vscode.FoldingRange(node.line, lastLine, vscode.FoldingRangeKind.Region));
       }
     }
@@ -177,63 +84,50 @@ function stripTrailingMarkers(name: string): { base: string; hadDirSlash: boolea
 }
 
 function buildPathAtLine(document: vscode.TextDocument, targetLine: number): { full: string; relative: string } | null {
-  let rootSeen = false;
-  let rootLineValue: string | undefined;
-  let rootDirectiveValue: string | undefined;
+  const doc = parsePtreeDocument(document.getText());
+  const targetNode = doc.nodes.find(node => node.line === targetLine);
+  if (!targetNode) return null;
 
   // componentsByDepth[depth] = name
   const componentsByDepth: string[] = [];
 
-  for (let i = 0; i <= targetLine && i < document.lineCount; i++) {
-    const text = document.lineAt(i).text;
-    const parsed = parseLine(text, !rootSeen);
+  for (const node of doc.nodes) {
+    if (node.line > targetLine) break;
+    const { base } = stripTrailingMarkers(node.name);
+    componentsByDepth[node.depth] = base;
+    componentsByDepth.length = node.depth + 1;
+  }
 
-    if (parsed.kind === 'directive' && parsed.directiveKey?.toLowerCase() === 'root') {
-      // Prefer @root for path reconstruction.
-      rootDirectiveValue = parsed.directiveValue;
-      continue;
-    }
+  const rawRel = componentsByDepth.join('/');
+  const targetHadSlash = targetNode.name.endsWith('/');
+  const rel = targetHadSlash ? `${rawRel}/` : rawRel;
 
-    if (parsed.kind === 'root') {
-      rootSeen = true;
-      rootLineValue = parsed.name;
-      continue;
-    }
-
-    if (parsed.kind !== 'node' || !parsed.name) continue;
-
-    const { base } = stripTrailingMarkers(parsed.name);
-    componentsByDepth[parsed.depth] = base;
-    componentsByDepth.length = parsed.depth + 1;
-
-    if (i === targetLine) {
-      const rawRel = componentsByDepth.join('/');
-      const targetHadSlash = parsed.name.endsWith('/');
-      const rel = targetHadSlash ? `${rawRel}/` : rawRel;
-
-      // Determine the "real" root prefix.
-      const rootPrefix = (() => {
-        if (rootDirectiveValue && rootDirectiveValue.trim().length > 0) {
-          return ensureTrailingSlash(rootDirectiveValue.trim());
-        }
-        if (rootLineValue && rootLineValue.trim().length > 0) {
-          const v = rootLineValue.trim();
-          // If root line is a label ending with //, it is not a filesystem path.
-          if (v.endsWith('//')) return '';
-          return ensureTrailingSlash(v);
-        }
-        return '';
-      })();
-
-      const full = rootPrefix ? `${rootPrefix}${rel}` : rel;
-      return {
-        full: normalizeSlashes(full),
-        relative: normalizeSlashes(rel)
-      };
+  let rootDirectiveValue: string | undefined;
+  for (const directive of doc.directiveLines) {
+    if (directive.line > targetLine) continue;
+    if (directive.key.toLowerCase() === 'root') {
+      rootDirectiveValue = directive.value;
     }
   }
 
-  return null;
+  const rootPrefix = (() => {
+    if (rootDirectiveValue && rootDirectiveValue.trim().length > 0) {
+      return ensureTrailingSlash(rootDirectiveValue.trim());
+    }
+    if (doc.root && doc.root.value.trim().length > 0 && doc.root.line <= targetLine) {
+      const v = doc.root.value.trim();
+      // If root line is a label ending with //, it is not a filesystem path.
+      if (v.endsWith('//')) return '';
+      return ensureTrailingSlash(v);
+    }
+    return '';
+  })();
+
+  const full = rootPrefix ? `${rootPrefix}${rel}` : rel;
+  return {
+    full: normalizeSlashes(full),
+    relative: normalizeSlashes(rel)
+  };
 }
 
 function toVscodeSeverity(sev: string): vscode.DiagnosticSeverity {

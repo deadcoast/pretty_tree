@@ -1,4 +1,4 @@
-# ptree Specification v1.0 (Draft)
+# ptree Specification v1.0.0 (Draft)
 
 `ptree` ("pretty tree") is a **plain-text, standardized format** for representing directory trees.
 
@@ -11,9 +11,9 @@ It is designed to be:
 
 This spec describes the **format**, not a particular editor integration. Naming and validation rules live in `docs/GRAMMAR.md`.
 
-Status: 0.0.4 is the current draft. Wording and examples may evolve as the language settles.
+Status: Spec 1.0.0 is the current draft. The extension/CLI currently ships as 0.0.4.
 
-## Design goals (0.0.4 draft)
+## Design goals (1.0.0 draft)
 
 - Turn-key, human-scannable tree blocks
 - Syntax-first: stable tokens for highlighting in editors and fenced blocks
@@ -31,19 +31,19 @@ A document that claims the canonical profile starts with:
 ```ptree
 @ptree: spec
 @style: unicode
-@version: 0.0.2
+@version: 1.0.0
 @name_type:[
   ROOT: 'SCREAM_TYPE',
   DIR: 'High_Type',
   FILE: 'smol-type'
 ]
-@seperation_delimiters: [
+@separation_delimiters: [
   '-',
   '_',
   '.'
 ]
 
-PTREE-0.0.2//
+PTREE-1.0.0//
 ...
 ```
 
@@ -94,7 +94,7 @@ Example:
   FILE: 'smol-type'
 ]
 
-@seperation_delimiters: [
+@separation_delimiters: [
   '-',
   '_',
   '.'
@@ -102,6 +102,7 @@ Example:
 ```
 
 These blocks are optional in the general format, but they are **required** by the canonical **spec** profile (`@ptree: spec`).
+The legacy spelling `@seperation_delimiters` is accepted for compatibility, but the canonical key is `@separation_delimiters`.
 
 ### 2.2 Directive line (optional)
 
