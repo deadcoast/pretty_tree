@@ -15,10 +15,18 @@ This document defines the **opinionated, default grammar + ruleset** that `ptree
 
 ---
 
+## Status and profiles (0.0.4 draft)
+
+- **default profile**: friendly, low-friction rules meant to keep trees readable without extra work (this document)
+- **spec profile**: canonical, stricter rules for shared docs and tooling; opt-in via `@ptree: spec`
+- validation is optional; you can use `ptree` purely for highlighting and folding
+
+---
+
 ## Canonical Profile: `@ptree: spec` (v0.0.2)
 
 The **spec** profile is the opinionated, canonical ruleset meant to be shared in docs and tooling.
-It matches the “canon settings” header:
+It matches the canonical header:
 
 ```ptree
 @ptree: spec
@@ -44,7 +52,7 @@ It matches the “canon settings” header:
   - `parser.test.ts` → stem `parser` (**smol-type**), extension `test.ts`
   - `ptree.config.json` → stem `ptree` (**smol-type**), extension `config.json`
 
-This “first-dot stem” behavior keeps the rules usable for real-world files (config files, test suffixes, multi-part extensions) without requiring an additional NAME_TYPE just for dots.
+This first-dot stem behavior keeps the rules usable for real-world files (config files, test suffixes, multi-part extensions) without requiring an additional NAME_TYPE just for dots.
 
 ---
 

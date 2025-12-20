@@ -5,6 +5,8 @@ All notable changes to the `ptree` extension will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+Note: 0.0.4 is the current draft. Wording and docs may evolve while the feature set stabilizes.
+
 ## [0.0.4] - 2024-12-17
 
 ### Added
@@ -82,7 +84,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - TextMate grammar for `.ptree` files
 - Smart folding provider (tree-depth aware, not indentation-based)
 - Commands: `ptree.copyPathAtCursor`, `ptree.copyRelativePathAtCursor`
-- Markdown fenced code block support (```ptree)
+- Fenced code block support (```ptree) in Markdown docs
 
 ---
 

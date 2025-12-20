@@ -1,21 +1,46 @@
-# ptree (Pretty Tree) — VS Code Extension + CLI Toolkit
+# ptree (Pretty Tree) — VS Code Extension + CLI (Optional)
 
-`ptree` is a **standardized, human-friendly directory tree format** (`.ptree`) designed for:
+`ptree` is a **standardized, human-friendly directory tree format** (`.ptree`). 0.0.4 is the current draft. The core goal is simple: make directory trees readable with syntax highlighting across editors and docs, without forcing extra complexity.
+
+## Design goals (0.0.4 draft)
+
+- Turn-key: readable with no configuration
+- Simple defaults; strictness is opt-in
+- Syntax-first: highlightable in editors and fenced blocks
+- Consistent structure so tools can parse and validate
+
+Designed for:
 
 - fast visual parsing (folders vs files vs extensions)
 - reliable copy/paste into documentation
 - editor ergonomics (folding / collapsing)
-- Markdown adoption (```ptree fenced code blocks)
-- **opinionated naming + validation** (markdownlint-style rules)
+- Fenced code blocks (```ptree) for docs
+- optional naming + validation rules
+
+## Vision (draft)
+
+- Become the default tree language for syntax highlighting (goal).
+- Keep the format simple to write by hand; strict rules stay optional.
+- Provide an airtight, parser-friendly spec for tooling and themes.
 
 This repository contains:
 
 - a VS Code extension
-- a small CLI (`ptree gen` / `ptree validate`) that shares the same default ruleset
+- an optional CLI (`ptree gen` / `ptree validate`) that shares the same default ruleset
 
 ---
 
+## Quick start (syntax highlighting)
+
+1. Create a `.ptree` file.
+2. Paste a minimal tree (see below).
+3. Save the file; highlighting and folding should appear automatically.
+
+No configuration is required for highlighting.
+
 ## Features
+
+Most users only need highlighting and folding. Validation and strict naming are optional.
 
 ### 1) Syntax Highlighting
 
@@ -38,7 +63,7 @@ This extension includes a FoldingRangeProvider that:
 - works with unicode tree output (`tree` command style)
 - works with a simple ASCII tree style (`|--`, `` `-- ``)
 
-### 3) Markdown Integration
+### 3) Fenced Code Blocks
 
 Once installed, you can write:
 
@@ -53,9 +78,11 @@ PTREE-0.0.2//
 
 …and VS Code will highlight the fenced block with the `ptree` grammar.
 
+This is the simplest way to stop plain, unstyled tree blocks in docs (including Markdown) while keeping the format syntax-first.
+
 ### 4) Validation (Rules + NAME_TYPES)
 
-`ptree` ships with an **opinionated default ruleset** (inspired by `.markdownlint.json`) including:
+Validation is optional; syntax highlighting works without any config. When you want stricter rules, `ptree` ships with an **opinionated default ruleset** (inspired by `.markdownlint.json`) including:
 
 - directory nodes MUST end with `/`
 - root label SHOULD end with `//`
@@ -75,10 +102,9 @@ The default naming grammar is documented in:
 
 ### 5) Dynamic Semantic Highlighting (NAME_TYPES-aware)
 
-TextMate grammars are **static**; they can't read your workspace config to decide how to colorize
-custom `[NAME_TYPES]`.
+TextMate grammars are **static**; they cannot read your workspace config. The **Semantic Tokens Provider** adds config-aware highlighting and mismatch markers.
 
-`ptree` now includes a **Semantic Tokens Provider** that:
+The provider:
 
 - reads the effective config (default/spec + optional user config)
 - classifies each [ROOT]/[DIR]/[FILE] name against your `[NAME_TYPES]` regex registry
@@ -113,6 +139,17 @@ See also:
 ---
 
 ## Supported Syntax
+
+Directives are optional; the tree format stands on its own.
+
+### Minimal (no directives)
+
+```ptree
+my-project/
+├── README.md
+└── src/
+    └── index.ts
+```
 
 ### Recommended (default ruleset)
 
@@ -173,6 +210,8 @@ Path commands infer the path by walking up the tree structure.
 
 ## Configuration
 
+If you only want highlighting and folding, no config is required.
+
 `ptree` looks for a config file in the workspace root (first match wins):
 
 - `.ptreerc.json`
@@ -192,14 +231,14 @@ VS Code validates these JSON config files using:
 `ptree` ships with **two built-in rulesets**:
 
 - **default** — flexible, friendly defaults (good for general trees)
-- **spec** — the **canonical**/opinionated ruleset that matches the “canon settings” header you provided
+- **spec** — the **canonical**, stricter ruleset for shared docs and tooling
 
 How the profile is chosen:
 
 - In **VS Code**, the extension auto-selects the profile per document:
   - `@ptree: spec` → uses the **spec** profile
   - anything else → uses the **default** profile
-- In the **CLI**, you can force it with `--profile spec|default` (otherwise it auto-detects from `@ptree:`).
+- In the **CLI (optional)**, you can force it with `--profile spec|default` (otherwise it auto-detects from `@ptree:`).
 
 The canonical **spec** profile also changes one important parsing detail:
 
@@ -207,7 +246,18 @@ The canonical **spec** profile also changes one important parsing detail:
 
 ---
 
-## CLI
+## Development
+
+```bash
+npm i
+npm run compile
+```
+
+Then press **F5** in VS Code to launch an Extension Development Host.
+
+---
+
+## CLI (optional)
 
 After compiling, you can run:
 
@@ -227,17 +277,6 @@ node bin/ptree.js validate samples/example.ptree
 # Fix safe mechanical issues in-place
 node bin/ptree.js validate samples/example.ptree --fix --write
 ```
-
----
-
-## Development
-
-```bash
-npm i
-npm run compile
-```
-
-Then press **F5** in VS Code to launch an Extension Development Host.
 
 ---
 

@@ -7,9 +7,18 @@ It is designed to be:
 - **Human-scannable** (visually structured, theme-friendly highlighting)
 - **Copy/paste friendly** (stable characters and alignment)
 - **Toolable** (parsers can reliably infer depth and paths)
-- **Markdown-first** (works well in fenced code blocks)
+- **Syntax-first** (stable tokens for highlighting; works well in fenced code blocks)
 
-This spec describes the **format**, not a particular editor integration.
+This spec describes the **format**, not a particular editor integration. Naming and validation rules live in `docs/GRAMMAR.md`.
+
+Status: 0.0.4 is the current draft. Wording and examples may evolve as the language settles.
+
+## Design goals (0.0.4 draft)
+
+- Turn-key, human-scannable tree blocks
+- Syntax-first: stable tokens for highlighting in editors and fenced blocks
+- Toolable: unambiguous depth and paths
+- Optional metadata and validation; complexity is opt-in
 
 ---
 

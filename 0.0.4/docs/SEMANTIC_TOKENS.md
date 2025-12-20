@@ -1,13 +1,13 @@
 # Semantic Tokens in `ptree`
 
+Semantic tokens are the dynamic highlighting layer that makes `ptree` readable at a glance. They apply config-aware colors to roots, directories, files, and extensions based on your `NAME_TYPES`.
+
 `ptree` uses two highlighting layers in VS Code:
 
 1. **TextMate grammar** (`syntaxes/ptree.tmLanguage.json`)
 2. **Semantic Tokens Provider** (`src/semanticTokens.ts`)
 
-The TextMate layer is a good baseline, but it is **static**. It cannot read your workspace configuration and therefore cannot truly implement "central `[NAME_TYPES]` drives highlighting".
-
-The Semantic Tokens layer is the dynamic layer.
+The TextMate layer is a good baseline, but it is **static**. The Semantic Tokens layer reads your config and adds name-type modifiers and mismatch markers. If you do nothing, you still get baseline highlighting.
 
 ---
 
@@ -22,15 +22,7 @@ On each `.ptree` document, the provider:
   - **DIR** names
   - **FILE** stems
   - name type identifiers inside `@name_type:[ ... ]`
-
-It then emits tokens such as:
-
-- token type: `ptreeDir`
-- token modifier: `nt_high_type`
-
-If the name is not allowed for that entity, it adds:
-
-- token modifier: `mismatch`
+- emits `nt_*` modifiers and a `mismatch` modifier when a name does not conform
 
 ---
 
