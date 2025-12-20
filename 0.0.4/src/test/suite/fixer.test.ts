@@ -46,6 +46,6 @@ ROOT//
     const res = applyCanonicalFixes(text, doc, DEFAULT_CONFIG);
 
     assert.ok(res.fixedText.includes('Folder/'));
-    assert.ok(res.fixedText.includes('file.txt  # note'));
+    assert.ok(res.fixedText.includes('File.txt  # note'));
   });
 });

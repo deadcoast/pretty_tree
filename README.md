@@ -63,6 +63,8 @@ The extension reads a workspace config (first match wins):
 - `ptree.config.json`
 
 ## CLI (optional)
+
+### Node.js CLI
 From `0.0.4/` after compiling:
 
 ```bash
@@ -70,3 +72,17 @@ node bin/ptree.js gen . --style unicode --max-depth 3
 node bin/ptree.js validate samples/example.ptree
 node bin/ptree.js validate samples/example.ptree --fix --write
 ```
+
+### Python Wrapper
+A thin Python wrapper is available for convenience:
+
+```bash
+pip install -e .
+ptree gen . --style unicode --max-depth 3
+ptree validate 0.0.4/samples/example.ptree
+```
+
+The wrapper requires Node.js and the compiled TypeScript (`npm run compile` in `0.0.4/`).
+
+## License
+MIT — see `LICENSE`.

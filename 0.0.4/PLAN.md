@@ -54,15 +54,15 @@ Align ptree around independent spec semver (separate from extension version), fi
 
 ## Action items
 
-[ ] Set independent spec versioning rules: `@ptree: spec` + `@version: <SEMVER>`; default spec version to `1.0.0`.
-[ ] Update docs/examples to use `@version: 1.0.0` and `@separation_delimiters`, with a deprecation note for the legacy spelling.
-[ ] Update CLI `gen --profile spec` to emit `@separation_delimiters` and default spec `@version` to `1.0.0`.
-[ ] Update schema/config to include `SEPARATION_DELIMITERS` and preserve legacy `SEPERATION_DELIMITERS`; define precedence rules.
-[ ] Extend parser/formatter/fixer to preserve inline metadata/comments/symlink targets during formatting and fixes.
-[ ] Consolidate parsing logic used by folding/path-copy into shared helpers or core parser output.
-[ ] Tighten validator parity with GRAMMAR (extension rules, dotted-name constraints, directive validation).
-[ ] Implement Python CLI wrapper (console script) that forwards args to Node CLI and reports missing Node/compiled artifacts clearly.
-[ ] Add unit tests for formatter/fixer/CLI and regression fixtures for metadata/symlinks/spec headers.
+[x] Set independent spec versioning rules: `@ptree: spec` + `@version: <SEMVER>`; default spec version to `1.0.0`.
+[x] Update docs/examples to use `@version: 1.0.0` and `@separation_delimiters`, with a deprecation note for the legacy spelling.
+[x] Update CLI `gen --profile spec` to emit `@separation_delimiters` and default spec `@version` to `1.0.0`.
+[x] Update schema/config to include `SEPARATION_DELIMITERS` and preserve legacy `SEPERATION_DELIMITERS`; define precedence rules.
+[x] Extend parser/formatter/fixer to preserve inline metadata/comments/symlink targets during formatting and fixes.
+[x] Consolidate parsing logic used by folding/path-copy into shared helpers or core parser output.
+[x] Tighten validator parity with GRAMMAR (extension rules, dotted-name constraints, directive validation).
+[x] Implement Python CLI wrapper (console script) that forwards args to Node CLI and reports missing Node/compiled artifacts clearly.
+[x] Add unit tests for formatter/fixer/CLI and regression fixtures for metadata/symlinks/spec headers.
 
 ## Testing and validation
 

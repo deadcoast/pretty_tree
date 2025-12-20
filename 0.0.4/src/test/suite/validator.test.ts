@@ -24,12 +24,18 @@ const DEFAULT_CONFIG: PtreeConfig = {
       word_delimiter: '-',
       allowed_version_delimiters: ['_'],
       pattern: '^[a-z0-9]+(?:-[a-z0-9]+)*$'
+    },
+    'dot.smol-type': {
+      description: 'Dot-separated kebab segments',
+      word_delimiter: '.',
+      allowed_version_delimiters: ['_', '-'],
+      pattern: '^[a-z0-9]+(?:-[a-z0-9]+)*(?:\\.[a-z0-9]+(?:-[a-z0-9]+)*)+$'
     }
   },
   ENTITY_NAME_TYPES: {
     ROOT: ['SCREAM_TYPE'],
     DIR: ['High_Type'],
-    FILE: ['smol-type']
+    FILE: ['smol-type', 'dot.smol-type']
   },
   RULES: {
     default: true,
@@ -91,12 +97,12 @@ PTREE//
   test('PT004: validates NAME_TYPES', () => {
     const text = `@ptree: 1.0
 PTREE//
-├── InvalidDir/
+├── invalid-dir/
 │   └── file.txt`;
     const doc = parsePtreeDocument(text);
     const msgs = validatePtreeDocument(doc, DEFAULT_CONFIG);
     
-    // InvalidDir doesn't match High_Type pattern
+    // invalid-dir uses kebab-case, not High_Type (Pascal_Snake_Case)
     const pt004 = msgs.find(m => m.code === 'PT004');
     assert.ok(pt004, 'Should report PT004 for non-matching name type');
   });

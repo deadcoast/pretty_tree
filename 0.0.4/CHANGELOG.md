@@ -108,8 +108,9 @@ Note: 0.0.4 is the current draft. Wording and docs may evolve while the feature 
 | PT014 | (spec) `@separation_delimiters` list required         | error    |
 | PT015 | (spec) Root label must be `PTREE-<@version>//`        | error    |
 
-## 0.0.4
+## 0.0.4 Roadmap Checklist
 
+### Documentation
 - [x] Draft a short message map (purpose, non-goals, user value) to reuse across all docs.
 - [x] Update README.md to foreground the "no syntax highlighting for trees" problem and the minimal ptree solution.
 - [x] Update 0.0.4/README.md to prioritize syntax highlighting, simplify feature text, and add a quick start.
@@ -117,3 +118,12 @@ Note: 0.0.4 is the current draft. Wording and docs may evolve while the feature 
 - [x] Develop GRAMMAR.md with a "Default vs spec profile" summary and current 0.0.4 examples.
 - [x] Shorten SEMANTIC_TOKENS.md to benefits + minimal customization guidance.
 - [x] Adjust 0.0.4/CHANGELOG.md wording if needed to match the "draft" positioning.
+
+### Implementation (from PLAN.md)
+- [x] Set independent spec versioning rules: `@ptree: spec` + `@version: <SEMVER>`
+- [x] Canonical `@separation_delimiters` spelling with legacy `@seperation_delimiters` alias
+- [x] Parser/formatter/fixer preserve inline metadata, comments, and symlink targets
+- [x] Consolidated parsing logic (all components use `parsePtreeDocument`)
+- [x] Validator parity with GRAMMAR.md (PT001-PT015, FILE_EXTENSION_SPLIT)
+- [x] Python CLI wrapper (`main.py`, `pyproject.toml`)
+- [x] Unit tests for parser (12), validator (10), fixer (2)
