@@ -1,20 +1,20 @@
 # Implementation Plan
 
-- [ ] 1. Extend NAME_TYPE Registry with NUMERAL and index-type
-  - [ ] 1.1 Add NUMERAL NAME_TYPE definition to ptree.default-config.json
+- [-] 1. Extend NAME_TYPE Registry with NUMERAL and index-type
+  - [x] 1.1 Add NUMERAL NAME_TYPE definition to ptree.default-config.json
     - Add pattern `^[IVXLCDM]+$` with examples I, II, III, IV, V, X, L, C, D, M
     - Set word_delimiter to null, allowed_version_delimiters to ["-", "_"]
     - _Requirements: 1.1, 4.5_
-  - [ ] 1.2 Add index-type NAME_TYPE definition to ptree.default-config.json
+  - [x] 1.2 Add index-type NAME_TYPE definition to ptree.default-config.json
     - Add pattern for `(index)` prefix files
     - _Requirements: 3.2_
-  - [ ] 1.3 Add NUMERAL to ENTITY_NAME_TYPES in both config files
+  - [x] 1.3 Add NUMERAL to ENTITY_NAME_TYPES in both config files
     - Add NUMERAL array with ["NUMERAL"] as allowed type
     - _Requirements: 1.2, 4.2_
-  - [ ] 1.4 Update ptree.spec-config.json with same NAME_TYPE additions
+  - [x] 1.4 Update ptree.spec-config.json with same NAME_TYPE additions
     - Mirror changes from default config
     - _Requirements: 1.2_
-  - [ ] 1.5 Write property test for NAME_TYPE pattern-example consistency
+  - [x] 1.5 Write property test for NAME_TYPE pattern-example consistency
     - **Property 2: NAME_TYPE Pattern-Example Consistency**
     - **Validates: Requirements 1.2**
 
@@ -193,20 +193,29 @@
 - [ ] 16. Update Documentation
   - [ ] 16.1 Update GRAMMAR.md with NUMERAL and index-type definitions
     - Document patterns, examples, and UniRules
-    - _Requirements: 10.2_
+    - _Requirements: 10.2, 10.6, 10.7_
   - [ ] 16.2 Complete SEMANTIC_TOKENS.md documentation
     - Document all token types, modifiers, and theme customization
-    - _Requirements: 10.1_
+    - Add ptreeNumeral, ptreeIndex, ptreeSymlink token documentation
+    - _Requirements: 10.1, 13.5, 13.6_
   - [ ] 16.3 Update FUTURE_PLANS.md with roadmap
     - Add prioritized list of planned features
     - _Requirements: 10.3_
   - [ ] 16.4 Create CONTRIBUTING.md with development guidelines
     - Include setup, testing, and PR guidelines
     - _Requirements: 10.4_
+  - [ ] 16.5 Update SPEC.md canonical header example
+    - Add EXT, META, NUMERAL to @name_type block example
+    - Document symlink syntax and inline metadata
+    - _Requirements: 10.5_
+  - [ ] 16.6 Document all six UniRules in GRAMMAR.md
+    - Ensure UR1-UR6 are fully documented with examples
+    - _Requirements: 10.8_
 
 - [ ] 17. Update Samples and Examples
   - [ ] 17.1 Update samples/example.ptree with generic content
     - Replace project-specific names with placeholders
+    - Ensure it demonstrates all core features
     - _Requirements: 14.1, 14.2_
   - [ ] 17.2 Add NUMERAL example to samples
     - Show Roman numeral prefixed directories (I_Introduction/, II_Content/)
@@ -217,6 +226,15 @@
   - [ ] 17.4 Add index file examples to samples
     - Show `(index)` prefix convention
     - _Requirements: 14.2_
+  - [ ] 17.5 Add symlink example to samples
+    - Show ` -> ` arrow syntax with directory target
+    - _Requirements: 16.3_
+  - [ ] 17.6 Add inline metadata examples to samples
+    - Show bracket attributes `[key=value]` and inline comments `# comment`
+    - _Requirements: 17.3_
+  - [ ] 17.7 Add summary line example to samples
+    - Show `N directories, M files` format
+    - _Requirements: 18.3_
 
 - [ ] 18. Final Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
@@ -225,3 +243,45 @@
   - [ ] 19.1 Write property test for validator determinism
     - **Property 10: Validator Determinism**
     - **Validates: Requirements 1.5**
+
+- [ ] 20. Implement Symlink Support
+  - [ ] 20.1 Update parser to recognize symlink syntax
+    - Parse ` -> ` arrow syntax to extract name and target
+    - _Requirements: 16.1_
+  - [ ] 20.2 Extend PtreeNode type with symlinkTarget field
+    - Add optional symlinkTarget: string field
+    - _Requirements: 16.1_
+  - [ ] 20.3 Update validator to validate symlink names
+    - Validate name portion against appropriate NAME_TYPE rules
+    - _Requirements: 16.2_
+  - [ ] 20.4 Add semantic tokens for symlink components
+    - Emit distinct tokens for name, arrow, and target
+    - _Requirements: 16.3, 13.5_
+
+- [ ] 21. Implement Inline Metadata Support
+  - [ ] 21.1 Update parser to recognize bracket attributes
+    - Parse `[key=value, key2=value2]` after two+ spaces
+    - _Requirements: 17.1_
+  - [ ] 21.2 Update parser to recognize inline comments
+    - Parse `# comment` after two+ spaces
+    - _Requirements: 17.2_
+  - [ ] 21.3 Add semantic tokens for inline metadata
+    - Emit distinct tokens for attributes and comments
+    - _Requirements: 17.3, 13.6_
+  - [ ] 21.4 Update validator to exclude metadata from name validation
+    - Validate only the name portion against NAME_TYPE rules
+    - _Requirements: 17.4_
+
+- [ ] 22. Implement Summary Line Support
+  - [ ] 22.1 Update parser to recognize summary lines
+    - Match pattern `N directories, M files`
+    - _Requirements: 18.1_
+  - [ ] 22.2 Treat summary lines as metadata
+    - Don't affect tree structure
+    - _Requirements: 18.2_
+  - [ ] 22.3 Add semantic token for summary lines
+    - Emit ptreeMeta token type
+    - _Requirements: 18.3_
+
+- [ ] 23. Final Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.

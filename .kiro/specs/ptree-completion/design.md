@@ -79,6 +79,12 @@ const NUMERAL_TYPE: NameTypeDef = {
 // Extended entity types
 export type EntityType = 'ROOT' | 'DIR' | 'FILE' | 'EXT' | 'META' | 'NUMERAL';
 
+// Inline metadata structure
+export type InlineMetadata = {
+  attributes?: Record<string, string>;
+  comment?: string;
+};
+
 // Extended PtreeNode with entity classification
 export type PtreeNode = {
   line: number;
@@ -96,6 +102,26 @@ export type PtreeNode = {
   extension?: string;      // For FILE: the extension(s)
   numeralPrefix?: string;  // For NUMERAL-prefixed dirs: the Roman numeral
   isIndexFile?: boolean;   // True if name starts with (index)
+  inlineMetadata?: InlineMetadata;  // Bracket attributes or inline comments
+};
+
+// Summary line structure
+export type SummaryLine = {
+  line: number;
+  raw: string;
+  directories: number;
+  files: number;
+};
+
+// Extended document structure
+export type PtreeDocument = {
+  directiveLines: PtreeDirective[];
+  root: PtreeNode | null;
+  nodes: PtreeNode[];
+  errors: ParseError[];
+  blankLines: number[];      // Line numbers of blank lines
+  commentLines: CommentLine[]; // Comment lines with positions
+  summaryLine?: SummaryLine;  // Optional summary line
 };
 ```
 
@@ -266,6 +292,76 @@ export function printPtreeDocument(doc: PtreeDocument): string {
 }
 ```
 
+### 8. Symlink Parser
+
+**Location:** `src/core/parser.ts`
+
+```typescript
+// Symlink pattern: name -> target
+const SYMLINK_RE = /^(.+?)\s+->\s+(.+)$/;
+
+function parseSymlink(nameWithTarget: string): { name: string; target: string | null } {
+  const match = nameWithTarget.match(SYMLINK_RE);
+  if (match) {
+    return { name: match[1], target: match[2] };
+  }
+  return { name: nameWithTarget, target: null };
+}
+```
+
+### 9. Inline Metadata Parser
+
+**Location:** `src/core/parser.ts`
+
+```typescript
+// Inline metadata patterns (require 2+ spaces before metadata)
+const BRACKET_ATTR_RE = /^(.+?)\s{2,}\[([^\]]+)\](.*)$/;
+const INLINE_COMMENT_RE = /^(.+?)\s{2,}#\s*(.*)$/;
+
+export type InlineMetadata = {
+  attributes?: Record<string, string>;
+  comment?: string;
+};
+
+function parseInlineMetadata(line: string): { name: string; metadata: InlineMetadata | null } {
+  // Try bracket attributes first
+  const attrMatch = line.match(BRACKET_ATTR_RE);
+  if (attrMatch) {
+    const attrs: Record<string, string> = {};
+    attrMatch[2].split(',').forEach(pair => {
+      const [key, value] = pair.split('=').map(s => s.trim());
+      if (key) attrs[key] = value || '';
+    });
+    return { name: attrMatch[1], metadata: { attributes: attrs } };
+  }
+  
+  // Try inline comment
+  const commentMatch = line.match(INLINE_COMMENT_RE);
+  if (commentMatch) {
+    return { name: commentMatch[1], metadata: { comment: commentMatch[2] } };
+  }
+  
+  return { name: line, metadata: null };
+}
+```
+
+### 10. Summary Line Parser
+
+**Location:** `src/core/parser.ts`
+
+```typescript
+// Summary line pattern: "N directories, M files"
+const SUMMARY_RE = /^(\d+)\s+director(?:y|ies),\s+(\d+)\s+files?$/i;
+
+function parseSummaryLine(line: string): { directories: number; files: number } | null {
+  const match = line.trim().match(SUMMARY_RE);
+  if (match) {
+    return { directories: parseInt(match[1], 10), files: parseInt(match[2], 10) };
+  }
+  return null;
+}
+```
+
 ## Data Models
 
 ### Extended Configuration Schema
@@ -383,6 +479,18 @@ export function printPtreeDocument(doc: PtreeDocument): string {
 ### Property 12: Index File Recognition
 *For any* file name starting with `(index)`, the parser should correctly identify it as an index file and extract the remainder.
 **Validates: Requirements 3.2, 3.5**
+
+### Property 13: Symlink Parsing Consistency
+*For any* node line containing ` -> ` arrow syntax, the parser should correctly split the name and target, and the name should be validated independently.
+**Validates: Requirements 16.1, 16.2**
+
+### Property 14: Inline Metadata Isolation
+*For any* node with inline metadata (bracket attributes or comments), the metadata should not affect NAME_TYPE validation of the node name.
+**Validates: Requirements 17.4**
+
+### Property 15: Summary Line Recognition
+*For any* line matching the pattern `N directories, M files`, the parser should recognize it as a summary line and not as a tree node.
+**Validates: Requirements 18.1, 18.2**
 
 ## Error Handling
 

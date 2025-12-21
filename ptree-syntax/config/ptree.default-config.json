@@ -150,6 +150,42 @@
       "with_number_examples": [
         "tsconfig.base_1.0.0"
       ]
+    },
+    "NUMERAL": {
+      "description": "Roman numeral (I, II, III, IV, V, VI, VII, VIII, IX, X, etc.)",
+      "word_delimiter": null,
+      "allowed_version_delimiters": [
+        "-",
+        "_"
+      ],
+      "pattern": "^[IVXLCDM]+$",
+      "examples": [
+        "I",
+        "II",
+        "III",
+        "IV",
+        "V",
+        "X",
+        "L",
+        "C",
+        "D",
+        "M"
+      ],
+      "with_number_examples": []
+    },
+    "index-type": {
+      "description": "Index file prefix pattern: (index) or (index)-name",
+      "word_delimiter": "-",
+      "allowed_version_delimiters": [
+        "_"
+      ],
+      "pattern": "^\\(index\\)(?:-[a-z0-9]+(?:-[a-z0-9]+)*)?$",
+      "examples": [
+        "(index)",
+        "(index)-introduction",
+        "(index)-chapter-one"
+      ],
+      "with_number_examples": []
     }
   },
   "SEPARATION_DELIMITERS": [
@@ -172,10 +208,14 @@
       "snake_type",
       "CamelType",
       "dotfile",
-      "dot.smol-type"
+      "dot.smol-type",
+      "index-type"
     ],
     "META": [
       "SCREAM_TYPE"
+    ],
+    "NUMERAL": [
+      "NUMERAL"
     ]
   },
   "RULES": {

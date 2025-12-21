@@ -29,6 +29,13 @@ The project currently implements core functionality (parser, validator, fixer, f
 - **SEMVER**: Semantic versioning format (MAJOR.MINOR.PATCH)
 - **UniRule**: Universal rules that apply across all NAME_TYPEs
 - **Index File**: A file with `(index)` prefix that serves as the main entry for a directory
+- **Symlink**: A symbolic link represented with ` -> ` arrow syntax pointing to a target path
+- **Inline Metadata**: Annotations added after node names, including bracket attributes `[key=value]` and inline comments `# comment`
+- **Summary Line**: A line like `N directories, M files` typically appended by tree generators
+- **Bracket Block**: Multi-line directive syntax using `@key:[...]` for structured values
+- **Stem**: The base name of a file before the extension (e.g., `parser` in `parser.test.ts`)
+- **firstDot Strategy**: Extension splitting where stem is before first dot (spec profile default)
+- **lastDot Strategy**: Extension splitting where stem is before last dot (default profile)
 
 ## Requirements
 
@@ -146,6 +153,10 @@ The project currently implements core functionality (parser, validator, fixer, f
 2. WHEN a user reads GRAMMAR.md THEN the system SHALL find all NAME_TYPEs, UniRules, and entity definitions fully documented
 3. WHEN a user reads FUTURE_PLANS.md THEN the system SHALL display a prioritized roadmap of planned features
 4. WHEN a user wants to contribute THEN the system SHALL provide a CONTRIBUTING.md file with development guidelines
+5. WHEN a user reads SPEC.md THEN the system SHALL find the canonical header example including EXT, META, and NUMERAL entity mappings
+6. WHEN a user reads GRAMMAR.md THEN the system SHALL find NUMERAL NAME_TYPE with pattern, examples, and usage rules documented
+7. WHEN a user reads GRAMMAR.md THEN the system SHALL find index-type NAME_TYPE with `(index)` prefix pattern documented
+8. WHEN a user reads GRAMMAR.md THEN the system SHALL find all six UniRules (UR1-UR6) fully documented with examples
 
 ### Requirement 11: CLI Enhancements
 
@@ -178,6 +189,8 @@ The project currently implements core functionality (parser, validator, fixer, f
 2. WHEN highlighting an EXT THEN the system SHALL emit ptreeExtension token with NAME_TYPE modifier
 3. WHEN highlighting a META node THEN the system SHALL emit ptreeMeta token with appropriate NAME_TYPE modifier
 4. WHEN highlighting an index file THEN the system SHALL emit distinct tokens for the `(index)` prefix and the filename
+5. WHEN highlighting a symlink THEN the system SHALL emit distinct tokens for the name, arrow, and target
+6. WHEN highlighting inline metadata THEN the system SHALL emit distinct tokens for bracket attributes and inline comments
 
 ### Requirement 14: Sample and Example Updates
 
@@ -200,3 +213,35 @@ The project currently implements core functionality (parser, validator, fixer, f
 2. WHEN running the test suite THEN the system SHALL execute property-based tests verifying that valid NAME_TYPE patterns match their examples
 3. WHEN running the test suite THEN the system SHALL execute property-based tests ensuring validator rules are deterministic
 4. WHEN running the test suite THEN the system SHALL execute property-based tests confirming fixer idempotence
+
+### Requirement 16: Symlink Support
+
+**User Story:** As a user documenting directory structures with symlinks, I want symlinks properly parsed and displayed, so that I can accurately represent filesystem relationships.
+
+#### Acceptance Criteria
+
+1. WHEN a node contains ` -> ` arrow syntax THEN the system SHALL parse it as a symlink with name and target
+2. WHEN validating a symlink THEN the system SHALL validate the name portion against the appropriate NAME_TYPE rules
+3. WHEN highlighting a symlink THEN the system SHALL emit distinct tokens for the name, arrow operator, and target path
+4. WHEN the symlink target ends with `/` THEN the system SHALL recognize it as pointing to a directory
+
+### Requirement 17: Inline Metadata Support
+
+**User Story:** As a user adding annotations to tree nodes, I want inline metadata support, so that I can add context without breaking the tree structure.
+
+#### Acceptance Criteria
+
+1. WHEN a node has two or more spaces followed by `[key=value]` THEN the system SHALL parse it as bracket attributes
+2. WHEN a node has two or more spaces followed by `#` THEN the system SHALL parse it as an inline comment
+3. WHEN highlighting inline metadata THEN the system SHALL emit distinct tokens for attributes and comments
+4. WHEN validating a node with inline metadata THEN the system SHALL validate only the name portion against NAME_TYPE rules
+
+### Requirement 18: Summary Line Support
+
+**User Story:** As a user generating trees from filesystem tools, I want summary lines recognized, so that output from `tree` command is compatible.
+
+#### Acceptance Criteria
+
+1. WHEN a line matches the pattern `N directories, M files` THEN the system SHALL recognize it as a summary line
+2. WHEN parsing a summary line THEN the system SHALL treat it as metadata without affecting tree structure
+3. WHEN highlighting a summary line THEN the system SHALL emit ptreeMeta token type
