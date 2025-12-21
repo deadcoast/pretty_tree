@@ -153,30 +153,30 @@
     - File exercising all semantic token types
     - _Requirements: 16.3_
 
-- [-] 13. Checkpoint - Ensure all playground files are valid
+- [x] 13. Checkpoint - Ensure all playground files are valid
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 14. Create CLI Test Scripts
-  - [ ] 14.1 Create scripts/test-validate.sh
+- [x] 14. Create CLI Test Scripts
+  - [x] 14.1 Create scripts/test-validate.sh
     - Demonstrate validate command with various options
     - Include --format json example
     - _Requirements: 17.1, 17.3_
-  - [ ] 14.2 Create scripts/test-gen.sh
+  - [x] 14.2 Create scripts/test-gen.sh
     - Demonstrate gen command with profile and name-type options
     - _Requirements: 17.1, 17.3_
-  - [ ] 14.3 Create scripts/test-fix.sh
+  - [x] 14.3 Create scripts/test-fix.sh
     - Demonstrate fix command with --write option
     - _Requirements: 17.1_
-  - [ ] 14.4 Create scripts/test-diff.sh
+  - [x] 14.4 Create scripts/test-diff.sh
     - Demonstrate --diff option for previewing fixes
     - _Requirements: 17.3_
 
-- [ ] 15. Update Extension Development Setup
-  - [ ] 15.1 Update ptree-syntax/.vscode/launch.json
+- [x] 15. Update Extension Development Setup
+  - [x] 15.1 Update ptree-syntax/.vscode/launch.json
     - Add "Run Extension with Playground" configuration
     - Configure to open playground folder on F5
     - _Requirements: 21.1_
-  - [ ] 15.2 Create playground/.vscode/extensions.json
+  - [x] 15.2 Create playground/.vscode/extensions.json
     - Recommend ptree extension for playground workspace
     - _Requirements: 13.1_
 
