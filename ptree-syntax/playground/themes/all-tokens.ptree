@@ -1,0 +1,115 @@
+# ============================================
+# THEME TEST: All 18 Semantic Token Types
+# ============================================
+#
+# This file exercises ALL semantic token types
+# for comprehensive theme testing. Each section
+# demonstrates specific token types.
+#
+# Token Types Covered:
+#  1. ptreeScaffold      - Tree characters
+#  2. ptreeDirective     - @directives
+#  3. ptreeDirectiveValue - Directive values
+#  4. ptreeRoot          - Root label
+#  5. ptreeDir           - Directory names
+#  6. ptreeFile          - File names
+#  7. ptreeExtension     - File extensions
+#  8. ptreeMeta          - Markers, quotes
+#  9. ptreeSemver        - Version numbers
+# 10. ptreeNameType      - NAME_TYPE identifiers
+# 11. ptreeNumeral       - Roman numerals
+# 12. ptreeIndex         - (index) prefix
+# 13. ptreeSymlink       - Symlink source
+# 14. ptreeSymlinkArrow  - " -> " arrow
+# 15. ptreeSymlinkTarget - Symlink target
+# 16. ptreeAttribute     - Bracket [ ]
+# 17. ptreeAttributeKey  - Attribute keys
+# 18. ptreeAttributeValue - Attribute values
+# 19. ptreeInlineComment - # comments
+# ============================================
+
+# Token 2: ptreeDirective (bold magenta)
+# Token 3: ptreeDirectiveValue (light blue)
+@ptree: spec
+@style: unicode
+@version: 1.0.0
+
+# Token 10: ptreeNameType (purple italic)
+# Shows NAME_TYPE identifiers in directive blocks
+@name_type:[
+    ROOT: 'SCREAM_TYPE',
+    DIR: 'High_Type',
+    FILE: 'smol-type',
+    EXT: 'smol-type',
+    META: 'SCREAM_TYPE',
+    NUMERAL: 'NUMERAL'
+]
+@separation_delimiters: [
+    '-',
+    '_',
+    '.'
+]
+
+# Token 4: ptreeRoot (bold red)
+# Token 8: ptreeMeta (gray - the // marker)
+# Token 9: ptreeSemver (blue - version number)
+THEME_TEST-1.0.0//
+# Token 1: ptreeScaffold (gray tree characters)
+# Token 5: ptreeDir (blue directories)
+├── Source_Code/
+│   # Token 6: ptreeFile (white/light files)
+│   # Token 7: ptreeExtension (orange extensions)
+│   ├── main.ts
+│   ├── config.json
+│   └── utils.py
+│
+# Token 11: ptreeNumeral (gold bold Roman numerals)
+├── I_Introduction/
+│   ├── overview.md
+│   └── getting-started.md
+├── II_Core_Concepts/
+│   └── architecture.md
+├── III_Advanced/
+│   └── performance.md
+│
+# Token 12: ptreeIndex (cyan italic index prefix)
+├── Documentation/
+│   ├── (index).md
+│   ├── (index)-overview.md
+│   └── (index)_reference.md
+│
+# Token 13: ptreeSymlink (cyan italic symlink name)
+# Token 14: ptreeSymlinkArrow (gray arrow)
+# Token 15: ptreeSymlinkTarget (light blue italic target)
+├── Symlinks/
+│   ├── readme-link.md -> ../README.md
+│   ├── config-link -> /etc/config/
+│   └── docs -> ../Documentation/
+│
+# Token 16: ptreeAttribute (blue brackets)
+# Token 17: ptreeAttributeKey (purple keys)
+# Token 18: ptreeAttributeValue (light blue values)
+# Token 19: ptreeInlineComment (gray italic comments)
+├── Metadata_Examples/
+│   ├── annotated.txt  [size=1024, readonly]
+│   ├── tagged.md  [author=user, version=2.0]  # Important file
+│   ├── flagged.json  [deprecated]  # Will be removed
+│   └── commented.ts  # Just a comment, no attributes
+│
+# Mixed examples combining multiple token types
+├── Mixed_Features/
+│   ├── I_First/
+│   │   └── (index).md  [priority=high]  # Main entry
+│   ├── II_Second/
+│   │   └── data.json  [schema=v2]
+│   └── link -> ../Source_Code/  # Symlink to source
+│
+# NAME_TYPE mismatch examples (should show underline)
+├── Mismatch_Examples/
+│   ├── WRONG_CASE.txt
+│   └── wrong-dir-name/
+│
+└── Summary/
+    └── readme.md
+
+8 directories, 20 files

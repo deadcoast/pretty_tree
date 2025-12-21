@@ -1,0 +1,85 @@
+{
+  "editor.semanticHighlighting.enabled": true,
+  "editor.semanticTokenColorCustomizations": {
+    "rules": {
+      // ============================================
+      // PTREE SEMANTIC TOKEN COLOR CUSTOMIZATIONS
+      // ============================================
+      // This file demonstrates how to customize colors
+      // for all 18 ptree semantic token types.
+      // Modify these values to match your theme!
+      // ============================================
+
+      // 1. Scaffold - Tree drawing characters (├── └── │)
+      "ptreeScaffold": { "foreground": "#6A737D" },
+
+      // 2. Directive - @ptree, @style, @version, @name_type
+      "ptreeDirective": { "foreground": "#F97583", "fontStyle": "bold" },
+
+      // 3. Directive Value - Values after directives (spec, unicode, etc.)
+      "ptreeDirectiveValue": { "foreground": "#9ECBFF" },
+
+      // 4. Root - Root label (PROJECT-1.0.0//)
+      "ptreeRoot": { "foreground": "#F97583", "fontStyle": "bold" },
+
+      // 5. Directory - Directory names (src/, docs/)
+      "ptreeDir": { "foreground": "#79B8FF" },
+      "ptreeDir.nt_high_type": { "foreground": "#85E89D" },
+      "ptreeDir.nt_scream_type": { "foreground": "#F97583" },
+      "ptreeDir.mismatch": { "foreground": "#F97583", "fontStyle": "underline wavy" },
+
+      // 6. File - File names (readme.md, config.json)
+      "ptreeFile": { "foreground": "#E1E4E8" },
+      "ptreeFile.nt_smol_type": { "foreground": "#B392F0" },
+      "ptreeFile.nt_high_type": { "foreground": "#85E89D" },
+      "ptreeFile.mismatch": { "foreground": "#F97583", "fontStyle": "underline wavy" },
+
+      // 7. Extension - File extensions (.md, .json, .ts)
+      "ptreeExtension": { "foreground": "#FFAB70" },
+      "ptreeExtension.nt_smol_type": { "foreground": "#FFAB70" },
+      "ptreeExtension.mismatch": { "foreground": "#F97583", "fontStyle": "underline wavy" },
+
+      // 8. Meta - Markers (//, /), quotes, separators
+      "ptreeMeta": { "foreground": "#6A737D" },
+
+      // 9. Semver - Version numbers (1.0.0, 2.1.3-beta)
+      "ptreeSemver": { "foreground": "#79B8FF" },
+
+      // 10. Name Type - NAME_TYPE identifiers in directives
+      "ptreeNameType": { "foreground": "#B392F0", "fontStyle": "italic" },
+      "ptreeNameType.unknown": { "foreground": "#F97583", "fontStyle": "italic underline" },
+
+      // 11. Numeral - Roman numeral prefixes (I_, II_, III_)
+      "ptreeNumeral": { "foreground": "#F9C513", "fontStyle": "bold" },
+
+      // 12. Index - Index file prefix ((index))
+      "ptreeIndex": { "foreground": "#56D4DD", "fontStyle": "italic" },
+
+      // 13. Symlink - Symlink source name
+      "ptreeSymlink": { "foreground": "#56D4DD", "fontStyle": "italic" },
+
+      // 14. Symlink Arrow - The " -> " arrow in symlinks
+      "ptreeSymlinkArrow": { "foreground": "#6A737D" },
+
+      // 15. Symlink Target - Target path of symlink
+      "ptreeSymlinkTarget": { "foreground": "#9ECBFF", "fontStyle": "italic" },
+
+      // 16. Attribute - Bracket delimiters [ ]
+      "ptreeAttribute": { "foreground": "#79B8FF" },
+
+      // 17. Attribute Key - Keys in [key=value] pairs
+      "ptreeAttributeKey": { "foreground": "#B392F0" },
+
+      // 18. Attribute Value - Values in [key=value] pairs
+      "ptreeAttributeValue": { "foreground": "#9ECBFF" },
+
+      // 19. Inline Comment - # comment text
+      "ptreeInlineComment": { "foreground": "#6A737D", "fontStyle": "italic" }
+    }
+  },
+  
+  // Recommend ptree extension for this workspace
+  "files.associations": {
+    "*.ptree": "ptree"
+  }
+}

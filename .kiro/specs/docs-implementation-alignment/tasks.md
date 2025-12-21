@@ -145,15 +145,15 @@
     - Example with relaxed configuration
     - _Requirements: 20.1_
 
-- [ ] 12. Create Theme Testing Files
-  - [ ] 12.1 Create playground/.vscode/settings.json
+- [x] 12. Create Theme Testing Files
+  - [x] 12.1 Create playground/.vscode/settings.json
     - Include semantic token color customizations for all 18 token types
     - _Requirements: 16.1_
-  - [ ] 12.2 Create themes/all-tokens.ptree
+  - [x] 12.2 Create themes/all-tokens.ptree
     - File exercising all semantic token types
     - _Requirements: 16.3_
 
-- [ ] 13. Checkpoint - Ensure all playground files are valid
+- [-] 13. Checkpoint - Ensure all playground files are valid
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 14. Create CLI Test Scripts
