@@ -1,0 +1,32 @@
+# ============================================
+# RULE TEST: PT001 - Root Marker
+# ============================================
+#
+# PT001 validates that a root line exists and uses
+# the correct marker. By default, root labels should
+# end with "//" (double slash).
+#
+# This file demonstrates what triggers PT001:
+# - Missing root line entirely
+# - Using "/" instead of "//" for root label
+#
+# ============================================
+
+@ptree: default
+@style: unicode
+
+# ❌ INCORRECT: Using single "/" instead of "//"
+# This should trigger PT001 error!
+# The default ruleset expects root labels to end with "//"
+my-project/
+├── readme.md
+├── src/
+│   └── index.ts
+└── tests/
+    └── index.test.ts
+
+# ============================================
+# EXPECTED ERROR:
+# PT001: Root line should be a root label ending
+#        with "//" (default ruleset).
+# ============================================

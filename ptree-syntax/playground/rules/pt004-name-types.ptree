@@ -1,0 +1,43 @@
+# ============================================
+# RULE TEST: PT004 - NAME_TYPE Mismatch
+# ============================================
+#
+# PT004 validates that entity names match their
+# configured NAME_TYPE patterns:
+#
+# Default NAME_TYPE patterns:
+#   ROOT: SCREAM_TYPE (UPPER_CASE)
+#   DIR:  High_Type   (Title_Case)
+#   FILE: smol-type   (lower-case)
+#
+# This file demonstrates what triggers PT004:
+# - Names that don't match their entity's pattern
+#
+# ============================================
+
+@ptree: default
+@style: unicode
+
+# ❌ INCORRECT: Root should be SCREAM_TYPE (UPPER_CASE)
+my-project//
+├── readme.md
+├── SRC/
+│   └── index.ts
+└── tests/
+    └── index.test.ts
+
+# ============================================
+# EXPECTED ERRORS:
+# PT004: Root name "my-project" does not match
+#        any allowed ROOT NAME_TYPES.
+#
+# PT004: DIR name "SRC" does not match any
+#        allowed NAME_TYPES (High_Type).
+#
+# PT004: DIR name "tests" does not match any
+#        allowed NAME_TYPES (High_Type).
+#
+# ✅ CORRECT ROOT: MY_PROJECT//
+# ✅ CORRECT DIR:  Src/
+# ✅ CORRECT FILE: readme.md
+# ============================================

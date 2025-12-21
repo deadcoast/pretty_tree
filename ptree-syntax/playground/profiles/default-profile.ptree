@@ -20,19 +20,19 @@
 @style: unicode
 
 MY_PROJECT//
-├── src/
+├── Src/
 │   ├── Core/
 │   │   ├── parser.ts
 │   │   └── validator.ts
 │   └── Utils/
 │       └── helpers.ts
-├── docs/
+├── Docs/
 │   ├── User-Guide/
 │   │   └── getting-started.md
 │   └── Api-Docs/
 │       └── reference.md
-├── tests/
-│   └── unit/
+├── Tests/
+│   └── Unit/
 │       └── parser.test.ts
 ├── .gitignore
 ├── .editorconfig

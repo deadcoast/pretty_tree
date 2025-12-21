@@ -1,0 +1,31 @@
+# ============================================
+# RULE TEST: PT003 - Missing @ptree Directive
+# ============================================
+#
+# PT003 validates that the @ptree directive is
+# present. This directive specifies which profile
+# to use for validation (default or spec).
+#
+# This file demonstrates what triggers PT003:
+# - Missing @ptree directive entirely
+#
+# ============================================
+
+# NOTE: No @ptree directive here!
+@style: unicode
+
+MY_PROJECT//
+├── readme.md
+├── src/
+│   └── index.ts
+└── tests/
+    └── index.test.ts
+
+# ============================================
+# EXPECTED WARNING:
+# PT003: Missing required directive: @ptree: <version>
+#
+# To fix, add one of:
+#   @ptree: default   (flexible validation)
+#   @ptree: spec      (strict canonical mode)
+# ============================================

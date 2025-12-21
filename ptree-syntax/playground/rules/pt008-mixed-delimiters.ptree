@@ -1,0 +1,41 @@
+# ============================================
+# RULE TEST: PT008 - Mixed Delimiters (UniRule_5)
+# ============================================
+#
+# PT008 enforces UniRule_5: Do not mix '-' and '_'
+# in the same bare name. A name should use one
+# delimiter consistently.
+#
+# This file demonstrates what triggers PT008:
+# - Names containing both hyphens and underscores
+#
+# ============================================
+
+@ptree: default
+@style: unicode
+
+MY_PROJECT//
+├── my_file-name.txt
+├── some-thing_else.md
+├── mixed_case-style.js
+├── Src/
+│   ├── my_module-utils.ts
+│   └── helper-functions_v2.ts
+└── Tests/
+    └── unit_tests-spec.ts
+
+# ============================================
+# EXPECTED WARNINGS:
+# PT008: Do not mix '-' and '_' in the same
+#        bare name (UniRule_5).
+#
+# Each mixed-delimiter name triggers PT008:
+#   - my_file-name.txt      → my-file-name.txt OR my_file_name.txt
+#   - some-thing_else.md    → some-thing-else.md OR some_thing_else.md
+#   - mixed_case-style.js   → mixed-case-style.js OR mixed_case_style.js
+#   - my_module-utils.ts    → my-module-utils.ts OR my_module_utils.ts
+#   - helper-functions_v2.ts → helper-functions-v2.ts OR helper_functions_v2.ts
+#   - unit_tests-spec.ts    → unit-tests-spec.ts OR unit_tests_spec.ts
+#
+# Pick one delimiter style and use it consistently!
+# ============================================

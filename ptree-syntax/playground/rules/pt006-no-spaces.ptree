@@ -1,0 +1,37 @@
+# ============================================
+# RULE TEST: PT006 - No Spaces in Names
+# ============================================
+#
+# PT006 validates that node names do not contain
+# spaces. Spaces are not allowed in the default
+# ruleset - use "-" or "_" instead.
+#
+# This file demonstrates what triggers PT006:
+# - File or directory names containing spaces
+#
+# ============================================
+
+@ptree: default
+@style: unicode
+
+MY_PROJECT//
+├── read me.md
+├── my file.txt
+├── Source Code/
+│   └── main file.ts
+└── Test Files/
+    └── unit tests.ts
+
+# ============================================
+# EXPECTED ERRORS:
+# PT006: Spaces are not allowed in node names
+#        in the default ruleset. Use "-" or "_".
+#
+# Each of the following triggers PT006:
+#   - "read me.md"      → readme.md or read-me.md
+#   - "my file.txt"     → my-file.txt
+#   - "Source Code/"    → Source_Code/ or Source-Code/
+#   - "main file.ts"    → main-file.ts
+#   - "Test Files/"     → Test_Files/
+#   - "unit tests.ts"   → unit-tests.ts
+# ============================================

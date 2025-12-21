@@ -1,0 +1,37 @@
+# ============================================
+# RULE TEST: PT002 - Directory Marker
+# ============================================
+#
+# PT002 validates that parent nodes (nodes with
+# children) end with "/" to indicate they are
+# directories.
+#
+# This file demonstrates what triggers PT002:
+# - A node has children but doesn't end with "/"
+#
+# ============================================
+
+@ptree: default
+@style: unicode
+
+MY_PROJECT//
+├── readme.md
+├── src
+│   ├── index.ts
+│   └── utils.ts
+├── tests
+│   └── index.test.ts
+└── docs/
+    └── readme.md
+
+# ============================================
+# EXPECTED ERRORS:
+# PT002: Parent node has children but does not
+#        end with "/" (directory marker).
+#
+# The "src" and "tests" nodes above have children
+# but are missing the trailing "/" marker.
+#
+# ✅ CORRECT: src/
+# ❌ INCORRECT: src
+# ============================================

@@ -51,10 +51,8 @@ PTREE-1.0.0//
 ├── Tests/
 │   └── Unit/
 │       └── parser.test.ts
-├── .gitignore
-├── .editorconfig
 ├── package.json
 ├── tsconfig.json
 └── readme.md
 
-8 directories, 10 files
+8 directories, 8 files

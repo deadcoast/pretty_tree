@@ -1,0 +1,47 @@
+# ============================================
+# RULE TEST: PT007 - Extension Lowercase
+# ============================================
+#
+# PT007 validates that file extensions are
+# lowercase. Uppercase extensions trigger a
+# warning.
+#
+# This file demonstrates what triggers PT007:
+# - File extensions with uppercase characters
+#
+# ============================================
+
+@ptree: default
+@style: unicode
+
+MY_PROJECT//
+├── readme.MD
+├── document.TXT
+├── script.JS
+├── styles.CSS
+├── config.JSON
+├── Src/
+│   ├── index.TS
+│   └── utils.TSX
+└── Assets/
+    ├── logo.PNG
+    ├── icon.SVG
+    └── photo.JPEG
+
+# ============================================
+# EXPECTED WARNINGS:
+# PT007: File extension should be lowercase
+#        (found: .MD).
+#
+# Each uppercase extension triggers PT007:
+#   - readme.MD    → readme.md
+#   - document.TXT → document.txt
+#   - script.JS    → script.js
+#   - styles.CSS   → styles.css
+#   - config.JSON  → config.json
+#   - index.TS     → index.ts
+#   - utils.TSX    → utils.tsx
+#   - logo.PNG     → logo.png
+#   - icon.SVG     → icon.svg
+#   - photo.JPEG   → photo.jpeg
+# ============================================

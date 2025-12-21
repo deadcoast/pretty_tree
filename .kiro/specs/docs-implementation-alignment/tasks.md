@@ -97,39 +97,39 @@
     - **Property 3: Profile Validation Difference**
     - **Validates: Requirements 15.2**
 
-- [-] 9. Checkpoint - Ensure demo files are valid
+- [x] 9. Checkpoint - Ensure demo files are valid
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 10. Create Rule Test Files
-  - [ ] 10.1 Create rules/pt001-root-marker.ptree
+- [x] 10. Create Rule Test Files
+  - [x] 10.1 Create rules/pt001-root-marker.ptree
     - Intentionally trigger PT001 (root marker) error
     - Include comments explaining the rule
     - _Requirements: 19.1, 19.3_
-  - [ ] 10.2 Create rules/pt002-dir-marker.ptree
+  - [x] 10.2 Create rules/pt002-dir-marker.ptree
     - Intentionally trigger PT002 (directory marker) error
     - _Requirements: 19.1_
-  - [ ] 10.3 Create rules/pt003-ptree-directive.ptree
+  - [x] 10.3 Create rules/pt003-ptree-directive.ptree
     - Intentionally trigger PT003 (missing @ptree) warning
     - _Requirements: 19.1_
-  - [ ] 10.4 Create rules/pt004-name-types.ptree
+  - [x] 10.4 Create rules/pt004-name-types.ptree
     - Intentionally trigger PT004 (NAME_TYPE mismatch) error
     - _Requirements: 19.1_
-  - [ ] 10.5 Create rules/pt005-version-delimiter.ptree
+  - [x] 10.5 Create rules/pt005-version-delimiter.ptree
     - Intentionally trigger PT005 (UniRule_1) error
     - _Requirements: 19.1_
-  - [ ] 10.6 Create rules/pt006-no-spaces.ptree
+  - [x] 10.6 Create rules/pt006-no-spaces.ptree
     - Intentionally trigger PT006 (spaces in names) error
     - _Requirements: 19.1_
-  - [ ] 10.7 Create rules/pt007-ext-lowercase.ptree
+  - [x] 10.7 Create rules/pt007-ext-lowercase.ptree
     - Intentionally trigger PT007 (uppercase extension) warning
     - _Requirements: 19.1_
-  - [ ] 10.8 Create rules/pt008-mixed-delimiters.ptree
+  - [x] 10.8 Create rules/pt008-mixed-delimiters.ptree
     - Intentionally trigger PT008 (UniRule_5) warning
     - _Requirements: 19.1_
-  - [ ] 10.9 Create rules/pt009-sorting.ptree
+  - [x] 10.9 Create rules/pt009-sorting.ptree
     - Demonstrate PT009 (sorting) rule behavior
     - _Requirements: 19.1_
-  - [ ] 10.10 Write property test for rule test file validation
+  - [x] 10.10 Write property test for rule test file validation
     - **Property 4: Rule Test File Validation**
     - **Validates: Requirements 19.2**
 

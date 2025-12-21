@@ -1,0 +1,63 @@
+# ============================================
+# RULE TEST: PT009 - Sorting Order
+# ============================================
+#
+# PT009 validates sibling ordering:
+# 1. Directories come before files
+# 2. Within each group, items are sorted
+#    lexicographically (case-insensitive by default)
+#
+# NOTE: PT009 is DISABLED by default. Enable it
+# in your .ptreerc.json to see these warnings.
+#
+# This file demonstrates what triggers PT009:
+# - Files appearing before directories
+# - Items not in alphabetical order
+#
+# ============================================
+
+@ptree: default
+@style: unicode
+
+MY_PROJECT//
+├── readme.md
+├── Src/
+├── package.json
+├── Assets/
+├── zebra.txt
+├── Tests/
+├── alpha.md
+└── Docs/
+
+# ============================================
+# EXPECTED WARNINGS (when PT009 is enabled):
+# PT009: Sibling ordering violation: expected
+#        directories first, then files; each
+#        group lexicographically.
+#
+# Issues in the tree above:
+# 1. "readme.md" (file) appears before "Src/" (dir)
+# 2. "package.json" (file) appears before "Assets/" (dir)
+# 3. "zebra.txt" (file) appears before "Tests/" (dir)
+# 4. "alpha.md" (file) appears before "Docs/" (dir)
+# 5. Directories not sorted: Src, Assets, Tests, Docs
+# 6. Files not sorted: readme.md, package.json, zebra.txt, alpha.md
+#
+# ✅ CORRECT ORDER:
+# MY_PROJECT//
+# ├── Assets/
+# ├── Docs/
+# ├── Src/
+# ├── Tests/
+# ├── alpha.md
+# ├── package.json
+# ├── readme.md
+# └── zebra.txt
+#
+# To enable PT009, add to .ptreerc.json:
+# {
+#   "RULES": {
+#     "PT009": { "enabled": true }
+#   }
+# }
+# ============================================

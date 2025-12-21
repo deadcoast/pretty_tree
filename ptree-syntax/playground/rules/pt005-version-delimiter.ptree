@@ -1,0 +1,39 @@
+# ============================================
+# RULE TEST: PT005 - Version Delimiter (UniRule_1)
+# ============================================
+#
+# PT005 enforces UniRule_1: The version delimiter
+# must differ from the NAME_TYPE's word delimiter.
+#
+# SCREAM_TYPE uses '_' as word delimiter, so the
+# version delimiter must be '-' (not '_').
+#
+# This file demonstrates what triggers PT005:
+# - Using '_' as version delimiter with SCREAM_TYPE
+#
+# ============================================
+
+@ptree: default
+@style: unicode
+
+# ❌ INCORRECT: SCREAM_TYPE with '_' version delimiter
+# SCREAM_TYPE uses '_' for words, so version must use '-'
+MY_PROJECT_1.0.0//
+├── readme.md
+├── Src/
+│   └── index.ts
+└── Tests/
+    └── index.test.ts
+
+# ============================================
+# EXPECTED ERROR:
+# PT005: Version delimiter "_" must not match
+#        the SCREAM_TYPE word delimiter "_"
+#        (UniRule_1).
+#
+# ✅ CORRECT: MY_PROJECT-1.0.0//
+# ❌ INCORRECT: MY_PROJECT_1.0.0//
+#
+# The rule prevents ambiguity between word
+# separators and version delimiters.
+# ============================================
