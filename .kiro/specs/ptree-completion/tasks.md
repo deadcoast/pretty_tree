@@ -87,26 +87,26 @@
     - **Property 5: Entity Classification Determinism**
     - **Validates: Requirements 2.1, 3.1**
 
-- [ ] 7. Implement UniRule Validators
-  - [ ] 7.1 Implement validateUniRule1 function in validator.ts
+- [x] 7. Implement UniRule Validators
+  - [x] 7.1 Implement validateUniRule1 function in validator.ts
     - Check that version delimiter differs from word delimiter
     - Report PT005 for violations
     - _Requirements: 6.1, 6.2, 6.3, 6.4_
-  - [ ] 7.2 Enhance validateUniRule5 (PT008) implementation
+  - [x] 7.2 Enhance validateUniRule5 (PT008) implementation
     - Ensure no mixing of `-` and `_` in bare names
     - _Requirements: 6.5_
-  - [ ] 7.3 Write property test for UniRule_1 delimiter conflict detection
+  - [x] 7.3 Write property test for UniRule_1 delimiter conflict detection
     - **Property 3: UniRule_1 Delimiter Conflict Detection**
     - **Validates: Requirements 6.1, 6.2, 6.4**
-  - [ ] 7.4 Write property test for UniRule_5 mixed delimiter detection
+  - [x] 7.4 Write property test for UniRule_5 mixed delimiter detection
     - **Property 4: UniRule_5 Mixed Delimiter Detection**
     - **Validates: Requirements 6.5**
 
-- [ ] 8. Checkpoint - Ensure all tests pass
+- [x] 8. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 9. Implement Parser Round-Trip Support
-  - [ ] 9.1 Extend PtreeDirective type with position fields
+- [-] 9. Implement Parser Round-Trip Support
+  - [-] 9.1 Extend PtreeDirective type with position fields
     - Add keyStartCol, keyEndCol, valueStartCol, valueEndCol, separatorChar
     - _Requirements: 7.2_
   - [ ] 9.2 Create printPtreeDocument function in parser.ts

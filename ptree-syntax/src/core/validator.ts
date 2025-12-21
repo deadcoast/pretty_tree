@@ -126,6 +126,60 @@ function mkMsg(code: string, severity: Severity, message: string, line: number, 
   return { code, severity, message, line, startCol, endCol };
 }
 
+/**
+ * UniRule_1: Version delimiter must differ from word delimiter.
+ * 
+ * When a NAME_TYPE uses a word delimiter (e.g., '_' for SCREAM_TYPE),
+ * the version delimiter must be different (e.g., '-' for SCREAM_TYPE).
+ * 
+ * @param versionDelimiter - The delimiter used before the version (e.g., '-' or '_')
+ * @param nameTypeDef - The NAME_TYPE definition containing word_delimiter and allowed_version_delimiters
+ * @param nameTypeId - The NAME_TYPE identifier for error messages
+ * @returns An error message string if validation fails, null if valid
+ */
+export function validateUniRule1(
+  versionDelimiter: string | null,
+  nameTypeDef: NameTypeDef,
+  nameTypeId: string
+): string | null {
+  // No version delimiter means no conflict possible
+  if (!versionDelimiter) {
+    return null;
+  }
+
+  // Check if version delimiter matches word delimiter (UniRule_1 violation)
+  if (nameTypeDef.word_delimiter && nameTypeDef.word_delimiter === versionDelimiter) {
+    return `Version delimiter "${versionDelimiter}" must not match the ${nameTypeId} word delimiter "${nameTypeDef.word_delimiter}" (UniRule_1).`;
+  }
+
+  // Check if version delimiter is in the allowed list
+  if (!nameTypeDef.allowed_version_delimiters.includes(versionDelimiter)) {
+    return `Version delimiter "${versionDelimiter}" is not allowed for NAME_TYPE ${nameTypeId}. Allowed: [${nameTypeDef.allowed_version_delimiters.join(', ')}].`;
+  }
+
+  return null;
+}
+
+/**
+ * UniRule_5: No mixing of '-' and '_' in the same bare name.
+ * 
+ * A bare name (excluding version suffix) must not contain both hyphen and underscore
+ * characters. This prevents ambiguity in determining the word delimiter.
+ * 
+ * @param bareName - The name without version suffix to validate
+ * @returns An error message string if validation fails, null if valid
+ */
+export function validateUniRule5(bareName: string): string | null {
+  const hasHyphen = bareName.includes('-');
+  const hasUnderscore = bareName.includes('_');
+
+  if (hasHyphen && hasUnderscore) {
+    return "Do not mix '-' and '_' in the same bare name (UniRule_5).";
+  }
+
+  return null;
+}
+
 function nodeSpan(node: PtreeNode): { line: number; startCol: number; endCol: number } {
   return { line: node.line, startCol: node.startCol, endCol: Math.max(node.startCol + 1, node.endCol) };
 }
@@ -369,7 +423,7 @@ export function validatePtreeDocument(doc: PtreeDocument, config: PtreeConfig): 
     }
   }
 
-  // PT008: do not mix '-' and '_'
+  // PT008: do not mix '-' and '_' (UniRule_5)
   if (rules.PT008.enabled) {
     for (const node of doc.nodes) {
       const kind = classifyNode(node.name);
@@ -379,9 +433,10 @@ export function validatePtreeDocument(doc: PtreeDocument, config: PtreeConfig): 
       const fileBase = kind === 'FILE' ? splitFileParts(bare, fileSplit).stem : bare;
       const { base } = splitVersion(fileBase);
 
-      if (base.includes('-') && base.includes('_')) {
+      const errorMsg = validateUniRule5(base);
+      if (errorMsg) {
         const sp = nodeSpan(node);
-        msgs.push(mkMsg('PT008', rules.PT008.severity, "Do not mix '-' and '_' in the same bare name.", sp.line, sp.startCol, sp.endCol));
+        msgs.push(mkMsg('PT008', rules.PT008.severity, errorMsg, sp.line, sp.startCol, sp.endCol));
       }
     }
   }
@@ -405,11 +460,9 @@ export function validatePtreeDocument(doc: PtreeDocument, config: PtreeConfig): 
         const match = findMatchingNameTypeId(rootBase, allowedByEntity.ROOT, nameTypes);
         if (match) {
           const def = nameTypes[match];
-          if (def.word_delimiter && def.word_delimiter === versionDelimiter) {
-            msgs.push(mkMsg('PT005', rules.PT005.severity, `Version delimiter "${versionDelimiter}" must not match the ${match} word delimiter "${def.word_delimiter}".`, doc.root.line, doc.root.startCol, doc.root.endCol));
-          }
-          if (!def.allowed_version_delimiters.includes(versionDelimiter)) {
-            msgs.push(mkMsg('PT005', rules.PT005.severity, `Version delimiter "${versionDelimiter}" is not allowed for NAME_TYPE ${match}.`, doc.root.line, doc.root.startCol, doc.root.endCol));
+          const errorMsg = validateUniRule1(versionDelimiter, def, match);
+          if (errorMsg) {
+            msgs.push(mkMsg('PT005', rules.PT005.severity, errorMsg, doc.root.line, doc.root.startCol, doc.root.endCol));
           }
         }
       }
@@ -453,11 +506,9 @@ export function validatePtreeDocument(doc: PtreeDocument, config: PtreeConfig): 
         const match = findMatchingNameTypeId(base, allowed, nameTypes);
         if (match) {
           const def = nameTypes[match];
-          if (def.word_delimiter && def.word_delimiter === versionDelimiter) {
-            msgs.push(mkMsg('PT005', rules.PT005.severity, `Version delimiter "${versionDelimiter}" must not match the ${match} word delimiter "${def.word_delimiter}".`, sp.line, sp.startCol, sp.endCol));
-          }
-          if (!def.allowed_version_delimiters.includes(versionDelimiter)) {
-            msgs.push(mkMsg('PT005', rules.PT005.severity, `Version delimiter "${versionDelimiter}" is not allowed for NAME_TYPE ${match}.`, sp.line, sp.startCol, sp.endCol));
+          const errorMsg = validateUniRule1(versionDelimiter, def, match);
+          if (errorMsg) {
+            msgs.push(mkMsg('PT005', rules.PT005.severity, errorMsg, sp.line, sp.startCol, sp.endCol));
           }
         }
       }

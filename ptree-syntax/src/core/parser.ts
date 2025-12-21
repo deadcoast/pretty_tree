@@ -3,6 +3,12 @@ export type PtreeDirective = {
   key: string;
   value: string;
   raw: string;
+  // Position fields for round-trip support
+  keyStartCol: number;
+  keyEndCol: number;
+  valueStartCol: number;
+  valueEndCol: number;
+  separatorChar: ':' | '=' | null;
 };
 
 export type PtreeRoot = {
