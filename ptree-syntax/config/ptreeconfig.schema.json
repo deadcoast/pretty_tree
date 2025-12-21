@@ -72,6 +72,39 @@
     },
     "ENTITY_NAME_TYPES": {
       "type": "object",
+      "description": "Maps entity types to arrays of allowed NAME_TYPE identifiers.",
+      "properties": {
+        "ROOT": {
+          "type": "array",
+          "description": "Allowed NAME_TYPEs for root labels (nodes ending with //).",
+          "items": { "type": "string" }
+        },
+        "DIR": {
+          "type": "array",
+          "description": "Allowed NAME_TYPEs for directory names (nodes ending with /).",
+          "items": { "type": "string" }
+        },
+        "FILE": {
+          "type": "array",
+          "description": "Allowed NAME_TYPEs for file names (stem portion before extension).",
+          "items": { "type": "string" }
+        },
+        "EXT": {
+          "type": "array",
+          "description": "Allowed NAME_TYPEs for file extensions.",
+          "items": { "type": "string" }
+        },
+        "META": {
+          "type": "array",
+          "description": "Allowed NAME_TYPEs for metadata nodes (nodes ending with //).",
+          "items": { "type": "string" }
+        },
+        "NUMERAL": {
+          "type": "array",
+          "description": "Allowed NAME_TYPEs for Roman numeral prefixes in directory names.",
+          "items": { "type": "string" }
+        }
+      },
       "additionalProperties": {
         "type": "array",
         "items": {

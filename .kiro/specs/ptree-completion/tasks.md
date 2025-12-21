@@ -147,72 +147,72 @@
     - Include file path and line/column in error message
     - _Requirements: 9.4_
 
-- [-] 12. Checkpoint - Ensure all tests pass
+- [x] 12. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 13. Update Semantic Tokens for New Entities
-  - [ ] 13.1 Add ptreeNumeral semantic token type
+- [x] 13. Update Semantic Tokens for New Entities
+  - [x] 13.1 Add ptreeNumeral semantic token type
     - Emit for Roman numeral prefixes in directory names
     - _Requirements: 13.1_
-  - [ ] 13.2 Update ptreeExtension token to include NAME_TYPE modifier
+  - [x] 13.2 Update ptreeExtension token to include NAME_TYPE modifier
     - Apply nt_smol_type or configured EXT NAME_TYPE modifier
     - _Requirements: 13.2_
-  - [ ] 13.3 Add semantic token for index file prefix
+  - [x] 13.3 Add semantic token for index file prefix
     - Emit distinct token for `(index)` portion
     - _Requirements: 13.4_
-  - [ ] 13.4 Update TextMate grammar for new patterns
+  - [x] 13.4 Update TextMate grammar for new patterns
     - Add NUMERAL prefix highlighting
     - Add index file prefix highlighting
     - _Requirements: 13.1, 13.4_
 
-- [ ] 14. Implement CLI Enhancements
-  - [ ] 14.1 Add --format json option to validate command
+- [x] 14. Implement CLI Enhancements
+  - [x] 14.1 Add --format json option to validate command
     - Output JSON with file, line, column, code, severity, message
     - _Requirements: 11.1_
-  - [ ] 14.2 Add --diff option to validate command
+  - [x] 14.2 Add --diff option to validate command
     - Show unified diff of proposed fixes without applying
     - _Requirements: 11.2_
-  - [ ] 14.3 Update gen command to respect @name_type directive
+  - [x] 14.3 Update gen command to respect @name_type directive
     - Apply configured naming conventions to generated output
     - _Requirements: 11.3_
 
-- [ ] 15. Update Configuration Schema
-  - [ ] 15.1 Update ptreeconfig.schema.json with EXT and NUMERAL entities
+- [x] 15. Update Configuration Schema
+  - [x] 15.1 Update ptreeconfig.schema.json with EXT and NUMERAL entities
     - Add EXT and NUMERAL to ENTITY_NAME_TYPES schema
     - _Requirements: 12.1_
-  - [ ] 15.2 Add validation for unknown NAME_TYPE references
+  - [x] 15.2 Add validation for unknown NAME_TYPE references
     - Report error when config references undefined NAME_TYPE
     - _Requirements: 12.2_
-  - [ ] 15.3 Add validation for invalid rule settings
+  - [x] 15.3 Add validation for invalid rule settings
     - Report which rule and what is invalid
     - _Requirements: 12.3_
-  - [ ] 15.4 Write property test for config merge associativity
+  - [x] 15.4 Write property test for config merge associativity
     - **Property 11: Config Merge Associativity**
     - **Validates: Requirements 1.4**
 
-- [ ] 16. Update Documentation
-  - [ ] 16.1 Update GRAMMAR.md with NUMERAL and index-type definitions
+- [x] 16. Update Documentation
+  - [x] 16.1 Update GRAMMAR.md with NUMERAL and index-type definitions
     - Document patterns, examples, and UniRules
     - _Requirements: 10.2, 10.6, 10.7_
-  - [ ] 16.2 Complete SEMANTIC_TOKENS.md documentation
+  - [x] 16.2 Complete SEMANTIC_TOKENS.md documentation
     - Document all token types, modifiers, and theme customization
     - Add ptreeNumeral, ptreeIndex, ptreeSymlink token documentation
     - _Requirements: 10.1, 13.5, 13.6_
-  - [ ] 16.3 Update FUTURE_PLANS.md with roadmap
+  - [x] 16.3 Update FUTURE_PLANS.md with roadmap
     - Add prioritized list of planned features
     - _Requirements: 10.3_
-  - [ ] 16.4 Create CONTRIBUTING.md with development guidelines
+  - [x] 16.4 Create CONTRIBUTING.md with development guidelines
     - Include setup, testing, and PR guidelines
     - _Requirements: 10.4_
-  - [ ] 16.5 Update SPEC.md canonical header example
+  - [x] 16.5 Update SPEC.md canonical header example
     - Add EXT, META, NUMERAL to @name_type block example
     - Document symlink syntax and inline metadata
     - _Requirements: 10.5_
-  - [ ] 16.6 Document all six UniRules in GRAMMAR.md
+  - [x] 16.6 Document all six UniRules in GRAMMAR.md
     - Ensure UR1-UR6 are fully documented with examples
     - _Requirements: 10.8_
 
-- [ ] 17. Update Samples and Examples
+- [-] 17. Update Samples and Examples
   - [ ] 17.1 Update samples/example.ptree with generic content
     - Replace project-specific names with placeholders
     - Ensure it demonstrates all core features

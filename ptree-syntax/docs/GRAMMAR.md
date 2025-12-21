@@ -125,10 +125,11 @@ The delimiter used to append a version to a name, e.g.:
 
 ## UNIVERSAL RULES
 
-### RULE ONE
+Universal Rules (UniRules) are naming conventions that apply across all NAME_TYPEs to ensure consistency and prevent ambiguity.
+
+### [UniRule_1] Version Delimiter Conflict
 
 ---
-[UR1]
 
 [NAME_TYPE] and [VERSION_DELIMITER] MUST NEVER use the same delimiter character **when the NAME_TYPE has a WORD_DELIMITER**.
 
@@ -136,7 +137,9 @@ The delimiter used to append a version to a name, e.g.:
 - If the NAME_TYPE uses `-` inside the name, the version delimiter MUST be `_`.
 - If the NAME_TYPE has no WORD_DELIMITER (e.g. `CamelType`), both `-` and `_` are allowed.
 
-**Why:** this prevents ambiguous scanning like `NAME_TYPE_1.0.0` where `_` is doing double-duty.
+**Rule ID:** PT005
+
+**Why:** This prevents ambiguous scanning like `NAME_TYPE_1.0.0` where `_` is doing double-duty as both word separator and version delimiter.
 
 #### EXAMPLES
 
@@ -210,6 +213,24 @@ This is the opinionated choice `(A)`:
 - enables accurate syntax highlighting without multi-line inference
 - enables stable parsing and validation
 
+**Rule ID:** PT002
+
+**Examples:**
+
+✅ CORRECT:
+```ptree
+├── src/
+├── docs/
+└── tests/
+```
+
+❌ INCORRECT:
+```ptree
+├── src
+├── docs
+└── tests
+```
+
 ---
 
 ### [UniRule_3]
@@ -218,9 +239,23 @@ This is the opinionated choice `(A)`:
 
 This makes the root label visually distinct from real filesystem directories (which end with `/`).
 
-Example:
+**Rule ID:** PT001
 
-- `PTREE-1.0.0//`
+**Examples:**
+
+✅ CORRECT:
+```ptree
+PTREE-1.0.0//
+├── src/
+└── README.md
+```
+
+❌ INCORRECT:
+```ptree
+PTREE-1.0.0/
+├── src/
+└── README.md
+```
 
 ---
 
@@ -233,17 +268,48 @@ Use:
 - `-` for readability in lowercase names (`smol-type`)
 - `_` for readability in TitleCase names (`High_Type`)
 
+**Rule ID:** PT006
+
+**Examples:**
+
+✅ CORRECT:
+```ptree
+├── user-guide/
+├── User_Guide/
+└── getting-started.md
+```
+
+❌ INCORRECT:
+```ptree
+├── user guide/
+├── User Guide/
+└── getting started.md
+```
+
 ---
 
 ### [UniRule_5]
 
 [NAME_TYPE] MUST NOT mix `-` and `_` in a single bare name.
 
-Examples:
+This rule prevents ambiguous names where the delimiter purpose is unclear.
 
-- ✅ `data-dictionary`
-- ✅ `data_dictionary`
-- ❌ `data_dictionary-file`
+**Rule ID:** PT008
+
+**Examples:**
+
+✅ CORRECT:
+- `data-dictionary`
+- `data_dictionary`
+- `user-guide-v2`
+- `user_guide_v2`
+
+❌ INCORRECT:
+- `data_dictionary-file`
+- `user-guide_v2`
+- `my_project-name`
+
+**Note:** This rule applies to the bare name only, not to version suffixes. A name like `data-dictionary_1.0.0` is valid because `_` is the version delimiter, not part of the bare name.
 
 ---
 
@@ -256,6 +322,28 @@ Examples:
 3. *explicitly allowed* dotted name types (e.g. `dot.smol-type`)
 
 If dotted base names are not desired, disable dotted NAME_TYPES and/or enable stricter rules.
+
+**Examples:**
+
+✅ CORRECT (extension separator):
+```ptree
+├── readme.md
+├── config.json
+└── data.tar.gz
+```
+
+✅ CORRECT (dot.smol-type):
+```ptree
+├── tsconfig.base.json
+├── vite.config.ts
+└── eslint.config.js
+```
+
+❌ INCORRECT (ambiguous dot usage):
+```ptree
+├── my.project.name/
+└── user.data.file
+```
 
 ---
 
@@ -385,6 +473,74 @@ EXAMPLES:
 WITH_NUMBER:
 
 - `data_dictionary-1.0.0`
+
+---
+
+### [NUMERAL]
+
+- DESCRIPTION: `Roman numeral prefix (I, II, III, IV, V, etc.)`
+- WORD_DELIMITER: none
+- ALLOWED_VERSION_DELIMITERS: `-`, `_`
+- REGEX: `^[IVXLCDM]+$`
+
+EXAMPLES:
+
+- `I`
+- `II`
+- `III`
+- `IV`
+- `V`
+- `X`
+- `L`
+- `C`
+- `D`
+- `M`
+
+USAGE:
+
+Roman numerals are used as prefixes for numbered sections in documentation trees. They are combined with an underscore separator and a standard NAME_TYPE:
+
+- `I_Introduction/` → numeral `I` + `High_Type` remainder
+- `II_Getting_Started/` → numeral `II` + `High_Type` remainder
+- `III_Advanced_Topics/` → numeral `III` + `High_Type` remainder
+
+The validator recognizes the `[NUMERAL]_[NAME]` pattern and validates:
+1. The numeral portion against the NUMERAL NAME_TYPE
+2. The remainder against the configured DIR NAME_TYPE
+
+---
+
+### [index-type]
+
+- DESCRIPTION: `Index file prefix pattern: (index) or (index)-name`
+- WORD_DELIMITER: `-`
+- ALLOWED_VERSION_DELIMITERS: `_`
+- REGEX: `^\(index\)(?:-[a-z0-9]+(?:-[a-z0-9]+)*)?$`
+
+EXAMPLES:
+
+- `(index)`
+- `(index)-introduction`
+- `(index)-chapter-one`
+
+USAGE:
+
+Index files serve as the main entry point for a directory. The `(index)` prefix is a convention borrowed from web frameworks where `index.html` or `index.js` represents the default file for a directory.
+
+In ptree, the `(index)` prefix:
+- Is recognized as a special FILE NAME_TYPE
+- Can be followed by an optional `-name` suffix
+- The remainder (after the prefix) is validated against FILE NAME_TYPE rules
+
+Example tree:
+
+```ptree
+Docs/
+├── (index).md
+├── (index)-overview.md
+└── Getting_Started/
+    └── (index)-tutorial.md
+```
 
 ---
 

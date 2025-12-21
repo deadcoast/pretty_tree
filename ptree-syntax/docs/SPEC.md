@@ -35,7 +35,10 @@ A document that claims the canonical profile starts with:
 @name_type:[
   ROOT: 'SCREAM_TYPE',
   DIR: 'High_Type',
-  FILE: 'smol-type'
+  FILE: 'smol-type',
+  EXT: 'smol-type',
+  META: 'SCREAM_TYPE',
+  NUMERAL: 'NUMERAL'
 ]
 @separation_delimiters: [
   '-',
@@ -46,6 +49,17 @@ A document that claims the canonical profile starts with:
 PTREE-1.0.0//
 ...
 ```
+
+### Entity Types
+
+| Entity | Description | Example |
+|--------|-------------|---------|
+| `ROOT` | Root label ending with `//` | `PTREE-1.0.0//` |
+| `DIR` | Directory ending with `/` | `User_Guide/` |
+| `FILE` | File stem (before extension) | `readme`, `parser` |
+| `EXT` | File extension | `md`, `ts`, `json` |
+| `META` | Metadata nodes ending with `//` | `NOTES//` |
+| `NUMERAL` | Roman numeral prefixes | `I`, `II`, `III` |
 
 Tooling may use this header to select the ruleset and validate that the tree is canonical.
 
@@ -264,58 +278,116 @@ The trailing `/` makes directory detection trivial and improves syntax highlight
 
 ## 5. Symlinks (optional)
 
-Symlinks are represented using an arrow:
+Symlinks are represented using an arrow syntax:
 
-```ptree
+```
 <name> -> <target>
 ```
 
 The arrow token **MUST** be surrounded by single spaces.
 
-Example:
+### 5.1 Symlink Syntax
+
+- The name portion follows standard naming rules for the entity type
+- The arrow ` -> ` separates the name from the target
+- The target is the path the symlink points to
+
+### 5.2 Directory Symlinks
+
+When a symlink points to a directory, the target **SHOULD** end with `/`:
 
 ```ptree
 └── current -> releases/2025-12-17/
+```
+
+### 5.3 File Symlinks
+
+When a symlink points to a file:
+
+```ptree
+└── config.json -> ../shared/config.json
+```
+
+### 5.4 Validation
+
+- The name portion is validated against the appropriate NAME_TYPE rules
+- The target path is not validated (it may point outside the tree)
+
+Example tree with symlinks:
+
+```ptree
+PROJECT-1.0.0//
+├── src/
+│   └── index.ts
+├── dist/
+│   └── index.js
+├── current -> dist/
+└── latest.js -> dist/index.js
 ```
 
 ---
 
 ## 6. Inline Metadata (optional)
 
-Inline metadata is allowed after the name.
+Inline metadata is allowed after the name to provide additional context without affecting tree structure.
 
 ### 6.1 Delimiter rule
 
-To avoid ambiguity when names contain `#` or `[`, metadata **SHOULD** be separated from the name by **two or more spaces**.
+To avoid ambiguity when names contain `#` or `[`, metadata **MUST** be separated from the name by **two or more spaces**.
+
+```
+<name>  <metadata>
+       ^^-- two or more spaces
+```
 
 ### 6.2 Bracket attributes
 
-Attributes are written as:
+Attributes are written as key-value pairs inside square brackets:
 
-```ptree
+```
   [key=value, key2=value2]
 ```
 
 Example:
 
 ```ptree
-├── package.json  [type=node]
-└── src/  [lang=ts]
+├── package.json  [type=node, version=18]
+├── tsconfig.json  [extends=base]
+└── src/  [lang=ts, strict=true]
 ```
 
 ### 6.3 Inline comments
 
-Comments are written as:
+Comments are written with `#` followed by the comment text:
 
-```ptree
-  # comment
+```
+  # comment text
 ```
 
 Example:
 
 ```ptree
-└── README.md  # main docs entry
+├── README.md  # main documentation entry
+├── CHANGELOG.md  # version history
+└── src/
+    ├── index.ts  # entry point
+    └── utils.ts  # helper functions
 ```
+
+### 6.4 Combined metadata
+
+Bracket attributes and comments can be combined:
+
+```ptree
+├── config.json  [env=prod]  # production config
+└── config.dev.json  [env=dev]  # development config
+```
+
+### 6.5 Validation behavior
+
+- Inline metadata is **not** included in NAME_TYPE validation
+- Only the name portion (before the two-space delimiter) is validated
+- Metadata is preserved during round-trip parsing
 
 ---
 

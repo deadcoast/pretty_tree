@@ -12,6 +12,138 @@ type Style = 'unicode' | 'ascii';
 
 type Profile = ConfigProfile;
 
+type OutputFormat = 'text' | 'json';
+
+type JsonLintMessage = {
+  file: string;
+  line: number;
+  column: number;
+  code: string;
+  severity: string;
+  message: string;
+};
+
+function formatMessagesAsJson(file: string, msgs: { code: string; severity: string; message: string; line: number; startCol: number }[]): string {
+  const jsonMsgs: JsonLintMessage[] = msgs.map(m => ({
+    file,
+    line: m.line + 1,
+    column: m.startCol + 1,
+    code: m.code,
+    severity: m.severity.toUpperCase(),
+    message: m.message
+  }));
+  return JSON.stringify(jsonMsgs, null, 2);
+}
+
+function createUnifiedDiff(originalText: string, fixedText: string, fileName: string): string {
+  const originalLines = originalText.split('\n');
+  const fixedLines = fixedText.split('\n');
+  
+  const diff: string[] = [];
+  diff.push(`--- a/${fileName}`);
+  diff.push(`+++ b/${fileName}`);
+  
+  // Find changed regions and create hunks
+  const hunks: { origStart: number; origCount: number; fixedStart: number; fixedCount: number; lines: string[] }[] = [];
+  
+  let i = 0;
+  let j = 0;
+  
+  while (i < originalLines.length || j < fixedLines.length) {
+    // Skip matching lines
+    if (i < originalLines.length && j < fixedLines.length && originalLines[i] === fixedLines[j]) {
+      i++;
+      j++;
+      continue;
+    }
+    
+    // Found a difference - create a hunk
+    const hunkOrigStart = Math.max(0, i - 3);
+    const hunkFixedStart = Math.max(0, j - 3);
+    const hunkLines: string[] = [];
+    let origCount = 0;
+    let fixedCount = 0;
+    
+    // Add context before
+    for (let k = hunkOrigStart; k < i; k++) {
+      hunkLines.push(` ${originalLines[k]}`);
+      origCount++;
+      fixedCount++;
+    }
+    
+    // Find the extent of the change
+    let origEnd = i;
+    let fixedEnd = j;
+    
+    // Look for the next matching sequence
+    let foundMatch = false;
+    for (let oi = i; oi < Math.min(originalLines.length, i + 50) && !foundMatch; oi++) {
+      for (let fi = j; fi < Math.min(fixedLines.length, j + 50) && !foundMatch; fi++) {
+        // Check if we have 3 consecutive matching lines
+        let matchLen = 0;
+        while (oi + matchLen < originalLines.length && 
+               fi + matchLen < fixedLines.length && 
+               originalLines[oi + matchLen] === fixedLines[fi + matchLen]) {
+          matchLen++;
+          if (matchLen >= 3) {
+            origEnd = oi;
+            fixedEnd = fi;
+            foundMatch = true;
+            break;
+          }
+        }
+      }
+    }
+    
+    if (!foundMatch) {
+      origEnd = originalLines.length;
+      fixedEnd = fixedLines.length;
+    }
+    
+    // Add removed lines
+    for (let k = i; k < origEnd; k++) {
+      hunkLines.push(`-${originalLines[k]}`);
+      origCount++;
+    }
+    
+    // Add added lines
+    for (let k = j; k < fixedEnd; k++) {
+      hunkLines.push(`+${fixedLines[k]}`);
+      fixedCount++;
+    }
+    
+    // Add context after
+    const contextAfter = Math.min(3, originalLines.length - origEnd, fixedLines.length - fixedEnd);
+    for (let k = 0; k < contextAfter; k++) {
+      if (origEnd + k < originalLines.length && fixedEnd + k < fixedLines.length &&
+          originalLines[origEnd + k] === fixedLines[fixedEnd + k]) {
+        hunkLines.push(` ${originalLines[origEnd + k]}`);
+        origCount++;
+        fixedCount++;
+      }
+    }
+    
+    hunks.push({
+      origStart: hunkOrigStart,
+      origCount,
+      fixedStart: hunkFixedStart,
+      fixedCount,
+      lines: hunkLines
+    });
+    
+    i = origEnd + contextAfter;
+    j = fixedEnd + contextAfter;
+  }
+  
+  // Output hunks
+  for (const hunk of hunks) {
+    diff.push(`@@ -${hunk.origStart + 1},${hunk.origCount} +${hunk.fixedStart + 1},${hunk.fixedCount} @@`);
+    diff.push(...hunk.lines);
+  }
+  
+  return diff.join('\n');
+}
+
 function asProfile(v: unknown): Profile {
   return String(v ?? '').trim() === 'spec' ? 'spec' : 'default';
 }
@@ -26,19 +158,26 @@ function usage(exitCode = 0): never {
 ptree CLI
 
 Usage:
-  ptree gen [path] [--profile default|spec] [--style unicode|ascii] [--max-depth N] [--version X]
-  ptree validate <file.ptree> [--profile default|spec] [--workspace-root DIR] [--fix] [--write]
+  ptree gen [path] [--profile default|spec] [--style unicode|ascii] [--max-depth N] [--version X] [--name-type DIR:TYPE,FILE:TYPE]
+  ptree validate <file.ptree> [--profile default|spec] [--workspace-root DIR] [--fix] [--write] [--format text|json] [--diff]
 
 Notes:
   - If --profile is omitted, validate auto-detects from @ptree: <value>.
   - Config lookup (markdownlint-style) from workspace-root:
       .ptreerc.json | .ptree.json | ptree.config.json
   - In "spec" profile, the CLI emits/validates the canonical header directives.
+  - Use --format json for machine-readable output (CI/CD integration).
+  - Use --diff to preview fixes as a unified diff without applying them.
+  - Use --name-type to specify naming conventions (e.g., --name-type DIR:High_Type,FILE:smol-type).
+    Available NAME_TYPEs: SCREAM_TYPE, High_Type, Cap-Type, CamelType, smol-type, snake_type
 
 Examples:
   ptree gen . --profile spec --version 1.0.0
+  ptree gen . --name-type DIR:High_Type,FILE:smol-type
   ptree validate samples/example.ptree
   ptree validate samples/example.ptree --fix --write
+  ptree validate samples/example.ptree --format json
+  ptree validate samples/example.ptree --diff
 `;
   console.error(msg.trimEnd());
   process.exit(exitCode);
@@ -84,10 +223,92 @@ function toScreamType(s: string): string {
     .toUpperCase() || 'PROJECT';
 }
 
+/**
+ * Parse a name-type specification string like "DIR:High_Type,FILE:smol-type"
+ */
+function parseNameTypeSpec(spec: string): { DIR?: string; FILE?: string } {
+  const result: { DIR?: string; FILE?: string } = {};
+  const parts = spec.split(',');
+  for (const part of parts) {
+    const [entity, nameType] = part.split(':').map(s => s.trim());
+    if (entity === 'DIR' || entity === 'FILE') {
+      result[entity] = nameType;
+    }
+  }
+  return result;
+}
+
+/**
+ * Split a name into words based on common delimiters and case boundaries.
+ */
+function splitIntoWords(name: string): string[] {
+  // Remove extension for files
+  const dotIndex = name.lastIndexOf('.');
+  const baseName = dotIndex > 0 ? name.slice(0, dotIndex) : name;
+  
+  // Split on common delimiters and case boundaries
+  return baseName
+    .replace(/([a-z])([A-Z])/g, '$1 $2')  // camelCase -> camel Case
+    .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')  // XMLParser -> XML Parser
+    .replace(/[-_.\s]+/g, ' ')  // Replace delimiters with space
+    .trim()
+    .split(/\s+/)
+    .filter(w => w.length > 0);
+}
+
+/**
+ * Convert a name to the specified NAME_TYPE format.
+ */
+function convertToNameType(name: string, nameType: string): string {
+  // Handle dotfiles/dotdirs - preserve as-is
+  if (name.startsWith('.')) {
+    return name;
+  }
+  
+  // Extract extension for files
+  const dotIndex = name.lastIndexOf('.');
+  const hasExtension = dotIndex > 0;
+  const extension = hasExtension ? name.slice(dotIndex) : '';
+  
+  const words = splitIntoWords(name);
+  if (words.length === 0) {
+    return name;
+  }
+  
+  let converted: string;
+  
+  switch (nameType) {
+    case 'SCREAM_TYPE':
+      converted = words.map(w => w.toUpperCase()).join('_');
+      break;
+    case 'High_Type':
+      converted = words.map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join('_');
+      break;
+    case 'Cap-Type':
+      converted = words.map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join('-');
+      break;
+    case 'CamelType':
+      converted = words.map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join('');
+      break;
+    case 'smol-type':
+      converted = words.map(w => w.toLowerCase()).join('-');
+      break;
+    case 'snake_type':
+      converted = words.map(w => w.toLowerCase()).join('_');
+      break;
+    default:
+      // Unknown type, return original
+      return name;
+  }
+  
+  return converted + extension.toLowerCase();
+}
+
 function makeTree(
   rootPath: string,
   style: Style,
-  maxDepth: number
+  maxDepth: number,
+  nameTypes?: { DIR?: string; FILE?: string }
 ): string[] {
   const unicode = {
     tee: '├──',
@@ -126,7 +347,20 @@ function makeTree(
       const conn = isLast ? glyph.last : glyph.tee;
 
       const full = path.join(dir, e.name);
-      const displayName = e.isDirectory() ? `${e.name}/` : e.name;
+      
+      // Apply name type conversion if specified
+      let displayName = e.name;
+      if (e.isDirectory()) {
+        if (nameTypes?.DIR) {
+          displayName = convertToNameType(e.name, nameTypes.DIR);
+        }
+        displayName = `${displayName}/`;
+      } else {
+        if (nameTypes?.FILE) {
+          displayName = convertToNameType(e.name, nameTypes.FILE);
+        }
+      }
+      
       lines.push(`${prefix}${conn} ${displayName}`);
 
       if (e.isDirectory()) {
@@ -148,6 +382,14 @@ function cmdGen(positionals: string[], flags: Record<string, string | boolean>) 
 
   const version = String(flags.version ?? (profile === 'spec' ? '1.0.0' : '0.0.0')).trim();
 
+  // Parse name-type specification
+  const nameTypeSpec = flags['name-type'] ? parseNameTypeSpec(String(flags['name-type'])) : undefined;
+  
+  // For spec profile, default to High_Type for DIR and smol-type for FILE
+  const nameTypes = profile === 'spec' 
+    ? { DIR: nameTypeSpec?.DIR ?? 'High_Type', FILE: nameTypeSpec?.FILE ?? 'smol-type' }
+    : nameTypeSpec;
+
   const out: string[] = [];
 
   if (profile === 'spec') {
@@ -156,8 +398,8 @@ function cmdGen(positionals: string[], flags: Record<string, string | boolean>) 
     out.push(`@version: ${version}`);
     out.push('@name_type:[');
     out.push("    ROOT: 'SCREAM_TYPE',");
-    out.push("    DIR: 'High_Type',");
-    out.push("    FILE: 'smol-type'");
+    out.push(`    DIR: '${nameTypes?.DIR ?? 'High_Type'}',`);
+    out.push(`    FILE: '${nameTypes?.FILE ?? 'smol-type'}'`);
     out.push(']');
     out.push('@separation_delimiters: [');
     out.push("    '-',");
@@ -173,11 +415,25 @@ function cmdGen(positionals: string[], flags: Record<string, string | boolean>) 
     out.push('@ptree: 1.0');
     out.push(`@style: ${style}`);
     out.push(`@root: ${p.replace(/\\/g, '/')}/`);
+    
+    // Add @name_type directive if custom name types are specified
+    if (nameTypes) {
+      out.push('@name_type:[');
+      out.push("    ROOT: 'SCREAM_TYPE',");
+      if (nameTypes.DIR) {
+        out.push(`    DIR: '${nameTypes.DIR}',`);
+      }
+      if (nameTypes.FILE) {
+        out.push(`    FILE: '${nameTypes.FILE}'`);
+      }
+      out.push(']');
+    }
+    
     out.push('');
     out.push(rootLabel);
   }
 
-  out.push(...makeTree(p, style, maxDepth));
+  out.push(...makeTree(p, style, maxDepth, nameTypes));
 
   process.stdout.write(out.join('\n') + '\n');
 }
@@ -198,6 +454,38 @@ function cmdValidate(positionals: string[], flags: Record<string, string | boole
 
   const doFix = Boolean(flags.fix);
   const doWrite = Boolean(flags.write);
+  const doDiff = Boolean(flags.diff);
+  const outputFormat: OutputFormat = String(flags.format ?? 'text') === 'json' ? 'json' : 'text';
+
+  // --diff mode: show unified diff of proposed fixes without applying
+  if (doDiff) {
+    const res = applyCanonicalFixes(text, doc, config);
+    const fixed = res.fixedText;
+    
+    if (text === fixed) {
+      if (outputFormat === 'json') {
+        console.log(JSON.stringify({ file, changes: 0, diff: null }));
+      } else {
+        console.log(`No changes needed for ${file}`);
+      }
+      process.exit(0);
+    }
+    
+    const diffOutput = createUnifiedDiff(text, fixed, file);
+    
+    if (outputFormat === 'json') {
+      console.log(JSON.stringify({ 
+        file, 
+        changes: res.applied.length, 
+        applied: res.applied,
+        diff: diffOutput 
+      }, null, 2));
+    } else {
+      console.log(diffOutput);
+      console.error(`\n${res.applied.length} change(s) would be applied`);
+    }
+    process.exit(0);
+  }
 
   if (doFix) {
     const res = applyCanonicalFixes(text, doc, config);
@@ -219,9 +507,14 @@ function cmdValidate(positionals: string[], flags: Record<string, string | boole
     if (msgs2.length === 0) {
       process.exit(0);
     }
-    for (const m of msgs2) {
-      const loc = `${file}:${m.line + 1}:${m.startCol + 1}`;
-      console.error(`${loc}  ${m.severity.toUpperCase()}  ${m.code}  ${m.message}`);
+    
+    if (outputFormat === 'json') {
+      console.log(formatMessagesAsJson(file, msgs2));
+    } else {
+      for (const m of msgs2) {
+        const loc = `${file}:${m.line + 1}:${m.startCol + 1}`;
+        console.error(`${loc}  ${m.severity.toUpperCase()}  ${m.code}  ${m.message}`);
+      }
     }
     process.exit(1);
   }
@@ -229,13 +522,21 @@ function cmdValidate(positionals: string[], flags: Record<string, string | boole
   const msgs = validatePtreeDocument(doc, config);
 
   if (msgs.length === 0) {
-    console.log(`OK  ${file}`);
+    if (outputFormat === 'json') {
+      console.log(formatMessagesAsJson(file, []));
+    } else {
+      console.log(`OK  ${file}`);
+    }
     process.exit(0);
   }
 
-  for (const m of msgs) {
-    const loc = `${file}:${m.line + 1}:${m.startCol + 1}`;
-    console.log(`${loc}  ${m.severity.toUpperCase()}  ${m.code}  ${m.message}`);
+  if (outputFormat === 'json') {
+    console.log(formatMessagesAsJson(file, msgs));
+  } else {
+    for (const m of msgs) {
+      const loc = `${file}:${m.line + 1}:${m.startCol + 1}`;
+      console.log(`${loc}  ${m.severity.toUpperCase()}  ${m.code}  ${m.message}`);
+    }
   }
 
   process.exit(1);

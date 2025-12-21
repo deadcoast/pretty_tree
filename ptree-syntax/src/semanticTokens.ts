@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 
 import type { PtreeConfig } from './core/config';
-import { parsePtreeDocument, type PtreeDirective, type PtreeDocument, type PtreeNode, type PtreeRoot } from './core/parser';
+import { parsePtreeDocument, parseNumeralPrefix, isValidRomanNumeral, parseIndexFile, type PtreeDirective, type PtreeDocument, type PtreeNode, type PtreeRoot } from './core/parser';
 
 /**
  * Semantic Tokens (dynamic highlighting)
@@ -26,7 +26,9 @@ export const PTREE_SEMANTIC_TOKEN_TYPES = [
   'ptreeExtension',
   'ptreeMeta',
   'ptreeSemver',
-  'ptreeNameType'
+  'ptreeNameType',
+  'ptreeNumeral',
+  'ptreeIndex'
 ] as const;
 
 export const PTREE_BASE_TOKEN_MODIFIERS = [
@@ -75,7 +77,7 @@ function compileNameTypeRegexes(config: PtreeConfig): Map<string, RegExp> {
 function parseNameTypeDirective(raw: string | undefined): Record<string, string> | null {
   if (!raw) return null;
   const out: Record<string, string> = {};
-  const re = /\b(ROOT|DIR|FILE|EXT|META)\b\s*:\s*['"]([^'"]+)['"]/g;
+  const re = /\b(ROOT|DIR|FILE|EXT|META|NUMERAL)\b\s*:\s*['"]([^'"]+)['"]/g;
   let m: RegExpExecArray | null;
   while ((m = re.exec(raw)) !== null) {
     out[m[1]] = m[2];
@@ -208,7 +210,7 @@ export class PtreeSemanticTokensProvider implements vscode.DocumentSemanticToken
     const fileSplit: FileSplitStrategy = config.FILE_EXTENSION_SPLIT === 'firstDot' ? 'firstDot' : 'lastDot';
 
     const nameTypeOverride = parseNameTypeDirective(doc.directives['name_type']);
-    const allowedFor = (entity: 'ROOT' | 'DIR' | 'FILE' | 'META'): string[] | undefined => {
+    const allowedFor = (entity: 'ROOT' | 'DIR' | 'FILE' | 'META' | 'EXT' | 'NUMERAL'): string[] | undefined => {
       const forced = nameTypeOverride?.[entity];
       if (forced) return [forced];
       return config.ENTITY_NAME_TYPES?.[entity];
@@ -354,7 +356,7 @@ export class PtreeSemanticTokensProvider implements vscode.DocumentSemanticToken
   private tokenizeNodeLine(
     node: PtreeNode,
     lineText: string,
-    allowedFor: (entity: 'ROOT' | 'DIR' | 'FILE' | 'META') => string[] | undefined,
+    allowedFor: (entity: 'ROOT' | 'DIR' | 'FILE' | 'META' | 'EXT' | 'NUMERAL') => string[] | undefined,
     compiled: Map<string, RegExp>,
     fileSplit: FileSplitStrategy,
     out: Tok[]
@@ -377,17 +379,45 @@ export class PtreeSemanticTokensProvider implements vscode.DocumentSemanticToken
     }
 
     if (kind === 'DIR') {
-      const allowed = allowedFor('DIR');
-      const expected = findMatchingNameTypeId(bare, allowed, compiled);
-      const any = expected ?? findAnyNameTypeId(bare, compiled);
-      const ok = expected !== null;
+      // Check for Roman numeral prefix (e.g., "I_Introduction", "II_Content")
+      const { numeral, remainder } = parseNumeralPrefix(bare);
+      
+      if (numeral && isValidRomanNumeral(numeral)) {
+        // Emit ptreeNumeral token for the Roman numeral prefix
+        out.push({ start: nameStart, len: numeral.length, type: 'ptreeNumeral' });
+        
+        // Emit underscore separator as meta
+        const underscorePos = nameStart + numeral.length;
+        out.push({ start: underscorePos, len: 1, type: 'ptreeMeta' });
+        
+        // Emit the remainder with DIR NAME_TYPE validation
+        const remainderStart = underscorePos + 1;
+        const allowed = allowedFor('DIR');
+        const expected = findMatchingNameTypeId(remainder, allowed, compiled);
+        const any = expected ?? findAnyNameTypeId(remainder, compiled);
+        const ok = expected !== null;
 
-      const mods: string[] = [];
-      if (any) mods.push(safeModifier(nameTypeToModifier(any), this.knownModifiers));
-      else mods.push('nt_custom');
-      if (!ok) mods.push('mismatch');
+        const mods: string[] = [];
+        if (any) mods.push(safeModifier(nameTypeToModifier(any), this.knownModifiers));
+        else mods.push('nt_custom');
+        if (!ok) mods.push('mismatch');
 
-      out.push({ start: nameStart, len: bare.length, type: 'ptreeDir', mods });
+        out.push({ start: remainderStart, len: remainder.length, type: 'ptreeDir', mods });
+      } else {
+        // No numeral prefix - standard DIR handling
+        const allowed = allowedFor('DIR');
+        const expected = findMatchingNameTypeId(bare, allowed, compiled);
+        const any = expected ?? findAnyNameTypeId(bare, compiled);
+        const ok = expected !== null;
+
+        const mods: string[] = [];
+        if (any) mods.push(safeModifier(nameTypeToModifier(any), this.knownModifiers));
+        else mods.push('nt_custom');
+        if (!ok) mods.push('mismatch');
+
+        out.push({ start: nameStart, len: bare.length, type: 'ptreeDir', mods });
+      }
+      
       if (marker) out.push({ start: nameStart + bare.length, len: marker.length, type: 'ptreeMeta' });
       return;
     }
@@ -409,24 +439,123 @@ export class PtreeSemanticTokensProvider implements vscode.DocumentSemanticToken
     }
 
     // FILE
-    const allowed = allowedFor('FILE');
-    const parts = splitFileParts(bare, fileSplit);
-    const expected = findMatchingNameTypeId(parts.stem, allowed, compiled);
-    const any = expected ?? findAnyNameTypeId(parts.stem, compiled);
-    const ok = expected !== null;
+    // Check for index file prefix (e.g., "(index)", "(index)-introduction")
+    const { isIndex, remainder: indexRemainder } = parseIndexFile(bare);
+    
+    if (isIndex) {
+      // Emit ptreeIndex token for the "(index)" prefix
+      const indexPrefixLen = '(index)'.length;
+      out.push({ start: nameStart, len: indexPrefixLen, type: 'ptreeIndex' });
+      
+      // If there's a separator and remainder, emit them
+      if (indexRemainder.length > 0) {
+        // There's a separator (- or _) after (index)
+        const separatorPos = nameStart + indexPrefixLen;
+        const separatorChar = bare.charAt(indexPrefixLen);
+        if (separatorChar === '-' || separatorChar === '_') {
+          out.push({ start: separatorPos, len: 1, type: 'ptreeMeta' });
+          
+          // Emit the remainder with FILE NAME_TYPE validation
+          const remainderStart = separatorPos + 1;
+          const remainderForValidation = indexRemainder;
+          const remainderParts = splitFileParts(remainderForValidation, fileSplit);
+          
+          const allowed = allowedFor('FILE');
+          const expected = findMatchingNameTypeId(remainderParts.stem, allowed, compiled);
+          const any = expected ?? findAnyNameTypeId(remainderParts.stem, compiled);
+          const ok = expected !== null;
 
-    const mods: string[] = [];
-    if (any) mods.push(safeModifier(nameTypeToModifier(any), this.knownModifiers));
-    else mods.push('nt_custom');
-    if (!ok) mods.push('mismatch');
+          const mods: string[] = [];
+          if (any) mods.push(safeModifier(nameTypeToModifier(any), this.knownModifiers));
+          else mods.push('nt_custom');
+          if (!ok) mods.push('mismatch');
 
-    // Stem
-    out.push({ start: nameStart, len: parts.stem.length, type: 'ptreeFile', mods });
+          out.push({ start: remainderStart, len: remainderParts.stem.length, type: 'ptreeFile', mods });
+          
+          // Extension for the remainder
+          if (remainderParts.ext && remainderParts.dotIndex !== null) {
+            const extStart = remainderStart + remainderParts.dotIndex + 1;
+            
+            const allowedExt = allowedFor('EXT');
+            const extExpected = findMatchingNameTypeId(remainderParts.ext, allowedExt, compiled);
+            const extAny = extExpected ?? findAnyNameTypeId(remainderParts.ext, compiled);
+            
+            const extMods: string[] = [];
+            if (extAny) extMods.push(safeModifier(nameTypeToModifier(extAny), this.knownModifiers));
+            else extMods.push('nt_custom');
+            if (extExpected === null && allowedExt && allowedExt.length > 0) extMods.push('mismatch');
+            
+            out.push({ start: extStart, len: remainderParts.ext.length, type: 'ptreeExtension', mods: extMods });
+          }
+        } else {
+          // No separator, just the remainder directly after (index)
+          const remainderStart = nameStart + indexPrefixLen;
+          const remainderParts = splitFileParts(indexRemainder, fileSplit);
+          
+          const allowed = allowedFor('FILE');
+          const expected = findMatchingNameTypeId(remainderParts.stem, allowed, compiled);
+          const any = expected ?? findAnyNameTypeId(remainderParts.stem, compiled);
+          const ok = expected !== null;
 
-    // Extension (everything after the chosen dot)
-    if (parts.ext && parts.dotIndex !== null) {
-      const extStart = nameStart + parts.dotIndex + 1;
-      out.push({ start: extStart, len: parts.ext.length, type: 'ptreeExtension' });
+          const mods: string[] = [];
+          if (any) mods.push(safeModifier(nameTypeToModifier(any), this.knownModifiers));
+          else mods.push('nt_custom');
+          if (!ok) mods.push('mismatch');
+
+          if (remainderParts.stem.length > 0) {
+            out.push({ start: remainderStart, len: remainderParts.stem.length, type: 'ptreeFile', mods });
+          }
+          
+          // Extension for the remainder
+          if (remainderParts.ext && remainderParts.dotIndex !== null) {
+            const extStart = remainderStart + remainderParts.dotIndex + 1;
+            
+            const allowedExt = allowedFor('EXT');
+            const extExpected = findMatchingNameTypeId(remainderParts.ext, allowedExt, compiled);
+            const extAny = extExpected ?? findAnyNameTypeId(remainderParts.ext, compiled);
+            
+            const extMods: string[] = [];
+            if (extAny) extMods.push(safeModifier(nameTypeToModifier(extAny), this.knownModifiers));
+            else extMods.push('nt_custom');
+            if (extExpected === null && allowedExt && allowedExt.length > 0) extMods.push('mismatch');
+            
+            out.push({ start: extStart, len: remainderParts.ext.length, type: 'ptreeExtension', mods: extMods });
+          }
+        }
+      }
+      // If no remainder, just the (index) prefix is the whole file name
+    } else {
+      // Standard FILE handling (no index prefix)
+      const allowed = allowedFor('FILE');
+      const parts = splitFileParts(bare, fileSplit);
+      const expected = findMatchingNameTypeId(parts.stem, allowed, compiled);
+      const any = expected ?? findAnyNameTypeId(parts.stem, compiled);
+      const ok = expected !== null;
+
+      const mods: string[] = [];
+      if (any) mods.push(safeModifier(nameTypeToModifier(any), this.knownModifiers));
+      else mods.push('nt_custom');
+      if (!ok) mods.push('mismatch');
+
+      // Stem
+      out.push({ start: nameStart, len: parts.stem.length, type: 'ptreeFile', mods });
+
+      // Extension (everything after the chosen dot) with NAME_TYPE modifier
+      if (parts.ext && parts.dotIndex !== null) {
+        const extStart = nameStart + parts.dotIndex + 1;
+        
+        // Get allowed EXT NAME_TYPEs from config
+        const allowedExt = allowedFor('EXT');
+        const extExpected = findMatchingNameTypeId(parts.ext, allowedExt, compiled);
+        const extAny = extExpected ?? findAnyNameTypeId(parts.ext, compiled);
+        
+        const extMods: string[] = [];
+        if (extAny) extMods.push(safeModifier(nameTypeToModifier(extAny), this.knownModifiers));
+        else extMods.push('nt_custom');
+        if (extExpected === null && allowedExt && allowedExt.length > 0) extMods.push('mismatch');
+        
+        out.push({ start: extStart, len: parts.ext.length, type: 'ptreeExtension', mods: extMods });
+      }
     }
 
     if (marker) {

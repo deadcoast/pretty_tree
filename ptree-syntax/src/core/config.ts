@@ -141,7 +141,7 @@ export function loadProfileConfig(projectRoot: string, profile: ConfigProfile = 
 export function findUserConfigPath(workspaceRoot: string): string | undefined {
   for (const name of USER_CONFIG_CANDIDATES) {
     const p = path.join(workspaceRoot, name);
-    if (fs.existsSync(p) && fs.statSync(p).isFile()) return p;
+    if (fs.existsSync(p) && fs.statSync(p).isFile()) {return p;}
   }
   return undefined;
 }
@@ -150,16 +150,23 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
-function deepMerge<T extends Record<string, any>>(base: T, override: Record<string, any>): T {
-  const out: any = { ...base };
+/**
+ * Deep merge two objects. Override values take precedence.
+ * For nested objects, the merge is recursive.
+ * @param base The base object
+ * @param override The override object
+ * @returns A new merged object
+ */
+export function deepMerge<T extends Record<string, unknown>>(base: T, override: Record<string, unknown>): T {
+  const out = { ...base } as Record<string, unknown>;
   for (const [k, v] of Object.entries(override)) {
     if (isPlainObject(v) && isPlainObject(out[k])) {
-      out[k] = deepMerge(out[k], v);
+      out[k] = deepMerge(out[k] as Record<string, unknown>, v);
     } else {
       out[k] = v;
     }
   }
-  return out;
+  return out as T;
 }
 
 export function loadEffectiveConfig(projectRoot: string, workspaceRoot?: string, profile: ConfigProfile = 'default'): {
@@ -182,7 +189,156 @@ export function loadEffectiveConfig(projectRoot: string, workspaceRoot?: string,
   const user = readJsonFile<Partial<PtreeConfig>>(userConfigPath);
 
   // Merge in a targeted way to keep NAME_TYPES/RULES/ENTITY_NAME_TYPES centrally managed.
-  const merged: PtreeConfig = deepMerge(base as any, user as unknown);
+  const merged: PtreeConfig = deepMerge(base as Record<string, unknown>, user as Record<string, unknown>) as PtreeConfig;
 
   return { config: merged, defaultConfigPath, userConfigPath };
+}
+
+/**
+ * Represents a configuration validation error.
+ */
+export type ConfigValidationError = {
+  type: 'unknown_name_type' | 'invalid_rule_setting';
+  message: string;
+  entity?: string;
+  nameType?: string;
+  rule?: string;
+  field?: string;
+};
+
+/**
+ * Validates that all NAME_TYPE references in ENTITY_NAME_TYPES exist in NAME_TYPES.
+ * @param config The configuration to validate
+ * @returns Array of validation errors for unknown NAME_TYPE references
+ */
+export function validateNameTypeReferences(config: PtreeConfig): ConfigValidationError[] {
+  const errors: ConfigValidationError[] = [];
+  const definedNameTypes = new Set(Object.keys(config.NAME_TYPES));
+  
+  if (config.ENTITY_NAME_TYPES) {
+    for (const [entity, nameTypes] of Object.entries(config.ENTITY_NAME_TYPES)) {
+      for (const nameType of nameTypes) {
+        if (!definedNameTypes.has(nameType)) {
+          errors.push({
+            type: 'unknown_name_type',
+            message: `ENTITY_NAME_TYPES.${entity} references unknown NAME_TYPE "${nameType}"`,
+            entity,
+            nameType
+          });
+        }
+      }
+    }
+  }
+  
+  return errors;
+}
+
+/** Valid rule IDs that can be configured */
+const VALID_RULE_IDS = [
+  'default', 'PT001', 'PT002', 'PT003', 'PT004', 'PT005',
+  'PT006', 'PT007', 'PT008', 'PT009', 'PT010', 'PT011',
+  'PT012', 'PT013', 'PT014', 'PT015'
+];
+
+/** Valid severity values */
+const VALID_SEVERITIES: Severity[] = ['error', 'warning', 'info'];
+
+/**
+ * Validates rule settings in the configuration.
+ * @param config The configuration to validate
+ * @returns Array of validation errors for invalid rule settings
+ */
+export function validateRuleSettings(config: PtreeConfig): ConfigValidationError[] {
+  const errors: ConfigValidationError[] = [];
+  
+  if (!config.RULES) {
+    return errors;
+  }
+  
+  for (const [ruleId, setting] of Object.entries(config.RULES)) {
+    // Check if rule ID is valid
+    if (!VALID_RULE_IDS.includes(ruleId)) {
+      errors.push({
+        type: 'invalid_rule_setting',
+        message: `Unknown rule "${ruleId}" in RULES configuration`,
+        rule: ruleId
+      });
+      continue;
+    }
+    
+    // Skip 'default' which is just a boolean
+    if (ruleId === 'default') {
+      if (typeof setting !== 'boolean') {
+        errors.push({
+          type: 'invalid_rule_setting',
+          message: `RULES.default must be a boolean, got ${typeof setting}`,
+          rule: ruleId,
+          field: 'default'
+        });
+      }
+      continue;
+    }
+    
+    // Validate rule setting structure
+    if (typeof setting === 'boolean') {
+      // Simple boolean enable/disable is valid
+      continue;
+    }
+    
+    if (!isPlainObject(setting)) {
+      errors.push({
+        type: 'invalid_rule_setting',
+        message: `RULES.${ruleId} must be a boolean or object, got ${typeof setting}`,
+        rule: ruleId
+      });
+      continue;
+    }
+    
+    // Validate 'enabled' field if present
+    if ('enabled' in setting && typeof setting.enabled !== 'boolean') {
+      errors.push({
+        type: 'invalid_rule_setting',
+        message: `RULES.${ruleId}.enabled must be a boolean, got ${typeof setting.enabled}`,
+        rule: ruleId,
+        field: 'enabled'
+      });
+    }
+    
+    // Validate 'severity' field if present
+    if ('severity' in setting) {
+      const sev = setting.severity as string;
+      if (!VALID_SEVERITIES.includes(sev as Severity)) {
+        errors.push({
+          type: 'invalid_rule_setting',
+          message: `RULES.${ruleId}.severity must be one of ${VALID_SEVERITIES.join(', ')}, got "${sev}"`,
+          rule: ruleId,
+          field: 'severity'
+        });
+      }
+    }
+    
+    // Validate 'description' field if present
+    if ('description' in setting && typeof setting.description !== 'string') {
+      errors.push({
+        type: 'invalid_rule_setting',
+        message: `RULES.${ruleId}.description must be a string, got ${typeof setting.description}`,
+        rule: ruleId,
+        field: 'description'
+      });
+    }
+  }
+  
+  return errors;
+}
+
+/**
+ * Validates the entire configuration and returns all validation errors.
+ * @param config The configuration to validate
+ * @returns Array of all validation errors
+ */
+export function validateConfig(config: PtreeConfig): ConfigValidationError[] {
+  return [
+    ...validateNameTypeReferences(config),
+    ...validateRuleSettings(config)
+  ];
 }
