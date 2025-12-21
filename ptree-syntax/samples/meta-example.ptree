@@ -1,0 +1,44 @@
+@ptree: spec
+@style: unicode
+@version: 1.0.0
+@name_type:[
+    ROOT: 'SCREAM_TYPE',
+    DIR: 'High_Type',
+    FILE: 'smol-type',
+    META: 'SCREAM_TYPE'
+]
+@separation_delimiters: [
+    '-',
+    '_',
+    '.'
+]
+
+PROJECT_STRUCTURE-1.0.0//
+├── CONFIGURATION//
+│   ├── .env
+│   ├── .gitignore
+│   └── config.json
+├── SOURCE_CODE//
+│   ├── Src/
+│   │   ├── index.ts
+│   │   ├── Core/
+│   │   │   ├── parser.ts
+│   │   │   └── validator.ts
+│   │   └── Utils/
+│   │       └── helpers.ts
+│   └── Tests/
+│       └── parser.test.ts
+├── DOCUMENTATION//
+│   ├── Docs/
+│   │   ├── readme.md
+│   │   └── api.md
+│   └── Examples/
+│       └── basic.md
+├── BUILD_OUTPUT//
+│   └── Dist/
+│       ├── index.js
+│       └── index.d.ts
+└── GENERATED//
+    └── Cache/
+        └── .cache
+

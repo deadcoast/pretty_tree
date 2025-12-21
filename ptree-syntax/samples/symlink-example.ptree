@@ -1,0 +1,55 @@
+@ptree: spec
+@style: unicode
+@version: 1.0.0
+@name_type:[
+    ROOT: 'SCREAM_TYPE',
+    DIR: 'High_Type',
+    FILE: 'smol-type'
+]
+@separation_delimiters: [
+    '-',
+    '_',
+    '.'
+]
+
+MONOREPO-1.0.0//
+├── readme.md
+├── package.json
+├── Packages/
+│   ├── Core/
+│   │   ├── package.json
+│   │   └── Src/
+│   │       └── index.ts
+│   ├── Utils/
+│   │   ├── package.json
+│   │   └── Src/
+│   │       └── helpers.ts
+│   └── Cli/
+│       ├── package.json
+│       └── Src/
+│           └── main.ts
+├── Apps/
+│   ├── Web/
+│   │   ├── package.json
+│   │   └── Src/
+│   │       └── app.tsx
+│   └── Api/
+│       ├── package.json
+│       └── Src/
+│           └── server.ts
+├── Shared/
+│   ├── types.ts -> ../Packages/Core/Src/types.ts
+│   ├── utils.ts -> ../Packages/Utils/Src/helpers.ts
+│   └── Config/ -> ../Config/
+├── Config/
+│   ├── base.json
+│   ├── development.json
+│   └── production.json
+├── node_modules/
+│   ├── core -> ../Packages/Core/
+│   ├── utils -> ../Packages/Utils/
+│   └── cli -> ../Packages/Cli/
+└── Docs/
+    ├── readme.md -> ../readme.md
+    └── Api/ -> ../Apps/Api/Docs/
+

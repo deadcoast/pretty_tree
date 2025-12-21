@@ -4,7 +4,9 @@
 @name_type:[
     ROOT: 'SCREAM_TYPE',
     DIR: 'High_Type',
-    FILE: 'smol-type'
+    FILE: 'smol-type',
+    EXT: 'smol-type',
+    META: 'SCREAM_TYPE'
 ]
 @separation_delimiters: [
     '-',
@@ -12,18 +14,31 @@
     '.'
 ]
 
-PTREE-1.0.0//
+PROJECT_NAME-1.0.0//
 ├── readme.md
 ├── changelog.md
-├── ptree.config.json
+├── license
+├── config.json
+├── Assets/
+│   ├── logo.svg
+│   └── banner.png
 ├── Docs/
-│   ├── specification.md
-│   └── grammar.md
+│   ├── getting-started.md
+│   ├── api-reference.md
+│   └── Examples/
+│       ├── basic-usage.md
+│       └── advanced-config.md
 ├── Src/
 │   ├── index.ts
-│   ├── tree-parser.ts
-│   └── name-types.ts
+│   ├── core/
+│   │   ├── parser.ts
+│   │   └── validator.ts
+│   └── utils/
+│       ├── helpers.ts
+│       └── constants.ts
 └── Tests/
     ├── parser.test.ts
+    ├── validator.test.ts
     └── Fixtures/
-        └── sample-tree.ptree
+        └── sample-data.json
+

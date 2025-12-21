@@ -1,0 +1,50 @@
+@ptree: spec
+@style: unicode
+@version: 1.0.0
+@name_type:[
+    ROOT: 'SCREAM_TYPE',
+    DIR: 'High_Type',
+    FILE: 'smol-type',
+    NUMERAL: 'NUMERAL'
+]
+@separation_delimiters: [
+    '-',
+    '_',
+    '.'
+]
+
+DOCUMENTATION-1.0.0//
+├── readme.md
+├── I_Introduction/
+│   ├── overview.md
+│   └── getting-started.md
+├── II_Core_Concepts/
+│   ├── architecture.md
+│   ├── data-models.md
+│   └── configuration.md
+├── III_User_Guide/
+│   ├── installation.md
+│   ├── basic-usage.md
+│   └── advanced-features.md
+├── IV_Api_Reference/
+│   ├── endpoints.md
+│   ├── authentication.md
+│   └── error-codes.md
+├── V_Examples/
+│   ├── quick-start.md
+│   ├── integration.md
+│   └── best-practices.md
+├── VI_Troubleshooting/
+│   ├── common-issues.md
+│   └── faq.md
+├── VII_Contributing/
+│   ├── guidelines.md
+│   └── code-of-conduct.md
+├── VIII_Changelog/
+│   └── releases.md
+├── IX_Appendix/
+│   ├── glossary.md
+│   └── references.md
+└── X_License/
+    └── license.md
+

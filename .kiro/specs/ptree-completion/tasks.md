@@ -212,35 +212,35 @@
     - Ensure UR1-UR6 are fully documented with examples
     - _Requirements: 10.8_
 
-- [-] 17. Update Samples and Examples
-  - [ ] 17.1 Update samples/example.ptree with generic content
+- [x] 17. Update Samples and Examples
+  - [x] 17.1 Update samples/example.ptree with generic content
     - Replace project-specific names with placeholders
     - Ensure it demonstrates all core features
     - _Requirements: 14.1, 14.2_
-  - [ ] 17.2 Add NUMERAL example to samples
+  - [x] 17.2 Add NUMERAL example to samples
     - Show Roman numeral prefixed directories (I_Introduction/, II_Content/)
     - _Requirements: 14.3_
-  - [ ] 17.3 Add META node examples to samples
+  - [x] 17.3 Add META node examples to samples
     - Show proper `//` suffix usage
     - _Requirements: 14.4_
-  - [ ] 17.4 Add index file examples to samples
+  - [x] 17.4 Add index file examples to samples
     - Show `(index)` prefix convention
     - _Requirements: 14.2_
-  - [ ] 17.5 Add symlink example to samples
+  - [x] 17.5 Add symlink example to samples
     - Show ` -> ` arrow syntax with directory target
     - _Requirements: 16.3_
-  - [ ] 17.6 Add inline metadata examples to samples
+  - [x] 17.6 Add inline metadata examples to samples
     - Show bracket attributes `[key=value]` and inline comments `# comment`
     - _Requirements: 17.3_
-  - [ ] 17.7 Add summary line example to samples
+  - [x] 17.7 Add summary line example to samples
     - Show `N directories, M files` format
     - _Requirements: 18.3_
 
-- [ ] 18. Final Checkpoint - Ensure all tests pass
+- [x] 18. Final Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 19. Write remaining property tests
-  - [ ] 19.1 Write property test for validator determinism
+- [-] 19. Write remaining property tests
+  - [-] 19.1 Write property test for validator determinism
     - **Property 10: Validator Determinism**
     - **Validates: Requirements 1.5**
 
