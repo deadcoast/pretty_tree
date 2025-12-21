@@ -35,7 +35,8 @@ const DEFAULT_CONFIG: PtreeConfig = {
   ENTITY_NAME_TYPES: {
     ROOT: ['SCREAM_TYPE'],
     DIR: ['High_Type'],
-    FILE: ['smol-type', 'dot.smol-type']
+    FILE: ['smol-type', 'dot.smol-type'],
+    META: ['SCREAM_TYPE']
   },
   RULES: {
     default: true,
@@ -149,6 +150,44 @@ PTREE//
     
     const pt008 = msgs.find(m => m.code === 'PT008');
     assert.ok(pt008, 'Should report PT008 for mixed - and _');
+  });
+
+  test('PT004: validates META nodes against META NAME_TYPE', () => {
+    const text = `@ptree: 1.0
+PTREE//
+├── invalid-meta//`;
+    const doc = parsePtreeDocument(text);
+    const msgs = validatePtreeDocument(doc, DEFAULT_CONFIG);
+    
+    // invalid-meta uses kebab-case, not SCREAM_TYPE
+    const pt004 = msgs.find(m => m.code === 'PT004' && m.message.includes('META'));
+    assert.ok(pt004, 'Should report PT004 for META node not matching SCREAM_TYPE');
+    assert.ok(pt004.message.includes('invalid-meta'), 'Error message should include the invalid name');
+  });
+
+  test('PT004: passes with valid META node', () => {
+    const text = `@ptree: 1.0
+PTREE//
+├── VALID_META//`;
+    const doc = parsePtreeDocument(text);
+    const msgs = validatePtreeDocument(doc, DEFAULT_CONFIG);
+    
+    const pt004 = msgs.find(m => m.code === 'PT004' && m.message.includes('META'));
+    assert.ok(!pt004, 'Should not report PT004 for valid META node');
+  });
+
+  test('classifies nodes ending with // as META', () => {
+    const text = `@ptree: 1.0
+PTREE//
+├── SECTION_ONE//
+├── Dir/
+│   └── file.txt`;
+    const doc = parsePtreeDocument(text);
+    const msgs = validatePtreeDocument(doc, DEFAULT_CONFIG);
+    
+    // SECTION_ONE// should be classified as META and validated against SCREAM_TYPE
+    const metaError = msgs.find(m => m.code === 'PT004' && m.message.includes('SECTION_ONE'));
+    assert.ok(!metaError, 'SECTION_ONE// should be valid as META (SCREAM_TYPE)');
   });
 
   test('clean document has no errors', () => {

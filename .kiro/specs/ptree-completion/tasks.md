@@ -76,14 +76,14 @@
     - **Property 7: Extension Parsing Consistency**
     - **Validates: Requirements 2.1, 2.4**
 
-- [ ] 6. Implement META Entity Enhancements
-  - [ ] 6.1 Update classifyNode function to properly handle META entities
+- [x] 6. Implement META Entity Enhancements
+  - [x] 6.1 Update classifyNode function to properly handle META entities
     - Classify nodes ending with `//` as META
     - _Requirements: 3.1_
-  - [ ] 6.2 Update validator to validate META nodes against META NAME_TYPE
+  - [x] 6.2 Update validator to validate META nodes against META NAME_TYPE
     - Apply META NAME_TYPE rules from config
     - _Requirements: 3.3_
-  - [ ] 6.3 Write property test for entity classification determinism
+  - [x] 6.3 Write property test for entity classification determinism
     - **Property 5: Entity Classification Determinism**
     - **Validates: Requirements 2.1, 3.1**
 
