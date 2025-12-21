@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark" />
+  <title>PTREE — Pretty Tree Format</title>
+  <meta name="description" content="PTREE: A standardized, human-friendly directory tree format. Readable. Foldable. Lintable." />
+  <meta property="og:title" content="PTREE — Pretty Tree Format" />
+  <meta property="og:description" content="Directory trees that read like documentation and behave like code." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=VT323&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="crt-overlay" aria-hidden="true"></div>
+  <div class="noise" aria-hidden="true"></div>
+  
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="header" id="top">
+    <div class="container header-inner">
+      <div class="logo-group">
+        <span class="logo-name">ptree</span>
+        <span class="logo-ver">v1.0</span>
+      </div>
+
+      <nav class="nav" aria-label="Primary">
+        <a href="#features" class="nav-link">[features]</a>
+        <a href="#demo" class="nav-link">[demo]</a>
+        <a href="#install" class="nav-link">[install]</a>
+        <a href="https://github.com" class="nav-link nav-external">[github]<span class="external-arrow">↗</span></a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="container">
+        <div class="hero-grid">
+          <div class="hero-left">
+            <div class="hero-logo-showcase">
+              <img src="logo.png" alt="PTREE - Pretty Tree Format" class="hero-logo" />
+            </div>
+
+            <div class="hero-content">
+              <div class="terminal-badge">
+                <span class="badge-dot"></span>
+                <span class="badge-text">NOW AVAILABLE</span>
+              </div>
+
+              <h1 class="hero-title">
+                <span class="title-line">Directory trees</span>
+                <span class="title-line accent">that make sense<span class="cursor">_</span></span>
+              </h1>
+
+              <p class="hero-lead">
+                A standardized format for project structure documentation.<br>
+                <span class="dim">Readable by humans. Parseable by tools. Finally.</span>
+              </p>
+
+              <div class="hero-actions">
+                <a href="#install" class="btn btn-primary">
+                  <span class="btn-icon">▶</span>
+                  <span>Get Started</span>
+                </a>
+                <a href="#demo" class="btn btn-ghost">
+                  <span class="btn-icon">◈</span>
+                  <span>Live Demo</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="hero-right">
+            <div class="hero-terminal">
+              <div class="terminal-chrome">
+                <div class="terminal-dots">
+                  <span class="dot red"></span>
+                  <span class="dot yellow"></span>
+                  <span class="dot green"></span>
+                </div>
+                <div class="terminal-title">example.ptree</div>
+                <div class="terminal-actions">
+                  <button class="copy-btn" data-copy="hero-code" aria-label="Copy code">
+                    <span class="copy-icon">⧉</span>
+                  </button>
+                </div>
+              </div>
+              <pre class="terminal-body" id="hero-code"><code><span class="token-directive">@ptree:</span> <span class="token-value">spec</span>
+<span class="token-directive">@style:</span> <span class="token-value">unicode</span>
+<span class="token-directive">@version:</span> <span class="token-value">1.0.0</span>
+
+<span class="token-root">PTREE-1.0.0//</span>
+<span class="token-branch">├──</span> <span class="token-file">readme.md</span>
+<span class="token-branch">├──</span> <span class="token-file">license</span>
+<span class="token-branch">├──</span> <span class="token-dir">Docs/</span>
+<span class="token-branch">│   ├──</span> <span class="token-file">overview.md</span>
+<span class="token-branch">│   └──</span> <span class="token-file">api-reference.md</span>
+<span class="token-branch">└──</span> <span class="token-dir">Src/</span>
+    <span class="token-branch">├──</span> <span class="token-file">index.ts</span>
+    <span class="token-branch">└──</span> <span class="token-file">parser.ts</span></code></pre>
+            </div>
+
+            <div class="hero-stats">
+              <div class="stat">
+                <span class="stat-val">15+</span>
+                <span class="stat-label">Lint Rules</span>
+              </div>
+              <div class="stat-sep">│</div>
+              <div class="stat">
+                <span class="stat-val">2</span>
+                <span class="stat-label">Profiles</span>
+              </div>
+              <div class="stat-sep">│</div>
+              <div class="stat">
+                <span class="stat-val">∞</span>
+                <span class="stat-label">Trees</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="section" id="features">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">// FEATURES</span>
+          <h2 class="section-title">Built for documentation</h2>
+        </div>
+
+        <div class="feature-grid">
+          <article class="feature-card">
+            <div class="feature-icon">
+              <span class="icon-glyph">◉</span>
+            </div>
+            <h3 class="feature-title">Syntax Highlighting</h3>
+            <p class="feature-desc">Semantic tokens distinguish roots, directories, files, and extensions at a glance.</p>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon">
+              <span class="icon-glyph">▤</span>
+            </div>
+            <h3 class="feature-title">Smart Folding</h3>
+            <p class="feature-desc">Collapse by tree depth, not indentation. Navigate massive structures with ease.</p>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon">
+              <span class="icon-glyph">⚙</span>
+            </div>
+            <h3 class="feature-title">Lint Rules</h3>
+            <p class="feature-desc">15+ validation rules (PT001–PT015) catch drift and enforce naming conventions.</p>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon">
+              <span class="icon-glyph">⟳</span>
+            </div>
+            <h3 class="feature-title">Auto-Fix</h3>
+            <p class="feature-desc">Safe mechanical fixes for common issues. Missing trailing slash? Fixed.</p>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon">
+              <span class="icon-glyph">⌘</span>
+            </div>
+            <h3 class="feature-title">CLI + Extension</h3>
+            <p class="feature-desc">Generate trees from filesystem. Validate in CI. Works everywhere.</p>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon">
+              <span class="icon-glyph">❮❯</span>
+            </div>
+            <h3 class="feature-title">Markdown Native</h3>
+            <p class="feature-desc">Embed with <code>```ptree</code> fenced blocks. Plain text, always portable.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROFILES -->
+    <section class="section section-alt" id="profiles">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">// PROFILES</span>
+          <h2 class="section-title">Flexible or strict. Your call.</h2>
+        </div>
+
+        <div class="profiles-grid">
+          <div class="profile-card">
+            <div class="profile-header">
+              <span class="profile-name">default</span>
+              <span class="profile-badge">FLEXIBLE</span>
+            </div>
+            <ul class="profile-list">
+              <li><span class="list-marker">▸</span> Lenient validation rules</li>
+              <li><span class="list-marker">▸</span> Multiple naming styles allowed</li>
+              <li><span class="list-marker">▸</span> Great for adoption</li>
+              <li><span class="list-marker">▸</span> Works with existing trees</li>
+            </ul>
+            <div class="profile-code">
+              <code>@ptree: 1.0</code>
+            </div>
+          </div>
+
+          <div class="profile-card profile-featured">
+            <div class="profile-header">
+              <span class="profile-name">spec</span>
+              <span class="profile-badge featured">CANONICAL</span>
+            </div>
+            <ul class="profile-list">
+              <li><span class="list-marker">▸</span> Strict, opinionated rules</li>
+              <li><span class="list-marker">▸</span> Enforced naming conventions</li>
+              <li><span class="list-marker">▸</span> Required header directives</li>
+              <li><span class="list-marker">▸</span> CI-ready validation</li>
+            </ul>
+            <div class="profile-code">
+              <code>@ptree: spec</code>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DEMO -->
+    <section class="section" id="demo">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">// DEMO</span>
+          <h2 class="section-title">See it in action</h2>
+        </div>
+
+        <div class="demo-container">
+          <div class="demo-tabs" role="tablist">
+            <button class="demo-tab active" role="tab" aria-selected="true" data-tab="generate">
+              <span class="tab-num">01</span>
+              <span class="tab-label">Generate</span>
+            </button>
+            <button class="demo-tab" role="tab" aria-selected="false" data-tab="validate">
+              <span class="tab-num">02</span>
+              <span class="tab-label">Validate</span>
+            </button>
+            <button class="demo-tab" role="tab" aria-selected="false" data-tab="fix">
+              <span class="tab-num">03</span>
+              <span class="tab-label">Auto-Fix</span>
+            </button>
+          </div>
+
+          <div class="demo-panel active" data-panel="generate">
+            <div class="terminal-chrome">
+              <div class="terminal-dots">
+                <span class="dot red"></span>
+                <span class="dot yellow"></span>
+                <span class="dot green"></span>
+              </div>
+              <div class="terminal-title">terminal</div>
+            </div>
+            <pre class="terminal-body"><code><span class="token-prompt">$</span> ptree gen ./my-project --style unicode --profile spec
+
+<span class="token-comment"># Generates a .ptree file from your filesystem</span>
+<span class="token-comment"># Respects .gitignore automatically</span>
+<span class="token-comment"># Outputs to stdout or --output file</span>
+
+<span class="token-success">✓</span> Generated: my-project.ptree (42 entries)</code></pre>
+          </div>
+
+          <div class="demo-panel" data-panel="validate">
+            <div class="terminal-chrome">
+              <div class="terminal-dots">
+                <span class="dot red"></span>
+                <span class="dot yellow"></span>
+                <span class="dot green"></span>
+              </div>
+              <div class="terminal-title">terminal</div>
+            </div>
+            <pre class="terminal-body"><code><span class="token-prompt">$</span> ptree validate docs/structure.ptree
+
+<span class="token-error">✗</span> PT003: Directory missing trailing slash at line 12
+<span class="token-error">✗</span> PT007: Name type mismatch at line 15
+<span class="token-warning">⚠</span> PT009: Entries not sorted alphabetically
+
+<span class="token-dim">Found 2 errors, 1 warning</span></code></pre>
+          </div>
+
+          <div class="demo-panel" data-panel="fix">
+            <div class="terminal-chrome">
+              <div class="terminal-dots">
+                <span class="dot red"></span>
+                <span class="dot yellow"></span>
+                <span class="dot green"></span>
+              </div>
+              <div class="terminal-title">terminal</div>
+            </div>
+            <pre class="terminal-body"><code><span class="token-prompt">$</span> ptree validate docs/structure.ptree --fix --write
+
+<span class="token-success">✓</span> Fixed: PT003 - Added trailing slash to "Components"
+<span class="token-success">✓</span> Fixed: PT009 - Sorted 3 entries alphabetically
+
+<span class="token-dim">Applied 2 fixes. 1 issue requires manual review.</span></code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- INSTALL -->
+    <section class="section section-alt" id="install">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">// INSTALL</span>
+          <h2 class="section-title">Get started in seconds</h2>
+        </div>
+
+        <div class="install-grid">
+          <div class="install-card">
+            <div class="install-header">
+              <span class="install-icon">◈</span>
+              <span class="install-title">VS Code Extension</span>
+            </div>
+            <p class="install-desc">Syntax highlighting, folding, validation, and commands built into your editor.</p>
+            <div class="install-cmd">
+              <code>ext install ptree-syntax</code>
+              <button class="copy-btn small" data-copy="install-vscode" aria-label="Copy">⧉</button>
+            </div>
+            <span id="install-vscode" class="sr-only">ext install ptree-syntax</span>
+          </div>
+
+          <div class="install-card">
+            <div class="install-header">
+              <span class="install-icon">▶</span>
+              <span class="install-title">CLI Tool</span>
+            </div>
+            <p class="install-desc">Generate trees, validate in CI, apply fixes. Works standalone or with the extension.</p>
+            <div class="install-cmd">
+              <code>npm install -g ptree-cli</code>
+              <button class="copy-btn small" data-copy="install-cli" aria-label="Copy">⧉</button>
+            </div>
+            <span id="install-cli" class="sr-only">npm install -g ptree-cli</span>
+          </div>
+
+          <div class="install-card">
+            <div class="install-header">
+              <span class="install-icon">◉</span>
+              <span class="install-title">Python Wrapper</span>
+            </div>
+            <p class="install-desc">Prefer Python? Same CLI, wrapped for pip. Requires Node.js runtime.</p>
+            <div class="install-cmd">
+              <code>pip install ptree</code>
+              <button class="copy-btn small" data-copy="install-pip" aria-label="Copy">⧉</button>
+            </div>
+            <span id="install-pip" class="sr-only">pip install ptree</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ASCII ART DIVIDER -->
+    <div class="ascii-divider" aria-hidden="true">
+<pre class="ascii-art">░█▀█░▀█▀░█▀▄░█▀▀░█▀▀
+░█▀▀░░█░░█▀▄░█▀▀░█▀▀
+░▀░░░░▀░░▀░▀░▀▀▀░▀▀▀</pre>
+    </div>
+
+    <!-- CTA -->
+    <section class="section cta-section">
+      <div class="container">
+        <div class="cta-box">
+          <h2 class="cta-title">Ready to standardize your trees?</h2>
+          <p class="cta-desc">Start with <code>@ptree: default</code> for flexibility.<br>Graduate to <code>@ptree: spec</code> when you're ready for enforcement.</p>
+          <div class="cta-actions">
+            <a href="#install" class="btn btn-primary btn-lg">
+              <span class="btn-icon">▶</span>
+              <span>Install Now</span>
+            </a>
+            <a href="https://github.com" class="btn btn-ghost btn-lg">
+              <span class="btn-icon">◈</span>
+              <span>View on GitHub</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <span class="footer-logo-text">ptree</span>
+        <span class="footer-text">— Pretty Tree Format</span>
+      </div>
+      <div class="footer-links">
+        <a href="#top">[back to top]</a>
+        <a href="https://github.com">[github]</a>
+        <a href="#features">[docs]</a>
+      </div>
+      <div class="footer-copy">
+        <span class="dim">© 2024 PTREE Project. MIT License.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
