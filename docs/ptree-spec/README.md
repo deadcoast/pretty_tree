@@ -59,49 +59,49 @@ PTREE exists to fill that gap with a standard that is:
 
 ## The suite at a glance
 
-1. [**01 — Vision and Goals**](01_VISION_AND_GOALS.md)
+1. [**01 — Vision and Goals**](ptree-training/01_VISION_AND_GOALS.md)
    What PTREE is trying to accomplish, and what it intentionally avoids.
 
-2. [**02 — Design Principles**](02_DESIGN_PRINCIPLES.md)
+2. [**02 — Design Principles**](ptree-training/02_DESIGN_PRINCIPLES.md)
    The philosophy behind the standard: readability, stability, interoperability.
 
-3. [**03 — Concepts and Mental Model**](03_CONCEPTS.md)
+3. [**03 — Concepts and Mental Model**](ptree-training/03_CONCEPTS.md)
    How to think about PTREE documents (tree, nodes, profiles, naming).
 
-4. [**04 — Authoring Guide**](04_AUTHORING_GUIDE.md)
+4. [**04 — Authoring Guide**](ptree-training/04_AUTHORING_GUIDE.md)
    How humans should write PTREE that is useful long-term.
 
-5. [**05 — Profiles**](05_PROFILES.md)
+5. [**05 — Profiles**](ptree-training/05_PROFILES.md)
    Why PTREE supports profiles (like “spec” vs “default”) and what each is for.
 
-6. [**06 — Configuration and Rule Model**](06_CONFIGURATION_MODEL.md)
+6. [**06 — Configuration and Rule Model**](ptree-training/06_CONFIGURATION_MODEL.md)
    The “markdownlint-style” configuration philosophy, without implementation detail.
 
-7. [**07 — Use Cases**](07_USE_CASES.md)
+7. [**07 — Use Cases**](ptree-training/07_USE_CASES.md)
    Where PTREE is most valuable in real workflows.
 
-8. [**08 — Interoperability**](08_INTEROPERABILITY.md)
+8. [**08 — Interoperability**](ptree-training/08_INTEROPERABILITY.md)
    How PTREE relates to Markdown, `tree` output, ASCII vs Unicode, and other systems.
 
-9. [**09 — Examples and Patterns**](09_EXAMPLES.md)
+9. [**09 — Examples and Patterns**](ptree-training/09_EXAMPLES.md)
    Canonical patterns and example trees (generic/sanitized).
 
-10. [**10 — Governance and Versioning**](10_GOVERNANCE_VERSIONING.md)
+10. [**10 — Governance and Versioning**](ptree-training/10_GOVERNANCE_VERSIONING.md)
    How PTREE evolves without breaking documents.
 
-11. [**11 — Rationale**](11_RATIONALE.md)
+11. [**11 — Rationale**](ptree-training/11_RATIONALE.md)
    The reasons behind the “opinionated” choices.
 
-12. [**12 — Glossary**](12_GLOSSARY.md)
+12. [**12 — Glossary**](ptree-training/12_GLOSSARY.md)
    The terms used in the spec.
 
-13. [**13 — FAQ**](13_FAQ.md)
+13. [**13 — FAQ**](ptree-training/13_FAQ.md)
    Frequently asked questions.
 
-14.[**14 - Adoption Guide**](14_ADOPTION_GUIDE.md)
+14.[**14 - Adoption Guide**](ptree-training/14_ADOPTION_GUIDE.md)
    How to adopt PTREE in your project or team.
 
-15. [**15 — Positioning**](15_POSITIONING.md)
+15. [**15 — Positioning**](ptree-training/15_POSITIONING.md)
    How to position PTREE in your documentation.
 ---
 
