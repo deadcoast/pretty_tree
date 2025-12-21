@@ -333,15 +333,38 @@ export function validatePtreeDocument(doc: PtreeDocument, config: PtreeConfig): 
     }
   }
 
-  // PT007: extension lowercase
+  // PT004/PT005/PT007: NAME_TYPES + version delimiter rule + extension validation
+  const allowedByEntity = config.ENTITY_NAME_TYPES ?? {};
+  const nameTypes = config.NAME_TYPES ?? {};
+
+  // PT007: extension lowercase and EXT NAME_TYPE validation
   if (rules.PT007.enabled) {
+    const allowedExtTypes = allowedByEntity.EXT ?? [];
+    
     for (const node of doc.nodes) {
       if (classifyNode(node.name) !== 'FILE') continue;
       const { ext } = splitFileParts(node.name, fileSplit);
       if (!ext) continue;
+      
+      // Check for uppercase in extension (original PT007 behavior)
       if (ext !== ext.toLowerCase()) {
         const sp = nodeSpan(node);
         msgs.push(mkMsg('PT007', rules.PT007.severity, `File extension should be lowercase (found: .${ext}).`, sp.line, sp.startCol, sp.endCol));
+      }
+      
+      // Validate each extension segment against EXT NAME_TYPE if configured
+      if (allowedExtTypes.length > 0) {
+        const extSegments = ext.split('.');
+        for (const segment of extSegments) {
+          // Skip empty segments
+          if (!segment) continue;
+          
+          const match = findMatchingNameTypeId(segment, allowedExtTypes, nameTypes);
+          if (!match) {
+            const sp = nodeSpan(node);
+            msgs.push(mkMsg('PT007', rules.PT007.severity, `Extension segment "${segment}" does not match any allowed EXT NAME_TYPES (${allowedExtTypes.join(', ')}).`, sp.line, sp.startCol, sp.endCol));
+          }
+        }
       }
     }
   }
@@ -364,9 +387,6 @@ export function validatePtreeDocument(doc: PtreeDocument, config: PtreeConfig): 
   }
 
   // PT004/PT005: NAME_TYPES + version delimiter rule
-  const allowedByEntity = config.ENTITY_NAME_TYPES ?? {};
-  const nameTypes = config.NAME_TYPES ?? {};
-
   if (rules.PT004.enabled || rules.PT005.enabled) {
     // ROOT
     if (doc.root) {

@@ -52,27 +52,27 @@
     - **Property 12: Index File Recognition**
     - **Validates: Requirements 3.2, 3.5**
 
-- [ ] 4. Checkpoint - Ensure all tests pass
+- [x] 4. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 5. Implement EXT Entity Support
-  - [ ] 5.1 Create splitFileExtension function in parser.ts
+- [x] 5. Implement EXT Entity Support
+  - [x] 5.1 Create splitFileExtension function in parser.ts
     - Split file name into stem and extension(s)
     - Support both firstDot and lastDot strategies
     - Handle dotfiles correctly
     - _Requirements: 2.1, 2.4_
-  - [ ] 5.2 Extend PtreeNode type with stem and extension fields
+  - [x] 5.2 Extend PtreeNode type with stem and extension fields
     - Add optional stem: string and extension: string fields
     - Populate during parsing for FILE entities
     - _Requirements: 2.1_
-  - [ ] 5.3 Add EXT to ENTITY_NAME_TYPES in config files
+  - [x] 5.3 Add EXT to ENTITY_NAME_TYPES in config files
     - Default to ["smol-type"] for extension validation
     - _Requirements: 2.2, 2.5_
-  - [ ] 5.4 Update validator to validate extensions against EXT NAME_TYPE
+  - [x] 5.4 Update validator to validate extensions against EXT NAME_TYPE
     - Check each extension segment against allowed EXT NAME_TYPEs
     - Report PT007 for uppercase extensions
     - _Requirements: 2.2, 2.3, 2.4_
-  - [ ] 5.5 Write property test for extension parsing consistency
+  - [x] 5.5 Write property test for extension parsing consistency
     - **Property 7: Extension Parsing Consistency**
     - **Validates: Requirements 2.1, 2.4**
 

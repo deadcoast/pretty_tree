@@ -204,6 +204,9 @@
       "smol-type",
       "index-type"
     ],
+    "EXT": [
+      "smol-type"
+    ],
     "META": [
       "SCREAM_TYPE"
     ],

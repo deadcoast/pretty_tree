@@ -168,7 +168,7 @@
     "vscode:prepublish": "npm run compile",
     "lint": "eslint src --ext ts",
     "test": "npm run compile && node ./out/test/runTests.js",
-    "test:unit": "npm run compile && mocha ./out/test/suite/**/*.test.js",
+    "test:unit": "npm run compile && mocha './out/test/suite/parser.test.js' './out/test/suite/validator.test.js' './out/test/suite/fixer.test.js' './out/test/suite/*.property.test.js'",
     "ptree": "node ./out/cli.js"
   },
   "devDependencies": {

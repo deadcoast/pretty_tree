@@ -26,6 +26,8 @@ export type PtreeNode = {
   hasChildren: boolean;
   numeralPrefix?: string; // Roman numeral prefix if present (e.g., "I", "II", "III")
   isIndexFile?: boolean; // True if file name starts with (index) prefix
+  stem?: string; // For FILE entities: the base name without extension(s)
+  extension?: string; // For FILE entities: the full extension string (e.g., "ts", "test.ts", "tar.gz")
 };
 
 export type PtreeParseError = {
@@ -47,6 +49,56 @@ const DIRECTIVE_RE = /^\s*(@[A-Za-z][A-Za-z0-9_-]*)(?:\s*[:=])?(.*)$/;
 
 // Roman numeral prefix pattern: [NUMERAL]_[remainder]
 const NUMERAL_PREFIX_RE = /^([IVXLCDM]+)_(.+)$/;
+
+/**
+ * Split a file name into stem and extension(s).
+ * Supports both firstDot and lastDot strategies.
+ * Handles dotfiles correctly (e.g., .gitignore is treated as stem with no extension).
+ * 
+ * @param fileName The file name to split
+ * @param strategy 'firstDot' splits at first dot, 'lastDot' splits at last dot
+ * @returns Object with stem and extensions array
+ * 
+ * Examples:
+ * - splitFileExtension('parser.ts', 'lastDot') => { stem: 'parser', extensions: ['ts'] }
+ * - splitFileExtension('parser.test.ts', 'firstDot') => { stem: 'parser', extensions: ['test', 'ts'] }
+ * - splitFileExtension('parser.test.ts', 'lastDot') => { stem: 'parser.test', extensions: ['ts'] }
+ * - splitFileExtension('.gitignore', 'lastDot') => { stem: '.gitignore', extensions: [] }
+ * - splitFileExtension('archive.tar.gz', 'firstDot') => { stem: 'archive', extensions: ['tar', 'gz'] }
+ */
+export function splitFileExtension(
+  fileName: string,
+  strategy: 'firstDot' | 'lastDot'
+): { stem: string; extensions: string[] } {
+  // Handle empty or whitespace-only input
+  if (!fileName || fileName.trim().length === 0) {
+    return { stem: fileName, extensions: [] };
+  }
+
+  // Handle dotfiles: files that start with a dot and have no other dots
+  // e.g., .gitignore, .env, .editorconfig
+  if (fileName.startsWith('.') && fileName.indexOf('.', 1) === -1) {
+    return { stem: fileName, extensions: [] };
+  }
+
+  // Find the split point based on strategy
+  const dotIndex = strategy === 'firstDot'
+    ? fileName.indexOf('.')
+    : fileName.lastIndexOf('.');
+
+  // No dot found, or dot is at position 0 (dotfile case already handled above)
+  if (dotIndex <= 0) {
+    return { stem: fileName, extensions: [] };
+  }
+
+  const stem = fileName.slice(0, dotIndex);
+  const extPart = fileName.slice(dotIndex + 1);
+
+  // Split extensions by dots
+  const extensions = extPart.length > 0 ? extPart.split('.') : [];
+
+  return { stem, extensions };
+}
 
 // Index file pattern: (index) prefix followed by optional separator and name
 const INDEX_FILE_RE = /^\(index\)(?:[-_])?(.*)$/;
@@ -257,10 +309,21 @@ export function parsePtreeDocument(text: string): PtreeDocument {
 
       // Check for index file prefix in file names (not directories)
       let isIndexFile: boolean | undefined;
+      let stem: string | undefined;
+      let extension: string | undefined;
+      
       if (!name.endsWith('/') && !name.endsWith('//')) {
         const { isIndex } = parseIndexFile(name);
         if (isIndex) {
           isIndexFile = true;
+        }
+        
+        // Parse stem and extension for FILE entities
+        // Use lastDot as default strategy (can be overridden by config in validator)
+        const { stem: parsedStem, extensions } = splitFileExtension(name, 'lastDot');
+        if (parsedStem !== name) {
+          stem = parsedStem;
+          extension = extensions.length > 0 ? extensions.join('.') : undefined;
         }
       }
 
@@ -275,7 +338,9 @@ export function parsePtreeDocument(text: string): PtreeDocument {
         endCol,
         hasChildren: false,
         numeralPrefix,
-        isIndexFile
+        isIndexFile,
+        stem,
+        extension
       });
       continue;
     }
