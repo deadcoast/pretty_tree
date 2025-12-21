@@ -125,7 +125,10 @@ The delimiter used to append a version to a name, e.g.:
 
 ## UNIVERSAL RULES
 
-### [UniRule_1]
+### RULE ONE
+
+---
+[UR1]
 
 [NAME_TYPE] and [VERSION_DELIMITER] MUST NEVER use the same delimiter character **when the NAME_TYPE has a WORD_DELIMITER**.
 
@@ -135,10 +138,10 @@ The delimiter used to append a version to a name, e.g.:
 
 **Why:** this prevents ambiguous scanning like `NAME_TYPE_1.0.0` where `_` is doing double-duty.
 
-> EXAMPLES:
+#### EXAMPLES
 
 ---
-[E01] SCREAM_TYPE
+[E01] [SCREAM_TYPE]
 
 INCORRECT:
 
@@ -151,7 +154,7 @@ CORRECT:
 - output: `API_CLIENT-1.0.0`
 
 ---
-[E02] Cap-Type
+[E02] [Cap-Type]
 
 INCORRECT:
 
@@ -164,7 +167,7 @@ CORRECT:
 - output: `User-Guide_1.0.0`
 
 ---
-[E03] snake_type
+[E03] [snake_type]
 
 INCORRECT:
 
@@ -177,7 +180,7 @@ CORRECT:
 - output: `user_guide-1.0.0`
 
 ---
-[E04] CamelType
+[E04] [CamelType]
 
 CORRECT (both allowed):
 
@@ -185,7 +188,7 @@ CORRECT (both allowed):
 - `[CamelType]_[SEMVER]` → `BuildTools_1.0.0`
 
 ---
-[E05] smol-type
+[E05] [smol-type]
 
 INCORRECT:
 
@@ -329,7 +332,7 @@ WITH_NUMBER:
 
 ---
 
-### [CamelType]
+### [>CamelType]
 
 - DESCRIPTION: `PascalCase`
 - WORD_DELIMITER: none

@@ -1,6 +1,8 @@
-# Alternative Example Configs for future integtation
+# FUTURE INTEGRATIONS FOR PTREE FRAMEWORK
 
-> TOML Config
+## Alternative Example Configs for future integtation
+
+> Skeleton TOML Config Example
 ```toml
 [metadata]
 title = "Directory Tree Structure"
