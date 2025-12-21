@@ -1,0 +1,71 @@
+# ============================================
+# CONFIG: Relaxed Configuration Example
+# ============================================
+#
+# This file demonstrates a RELAXED configuration
+# that minimizes validation strictness.
+#
+# WITHOUT a relaxed .ptreerc.json, this file will
+# show PT004 errors for mixed naming styles.
+# This is intentional - it shows what happens
+# when you use flexible naming without config.
+#
+# Relaxed configuration characteristics:
+# - Many rules disabled or set to warning
+# - Multiple NAME_TYPEs allowed per entity
+# - No canonical header requirements
+# - Flexible naming conventions
+#
+# Use this configuration when you want:
+# - Maximum flexibility in naming
+# - Minimal validation errors
+# - Quick prototyping without strict rules
+#
+# To use relaxed config, create .ptreerc.json:
+# {
+#   "profile": "default",
+#   "RULES": {
+#     "PT003": { "enabled": false },
+#     "PT004": { "severity": "warning" },
+#     "PT007": { "enabled": false },
+#     "PT008": { "enabled": false }
+#   },
+#   "ENTITY_NAME_TYPES": {
+#     "DIR": ["High_Type", "Cap-Type", "CamelType", "smol-type", "snake_type", "dotdir"],
+#     "FILE": ["smol-type", "snake_type", "CamelType", "Cap-Type", "dotfile", "index-type"]
+#   }
+# }
+#
+# ============================================
+
+@ptree: default
+@style: unicode
+
+MY_PROJECT//
+├── src/
+│   ├── core/
+│   │   ├── Parser.ts
+│   │   └── validator.ts
+│   ├── Utils/
+│   │   ├── helpers.ts
+│   │   └── CONSTANTS.ts
+│   └── index.ts
+├── User-Guide/
+│   ├── getting_started.md
+│   └── API-Reference.md
+├── tests/
+│   ├── unit_tests/
+│   │   └── parser.test.ts
+│   └── Integration/
+│       └── api.test.ts
+├── .github/
+│   └── workflows/
+│       └── ci.yml
+├── .gitignore
+├── .editorconfig
+├── package.json
+├── README.md
+└── tsconfig.json
+
+9 directories, 13 files
+

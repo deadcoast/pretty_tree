@@ -133,15 +133,15 @@
     - **Property 4: Rule Test File Validation**
     - **Validates: Requirements 19.2**
 
-- [ ] 11. Create Configuration Testing Files
-  - [ ] 11.1 Create config/.ptreerc.json example
+- [x] 11. Create Configuration Testing Files
+  - [x] 11.1 Create config/.ptreerc.json example
     - Show rule enable/disable configuration
     - Show NAME_TYPE mapping customization
     - _Requirements: 20.1, 20.3_
-  - [ ] 11.2 Create config/strict-config.ptree
+  - [x] 11.2 Create config/strict-config.ptree
     - Example with strict configuration
     - _Requirements: 20.1_
-  - [ ] 11.3 Create config/relaxed-config.ptree
+  - [x] 11.3 Create config/relaxed-config.ptree
     - Example with relaxed configuration
     - _Requirements: 20.1_
 

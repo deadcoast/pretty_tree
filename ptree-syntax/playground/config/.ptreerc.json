@@ -1,0 +1,92 @@
+{
+  "$schema": "../../../config/ptreeconfig.schema.json",
+  "ptree": "1.0",
+  "style": "unicode",
+  "profile": "default",
+
+  "// RULE CONFIGURATION": "Enable/disable individual rules and set severity",
+  "RULES": {
+    "// PT001": "Root label must end with //",
+    "PT001": {
+      "enabled": true,
+      "severity": "error"
+    },
+
+    "// PT002": "Parent nodes must end with /",
+    "PT002": {
+      "enabled": true,
+      "severity": "error"
+    },
+
+    "// PT003": "Require @ptree directive (set to warning for flexibility)",
+    "PT003": {
+      "enabled": true,
+      "severity": "warning"
+    },
+
+    "// PT004": "Enforce NAME_TYPE validation",
+    "PT004": {
+      "enabled": true,
+      "severity": "error"
+    },
+
+    "// PT005": "Version delimiter must differ from word delimiter (UniRule_1)",
+    "PT005": {
+      "enabled": true,
+      "severity": "error"
+    },
+
+    "// PT006": "Disallow spaces in names",
+    "PT006": {
+      "enabled": true,
+      "severity": "error"
+    },
+
+    "// PT007": "Extensions should be lowercase (warning only)",
+    "PT007": {
+      "enabled": true,
+      "severity": "warning"
+    },
+
+    "// PT008": "Disallow mixing - and _ in same name (UniRule_5)",
+    "PT008": {
+      "enabled": true,
+      "severity": "warning"
+    },
+
+    "// PT009": "Sorting rule - disabled by default, enable for strict ordering",
+    "PT009": {
+      "enabled": false,
+      "severity": "warning",
+      "case_sensitive": false
+    }
+  },
+
+  "// NAME_TYPE CUSTOMIZATION": "Override which NAME_TYPEs are allowed per entity",
+  "ENTITY_NAME_TYPES": {
+    "// ROOT": "Only SCREAM_TYPE for root labels",
+    "ROOT": ["SCREAM_TYPE"],
+
+    "// DIR": "Allow multiple directory naming styles",
+    "DIR": ["High_Type", "Cap-Type", "CamelType", "dotdir"],
+
+    "// FILE": "Allow multiple file naming styles",
+    "FILE": ["smol-type", "snake_type", "CamelType", "dotfile", "index-type"],
+
+    "// EXT": "Extensions must be lowercase",
+    "EXT": ["smol-type"],
+
+    "// META": "Metadata nodes use SCREAM_TYPE",
+    "META": ["SCREAM_TYPE"],
+
+    "// NUMERAL": "Roman numeral prefixes",
+    "NUMERAL": ["NUMERAL"]
+  },
+
+  "// FILE_EXTENSION_SPLIT": "How to split filename from extension",
+  "// Options": "'lastDot' (default) or 'firstDot' (for multi-part extensions)",
+  "FILE_EXTENSION_SPLIT": "lastDot",
+
+  "// SEPARATION_DELIMITERS": "Allowed delimiters between name segments",
+  "SEPARATION_DELIMITERS": ["-", "_", "."]
+}

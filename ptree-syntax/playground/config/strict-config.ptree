@@ -1,0 +1,78 @@
+# ============================================
+# CONFIG: Strict Configuration Example
+# ============================================
+#
+# This file demonstrates a STRICT configuration
+# that enforces maximum validation rules.
+#
+# Strict configuration characteristics:
+# - All rules enabled with error severity
+# - PT009 sorting rule ENABLED
+# - Only High_Type for directories
+# - Only smol-type for files
+# - Canonical spec profile headers required
+#
+# Use this configuration when you want:
+# - Consistent naming across your project
+# - Alphabetical sorting of entries
+# - Maximum validation strictness
+#
+# To use strict config, create .ptreerc.json:
+# {
+#   "profile": "spec",
+#   "RULES": {
+#     "PT009": { "enabled": true, "severity": "error" }
+#   },
+#   "ENTITY_NAME_TYPES": {
+#     "DIR": ["High_Type"],
+#     "FILE": ["smol-type", "index-type"]
+#   }
+# }
+#
+# ============================================
+
+@ptree: spec
+@style: unicode
+@version: 1.0.0
+@name_type:[
+    ROOT: 'SCREAM_TYPE',
+    DIR: 'High_Type',
+    FILE: 'smol-type',
+    EXT: 'smol-type',
+    META: 'SCREAM_TYPE',
+    NUMERAL: 'NUMERAL'
+]
+@separation_delimiters: [
+    '-',
+    '_',
+    '.'
+]
+
+PTREE-1.0.0//
+├── Config/
+│   └── settings.json
+├── Docs/
+│   ├── api-reference.md
+│   ├── getting-started.md
+│   └── user-guide.md
+├── Src/
+│   ├── Core/
+│   │   ├── config.ts
+│   │   ├── parser.ts
+│   │   └── validator.ts
+│   ├── Utils/
+│   │   ├── constants.ts
+│   │   └── helpers.ts
+│   └── index.ts
+├── Tests/
+│   ├── Integration/
+│   │   └── api.test.ts
+│   └── Unit/
+│       ├── parser.test.ts
+│       └── validator.test.ts
+├── package.json
+├── readme.md
+└── tsconfig.json
+
+7 directories, 14 files
+
