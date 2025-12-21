@@ -1,0 +1,227 @@
+# Implementation Plan
+
+- [ ] 1. Extend NAME_TYPE Registry with NUMERAL and index-type
+  - [ ] 1.1 Add NUMERAL NAME_TYPE definition to ptree.default-config.json
+    - Add pattern `^[IVXLCDM]+$` with examples I, II, III, IV, V, X, L, C, D, M
+    - Set word_delimiter to null, allowed_version_delimiters to ["-", "_"]
+    - _Requirements: 1.1, 4.5_
+  - [ ] 1.2 Add index-type NAME_TYPE definition to ptree.default-config.json
+    - Add pattern for `(index)` prefix files
+    - _Requirements: 3.2_
+  - [ ] 1.3 Add NUMERAL to ENTITY_NAME_TYPES in both config files
+    - Add NUMERAL array with ["NUMERAL"] as allowed type
+    - _Requirements: 1.2, 4.2_
+  - [ ] 1.4 Update ptree.spec-config.json with same NAME_TYPE additions
+    - Mirror changes from default config
+    - _Requirements: 1.2_
+  - [ ] 1.5 Write property test for NAME_TYPE pattern-example consistency
+    - **Property 2: NAME_TYPE Pattern-Example Consistency**
+    - **Validates: Requirements 1.2**
+
+- [ ] 2. Implement Roman Numeral Parser
+  - [ ] 2.1 Create parseNumeralPrefix function in parser.ts
+    - Parse `[NUMERAL]_[remainder]` pattern from directory names
+    - Return { numeral: string | null, remainder: string }
+    - _Requirements: 4.1, 4.3_
+  - [ ] 2.2 Create isValidRomanNumeral validation function
+    - Validate Roman numeral format (I-M, values 1-1000)
+    - Use regex: `^M{0,3}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$`
+    - _Requirements: 4.5_
+  - [ ] 2.3 Extend PtreeNode type with numeralPrefix field
+    - Add optional numeralPrefix: string field
+    - Populate during parsing when NUMERAL pattern detected
+    - _Requirements: 4.1_
+  - [ ] 2.4 Write property test for Roman numeral validation
+    - **Property 6: Roman Numeral Validation**
+    - **Validates: Requirements 4.5**
+
+- [ ] 3. Implement Index File Recognition
+  - [ ] 3.1 Create parseIndexFile function in parser.ts
+    - Parse `(index)` prefix pattern
+    - Return { isIndex: boolean, remainder: string }
+    - _Requirements: 3.2_
+  - [ ] 3.2 Extend PtreeNode type with isIndexFile field
+    - Add optional isIndexFile: boolean field
+    - Populate during parsing when (index) prefix detected
+    - _Requirements: 3.2_
+  - [ ] 3.3 Update validator to allow (index) prefix in FILE names
+    - Skip NAME_TYPE validation for (index) prefix portion
+    - Validate remainder against FILE NAME_TYPE rules
+    - _Requirements: 3.5_
+  - [ ] 3.4 Write property test for index file recognition
+    - **Property 12: Index File Recognition**
+    - **Validates: Requirements 3.2, 3.5**
+
+- [ ] 4. Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [ ] 5. Implement EXT Entity Support
+  - [ ] 5.1 Create splitFileExtension function in parser.ts
+    - Split file name into stem and extension(s)
+    - Support both firstDot and lastDot strategies
+    - Handle dotfiles correctly
+    - _Requirements: 2.1, 2.4_
+  - [ ] 5.2 Extend PtreeNode type with stem and extension fields
+    - Add optional stem: string and extension: string fields
+    - Populate during parsing for FILE entities
+    - _Requirements: 2.1_
+  - [ ] 5.3 Add EXT to ENTITY_NAME_TYPES in config files
+    - Default to ["smol-type"] for extension validation
+    - _Requirements: 2.2, 2.5_
+  - [ ] 5.4 Update validator to validate extensions against EXT NAME_TYPE
+    - Check each extension segment against allowed EXT NAME_TYPEs
+    - Report PT007 for uppercase extensions
+    - _Requirements: 2.2, 2.3, 2.4_
+  - [ ] 5.5 Write property test for extension parsing consistency
+    - **Property 7: Extension Parsing Consistency**
+    - **Validates: Requirements 2.1, 2.4**
+
+- [ ] 6. Implement META Entity Enhancements
+  - [ ] 6.1 Update classifyNode function to properly handle META entities
+    - Classify nodes ending with `//` as META
+    - _Requirements: 3.1_
+  - [ ] 6.2 Update validator to validate META nodes against META NAME_TYPE
+    - Apply META NAME_TYPE rules from config
+    - _Requirements: 3.3_
+  - [ ] 6.3 Write property test for entity classification determinism
+    - **Property 5: Entity Classification Determinism**
+    - **Validates: Requirements 2.1, 3.1**
+
+- [ ] 7. Implement UniRule Validators
+  - [ ] 7.1 Implement validateUniRule1 function in validator.ts
+    - Check that version delimiter differs from word delimiter
+    - Report PT005 for violations
+    - _Requirements: 6.1, 6.2, 6.3, 6.4_
+  - [ ] 7.2 Enhance validateUniRule5 (PT008) implementation
+    - Ensure no mixing of `-` and `_` in bare names
+    - _Requirements: 6.5_
+  - [ ] 7.3 Write property test for UniRule_1 delimiter conflict detection
+    - **Property 3: UniRule_1 Delimiter Conflict Detection**
+    - **Validates: Requirements 6.1, 6.2, 6.4**
+  - [ ] 7.4 Write property test for UniRule_5 mixed delimiter detection
+    - **Property 4: UniRule_5 Mixed Delimiter Detection**
+    - **Validates: Requirements 6.5**
+
+- [ ] 8. Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [ ] 9. Implement Parser Round-Trip Support
+  - [ ] 9.1 Extend PtreeDirective type with position fields
+    - Add keyStartCol, keyEndCol, valueStartCol, valueEndCol, separatorChar
+    - _Requirements: 7.2_
+  - [ ] 9.2 Create printPtreeDocument function in parser.ts
+    - Serialize AST back to text preserving original formatting
+    - _Requirements: 7.1, 7.3_
+  - [ ] 9.3 Update parser to preserve whitespace and comment positions
+    - Store blank lines and comments in AST
+    - _Requirements: 7.2_
+  - [ ] 9.4 Write property test for parser round-trip consistency
+    - **Property 1: Parser Round-Trip Consistency**
+    - **Validates: Requirements 7.1, 7.3**
+
+- [ ] 10. Implement PT009 Sorting Enhancements
+  - [ ] 10.1 Update fixer to reorder nodes when PT009 is enabled
+    - Sort directories first, then files, each group alphabetically
+    - _Requirements: 8.3_
+  - [ ] 10.2 Update formatter to apply PT009 sorting by default
+    - Ensure formatter produces sorted output
+    - _Requirements: 8.4_
+  - [ ] 10.3 Write property test for sorting transitivity
+    - **Property 9: Sorting Transitivity (PT009)**
+    - **Validates: Requirements 8.1, 8.2**
+  - [ ] 10.4 Write property test for fixer idempotence
+    - **Property 8: Fixer Idempotence**
+    - **Validates: Requirements 8.3**
+
+- [ ] 11. Implement Error Recovery Enhancements
+  - [ ] 11.1 Update parser to continue after invalid lines
+    - Collect errors but don't stop parsing
+    - _Requirements: 9.1_
+  - [ ] 11.2 Update parser to report unclosed bracket blocks with opening line
+    - Track bracket depth and report error at opening line
+    - _Requirements: 9.2_
+  - [ ] 11.3 Update validator to emit info-level for unknown directives
+    - Don't block validation for unknown directives
+    - _Requirements: 9.3_
+  - [ ] 11.4 Update config loader to report JSON parse errors with position
+    - Include file path and line/column in error message
+    - _Requirements: 9.4_
+
+- [ ] 12. Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [ ] 13. Update Semantic Tokens for New Entities
+  - [ ] 13.1 Add ptreeNumeral semantic token type
+    - Emit for Roman numeral prefixes in directory names
+    - _Requirements: 13.1_
+  - [ ] 13.2 Update ptreeExtension token to include NAME_TYPE modifier
+    - Apply nt_smol_type or configured EXT NAME_TYPE modifier
+    - _Requirements: 13.2_
+  - [ ] 13.3 Add semantic token for index file prefix
+    - Emit distinct token for `(index)` portion
+    - _Requirements: 13.4_
+  - [ ] 13.4 Update TextMate grammar for new patterns
+    - Add NUMERAL prefix highlighting
+    - Add index file prefix highlighting
+    - _Requirements: 13.1, 13.4_
+
+- [ ] 14. Implement CLI Enhancements
+  - [ ] 14.1 Add --format json option to validate command
+    - Output JSON with file, line, column, code, severity, message
+    - _Requirements: 11.1_
+  - [ ] 14.2 Add --diff option to validate command
+    - Show unified diff of proposed fixes without applying
+    - _Requirements: 11.2_
+  - [ ] 14.3 Update gen command to respect @name_type directive
+    - Apply configured naming conventions to generated output
+    - _Requirements: 11.3_
+
+- [ ] 15. Update Configuration Schema
+  - [ ] 15.1 Update ptreeconfig.schema.json with EXT and NUMERAL entities
+    - Add EXT and NUMERAL to ENTITY_NAME_TYPES schema
+    - _Requirements: 12.1_
+  - [ ] 15.2 Add validation for unknown NAME_TYPE references
+    - Report error when config references undefined NAME_TYPE
+    - _Requirements: 12.2_
+  - [ ] 15.3 Add validation for invalid rule settings
+    - Report which rule and what is invalid
+    - _Requirements: 12.3_
+  - [ ] 15.4 Write property test for config merge associativity
+    - **Property 11: Config Merge Associativity**
+    - **Validates: Requirements 1.4**
+
+- [ ] 16. Update Documentation
+  - [ ] 16.1 Update GRAMMAR.md with NUMERAL and index-type definitions
+    - Document patterns, examples, and UniRules
+    - _Requirements: 10.2_
+  - [ ] 16.2 Complete SEMANTIC_TOKENS.md documentation
+    - Document all token types, modifiers, and theme customization
+    - _Requirements: 10.1_
+  - [ ] 16.3 Update FUTURE_PLANS.md with roadmap
+    - Add prioritized list of planned features
+    - _Requirements: 10.3_
+  - [ ] 16.4 Create CONTRIBUTING.md with development guidelines
+    - Include setup, testing, and PR guidelines
+    - _Requirements: 10.4_
+
+- [ ] 17. Update Samples and Examples
+  - [ ] 17.1 Update samples/example.ptree with generic content
+    - Replace project-specific names with placeholders
+    - _Requirements: 14.1, 14.2_
+  - [ ] 17.2 Add NUMERAL example to samples
+    - Show Roman numeral prefixed directories (I_Introduction/, II_Content/)
+    - _Requirements: 14.3_
+  - [ ] 17.3 Add META node examples to samples
+    - Show proper `//` suffix usage
+    - _Requirements: 14.4_
+  - [ ] 17.4 Add index file examples to samples
+    - Show `(index)` prefix convention
+    - _Requirements: 14.2_
+
+- [ ] 18. Final Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [ ] 19. Write remaining property tests
+  - [ ] 19.1 Write property test for validator determinism
+    - **Property 10: Validator Determinism**
+    - **Validates: Requirements 1.5**
