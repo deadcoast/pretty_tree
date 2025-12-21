@@ -1,8 +1,8 @@
 # ptree (Pretty Tree) — VS Code Extension + CLI (Optional)
 
-`ptree` is a **standardized, human-friendly directory tree format** (`.ptree`). Spec 1.0.0 is the current draft, implemented by extension/CLI 0.0.4. The core goal is simple: make directory trees readable with syntax highlighting across editors and docs, without forcing extra complexity.
+`ptree` is a **standardized, human-friendly directory tree format** (`.ptree`). Spec 1.0.0 is the current draft, implemented by extension/CLI 0.0.5. The core goal is simple: make directory trees readable with syntax highlighting across editors and docs, without forcing extra complexity.
 
-## Design goals (0.0.4 draft)
+## Design goals (0.0.5 draft)
 
 - Turn-key: readable with no configuration
 - Simple defaults; strictness is opt-in

@@ -11,7 +11,7 @@ It is designed to be:
 
 This spec describes the **format**, not a particular editor integration. Naming and validation rules live in `docs/GRAMMAR.md`.
 
-Status: Spec 1.0.0 is the current draft. The extension/CLI currently ships as 0.0.4.
+Status: Spec 1.0.0 is the current draft. The extension/CLI currently ships as 0.0.5.
 
 ## Design goals (1.0.0 draft)
 

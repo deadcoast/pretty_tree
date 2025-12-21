@@ -6,15 +6,15 @@ This file tracks roadmap checklists and planning notes that do not belong in the
 
 ### Documentation
 
-- [ ] Update README.md and ptree-syntax/README.md for the `ptree-syntax/` folder rename and 0.0.5 status.
+- [x] Update README.md and ptree-syntax/README.md for the `ptree-syntax/` folder rename and 0.0.5 status.
 - [ ] Refresh ptree-syntax/docs/SPEC.md, ptree-syntax/docs/GRAMMAR.md, and ptree-syntax/docs/SEMANTIC_TOKENS.md for 0.0.5 terminology and examples.
-- [ ] Update ptree-syntax/CHANGELOG.md with real 0.0.5 entries as work ships.
+- [x] Update ptree-syntax/CHANGELOG.md with real 0.0.5 entries as work ships.
 
 ### Implementation
 
-- [ ] Update main.py and install.sh to target `ptree-syntax/` paths.
-- [ ] Update any remaining `0.0.4/` or `ptree-0.0.4/` references in configs and docs.
-- [ ] Align package versions to 0.0.5 where applicable.
+- [x] Update main.py and install.sh to target `ptree-syntax/` paths.
+- [x] Update any remaining `0.0.4/` or `ptree-0.0.4/` references in configs and docs.
+- [x] Align package versions to 0.0.5 where applicable.
 
 ### Testing and validation
 

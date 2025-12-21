@@ -9,7 +9,7 @@ ptree is a VS Code extension and CLI toolkit for a standardized, human-friendly 
 ## Project Structure
 
 ```
-0.0.4/                    # VS Code extension and CLI (TypeScript)
+ptree-syntax/             # VS Code extension and CLI (TypeScript)
 ├── src/
 │   ├── extension.ts      # Extension entry point
 │   ├── cli.ts            # CLI entry point
@@ -26,7 +26,7 @@ Repository root includes a Python CLI wrapper (`pyproject.toml`, `main.py`) that
 
 ## Build & Development
 
-Run from `0.0.4/`:
+Run from `ptree-syntax/`:
 
 ```bash
 npm install              # Install dependencies
@@ -37,7 +37,7 @@ npm run test             # VS Code extension test harness
 npm run test:unit        # Mocha unit tests
 ```
 
-To debug the extension, open `0.0.4/` in VS Code and press **F5** to launch an Extension Development Host.
+To debug the extension, open `ptree-syntax/` in VS Code and press **F5** to launch an Extension Development Host.
 
 ## CLI Usage
 
@@ -66,7 +66,7 @@ From the repository root:
 ```bash
 pip install -e .
 ptree gen . --style unicode --max-depth 3
-ptree validate 0.0.4/samples/example.ptree
+ptree validate ptree-syntax/samples/example.ptree
 ```
 
 The wrapper checks for Node.js and compiled artifacts, providing clear error messages if missing.
@@ -153,7 +153,7 @@ User config files (`.ptreerc.json`, `.ptree.json`, `ptree.config.json`) are supp
 
 - Indentation: 2 spaces
 - TypeScript uses semicolons
-- ESLint config: `0.0.4/.eslintrc.json` (fix warnings before pushing)
+- ESLint config: `ptree-syntax/.eslintrc.json` (fix warnings before pushing)
 - Variables/functions: camelCase
 - Types/classes: PascalCase
 - File names: camelCase (e.g., `codeActions.ts`)
@@ -161,7 +161,7 @@ User config files (`.ptreerc.json`, `.ptree.json`, `ptree.config.json`) are supp
 ## Testing
 
 - Frameworks: Mocha for unit tests, `@vscode/test-electron` for extension tests
-- Test files: `*.test.ts` under `0.0.4/src/test/suite/`
+- Test files: `*.test.ts` under `ptree-syntax/src/test/suite/`
 - Add tests when touching parser/validator/semantic tokens or CLI behavior
 
 ## Commit Guidelines

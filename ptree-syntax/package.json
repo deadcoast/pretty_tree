@@ -2,7 +2,7 @@
   "name": "ptree",
   "displayName": "ptree (Pretty Tree)",
   "description": "Standardized directory-tree files (.ptree): syntax highlighting, smart folding, and Markdown fenced-code support.",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "publisher": "ptree",
   "license": "MIT",
   "repository": {

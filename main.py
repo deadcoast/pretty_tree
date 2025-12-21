@@ -13,8 +13,8 @@ def main() -> int:
         return 1
 
     repo_root = Path(__file__).resolve().parent
-    cli_entry = repo_root / "0.0.4" / "bin" / "ptree.js"
-    compiled_cli = repo_root / "0.0.4" / "out" / "cli.js"
+    cli_entry = repo_root / "ptree-syntax" / "bin" / "ptree.js"
+    compiled_cli = repo_root / "ptree-syntax" / "out" / "cli.js"
 
     if not cli_entry.exists():
         print(f"ptree: CLI entry not found at {cli_entry}.", file=sys.stderr)
@@ -22,7 +22,7 @@ def main() -> int:
 
     if not compiled_cli.exists():
         print(
-            "ptree: Compiled CLI not found. Run `cd 0.0.4 && npm install && npm run compile`.",
+            "ptree: Compiled CLI not found. Run `cd ptree-syntax && npm install && npm run compile`.",
             file=sys.stderr,
         )
         return 1

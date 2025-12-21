@@ -1,6 +1,6 @@
 # ptree — Directory Tree Language
 
-ptree is a plain-text, standardized directory tree format (`.ptree`) with a VS Code extension and optional CLI. Its first priority is syntax highlighting for directory trees across editors and docs; Markdown is a common host, not the goal. Spec 1.0.0 is the current draft, implemented by extension/CLI 0.0.4.
+ptree is a plain-text, standardized directory tree format (`.ptree`) with a VS Code extension and optional CLI. Its first priority is syntax highlighting for directory trees across editors and docs; Markdown is a common host, not the goal. Spec 1.0.0 is the current draft, implemented by extension/CLI 0.0.5.
 
 ## Why ptree
 - Directory trees are usually pasted as bland text with no structure or labels.
@@ -35,25 +35,25 @@ my-project/
 ```
 
 ## Specs & Grammar
-- `0.0.4/docs/SPEC.md` — the ptree format specification.
-- `0.0.4/docs/GRAMMAR.md` — naming grammar + lint rules.
+- `ptree-syntax/docs/SPEC.md` — the ptree format specification.
+- `ptree-syntax/docs/GRAMMAR.md` — naming grammar + lint rules.
 
 ## What's Here
-- `0.0.4/` — VS Code extension + optional CLI (TypeScript).
-- `0.0.4/src/` — extension entry, CLI, core parser/validator/fixer.
-- `0.0.4/syntaxes/` — TextMate grammar for static highlighting.
-- `0.0.4/config/` — default/spec profiles and JSON schema.
-- `0.0.4/docs/` — format spec and grammar.
+- `ptree-syntax/` — VS Code extension + optional CLI (TypeScript).
+- `ptree-syntax/src/` — extension entry, CLI, core parser/validator/fixer.
+- `ptree-syntax/syntaxes/` — TextMate grammar for static highlighting.
+- `ptree-syntax/config/` — default/spec profiles and JSON schema.
+- `ptree-syntax/docs/` — format spec and grammar.
 
 ## Build & Run (Extension)
-From `0.0.4/`:
+From `ptree-syntax/`:
 
 ```bash
 npm install
 npm run compile
 ```
 
-Open `0.0.4/` in VS Code and press `F5` to launch the Extension Development Host.
+Open `ptree-syntax/` in VS Code and press `F5` to launch the Extension Development Host.
 
 ## Configuration
 The extension reads a workspace config (first match wins):
@@ -65,7 +65,7 @@ The extension reads a workspace config (first match wins):
 ## CLI (optional)
 
 ### Node.js CLI
-From `0.0.4/` after compiling:
+From `ptree-syntax/` after compiling:
 
 ```bash
 node bin/ptree.js gen . --style unicode --max-depth 3
@@ -79,10 +79,10 @@ A thin Python wrapper is available for convenience:
 ```bash
 pip install -e .
 ptree gen . --style unicode --max-depth 3
-ptree validate 0.0.4/samples/example.ptree
+ptree validate ptree-syntax/samples/example.ptree
 ```
 
-The wrapper requires Node.js and the compiled TypeScript (`npm run compile` in `0.0.4/`).
+The wrapper requires Node.js and the compiled TypeScript (`npm run compile` in `ptree-syntax/`).
 
 ## License
 MIT — see `LICENSE`.

@@ -17,6 +17,8 @@ Note: 0.0.5 is the current draft. Wording and docs may evolve while the feature 
 
 - Repository extension folder renamed to `ptree-syntax/` for a stable, non-versioned path.
 - Changelog now tracks releases only; roadmap content moved to `ptree-syntax/PLAN.md`.
+- Bumped extension and Python wrapper versions to 0.0.5.
+- Updated docs and scripts to reference `ptree-syntax/` paths.
 
 ## [0.0.4] - 2024-12-17
 

@@ -1,6 +1,12 @@
 # FUTURE INTEGRATIONS FOR PTREE FRAMEWORK
 
-## Alternative Example Configs for future integtation
+## [HIGH-PRIORITY]
+
+## [MED-PRIORITY]
+
+## [LOW-PRIORITY]
+
+## [VERY-LOW-PRIORITY] Alternative Example Configs for future integtation
 
 > Skeleton TOML Config Example
 ```toml

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ptree"
-version = "0.0.4"
+version = "0.0.5"
 description = "Pretty Tree is a VS Code extension for pretty tree directory data structures."
 readme = "README.md"
 requires-python = ">=3.13"
