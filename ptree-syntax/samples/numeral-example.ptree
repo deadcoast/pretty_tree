@@ -1,17 +1,22 @@
-@ptree: spec
+# ============================================
+# EXAMPLE: Roman Numeral Prefixed Directories
+# ============================================
+#
+# This sample demonstrates the NUMERAL NAME_TYPE
+# for organizing directories with Roman numeral
+# prefixes (I, II, III, IV, V, etc.)
+#
+# Pattern: [NUMERAL]_[High_Type]
+# Examples: I_Introduction/, II_Getting_Started/
+#
+# Roman numerals provide natural ordering for
+# documentation chapters, tutorial sections,
+# or any sequential content.
+#
+# ============================================
+
+@ptree: default
 @style: unicode
-@version: 1.0.0
-@name_type:[
-    ROOT: 'SCREAM_TYPE',
-    DIR: 'High_Type',
-    FILE: 'smol-type',
-    NUMERAL: 'NUMERAL'
-]
-@separation_delimiters: [
-    '-',
-    '_',
-    '.'
-]
 
 DOCUMENTATION-1.0.0//
 ├── readme.md
@@ -47,4 +52,6 @@ DOCUMENTATION-1.0.0//
 │   └── references.md
 └── X_License/
     └── license.md
+
+10 directories, 21 files
 

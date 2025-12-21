@@ -1,16 +1,5 @@
-@ptree: spec
+@ptree: default
 @style: unicode
-@version: 1.0.0
-@name_type:[
-    ROOT: 'SCREAM_TYPE',
-    DIR: 'High_Type',
-    FILE: 'smol-type'
-]
-@separation_delimiters: [
-    '-',
-    '_',
-    '.'
-]
 
 MONOREPO-1.0.0//
 ├── readme.md
@@ -45,7 +34,7 @@ MONOREPO-1.0.0//
 │   ├── base.json
 │   ├── development.json
 │   └── production.json
-├── node_modules/
+├── Node_Modules/
 │   ├── core -> ../Packages/Core/
 │   ├── utils -> ../Packages/Utils/
 │   └── cli -> ../Packages/Cli/

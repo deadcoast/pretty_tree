@@ -1,44 +1,59 @@
-@ptree: spec
+# ============================================
+# EXAMPLE: Comprehensive ptree Sample
+# ============================================
+#
+# This sample demonstrates all core ptree features:
+#
+# ✓ Header with directives
+# ✓ NAME_TYPE validation (ROOT, DIR, FILE, EXT, META)
+# ✓ Symbolic links (->)
+# ✓ Inline metadata [key=value]
+# ✓ Inline comments # comment
+# ✓ Summary line
+#
+# ============================================
+
+@ptree: default
 @style: unicode
-@version: 1.0.0
-@name_type:[
-    ROOT: 'SCREAM_TYPE',
-    DIR: 'High_Type',
-    FILE: 'smol-type',
-    EXT: 'smol-type',
-    META: 'SCREAM_TYPE'
-]
-@separation_delimiters: [
-    '-',
-    '_',
-    '.'
-]
 
 PROJECT_NAME-1.0.0//
-├── readme.md
-├── changelog.md
-├── license
+├── readme.md  [status=published]  # Project overview
+├── changelog.md  # Track version changes
+├── license  [type=MIT]
 ├── config.json
 ├── Assets/
-│   ├── logo.svg
-│   └── banner.png
+│   ├── logo.svg  [format=vector]
+│   └── banner.png  [size=1200x630]
 ├── Docs/
-│   ├── getting-started.md
-│   ├── api-reference.md
+│   ├── getting-started.md  [priority=high]
+│   ├── api-reference.md  [generated=true]  # Auto-generated
 │   └── Examples/
 │       ├── basic-usage.md
-│       └── advanced-config.md
+│       └── advanced-config.md  [status=draft]
 ├── Src/
-│   ├── index.ts
-│   ├── core/
-│   │   ├── parser.ts
-│   │   └── validator.ts
-│   └── utils/
-│       ├── helpers.ts
-│       └── constants.ts
-└── Tests/
-    ├── parser.test.ts
-    ├── validator.test.ts
-    └── Fixtures/
-        └── sample-data.json
+│   ├── index.ts  [entry=true]  # Main entry point
+│   ├── Core/
+│   │   ├── parser.ts  [tested=true, coverage=95]
+│   │   └── validator.ts  [tested=true, coverage=88]
+│   └── Utils/
+│       ├── helpers.ts  [deprecated=false]
+│       └── constants.ts  [immutable=true]
+├── Tests/
+│   ├── parser.test.ts  [suite=unit]
+│   ├── validator.test.ts  [suite=unit]
+│   └── Fixtures/
+│       └── sample-data.json
+├── Config/
+│   ├── base.json  [env=all]
+│   ├── development.json  [env=dev]  # Local settings
+│   └── production.json  [env=prod, secure=true]
+├── Shared/
+│   ├── types.ts -> ../Src/Core/types.ts
+│   ├── utils.ts -> ../Src/Utils/helpers.ts
+│   └── Config/ -> ../Config/
+└── Node_Modules/
+    ├── core -> ../Src/Core/
+    └── utils -> ../Src/Utils/
+
+11 directories, 22 files
 

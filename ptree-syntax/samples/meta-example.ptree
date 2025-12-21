@@ -1,22 +1,29 @@
-@ptree: spec
+# ============================================
+# EXAMPLE: META Nodes with // Suffix
+# ============================================
+#
+# This sample demonstrates META nodes, which are
+# organizational labels that end with // (double slash).
+#
+# META nodes are used to:
+# - Group related directories conceptually
+# - Add section headers to large trees
+# - Provide organizational context
+#
+# META nodes use SCREAM_TYPE naming convention
+# and are distinguished from ROOT nodes by their
+# position (not at the top level).
+#
+# ============================================
+
+@ptree: default
 @style: unicode
-@version: 1.0.0
-@name_type:[
-    ROOT: 'SCREAM_TYPE',
-    DIR: 'High_Type',
-    FILE: 'smol-type',
-    META: 'SCREAM_TYPE'
-]
-@separation_delimiters: [
-    '-',
-    '_',
-    '.'
-]
 
 PROJECT_STRUCTURE-1.0.0//
 ├── CONFIGURATION//
 │   ├── .env
 │   ├── .gitignore
+│   ├── .editorconfig
 │   └── config.json
 ├── SOURCE_CODE//
 │   ├── Src/
@@ -25,20 +32,29 @@ PROJECT_STRUCTURE-1.0.0//
 │   │   │   ├── parser.ts
 │   │   │   └── validator.ts
 │   │   └── Utils/
-│   │       └── helpers.ts
+│   │       ├── helpers.ts
+│   │       └── constants.ts
 │   └── Tests/
-│       └── parser.test.ts
+│       ├── parser.test.ts
+│       └── validator.test.ts
 ├── DOCUMENTATION//
 │   ├── Docs/
 │   │   ├── readme.md
-│   │   └── api.md
+│   │   ├── api.md
+│   │   └── guide.md
 │   └── Examples/
-│       └── basic.md
+│       ├── basic.md
+│       └── advanced.md
 ├── BUILD_OUTPUT//
 │   └── Dist/
 │       ├── index.js
-│       └── index.d.ts
+│       ├── index.d.ts
+│       └── index.js.map
 └── GENERATED//
-    └── Cache/
-        └── .cache
+    ├── Cache/
+    │   └── .cache
+    └── Temp/
+        └── .tmp
+
+10 directories, 21 files
 

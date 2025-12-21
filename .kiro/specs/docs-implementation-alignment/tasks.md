@@ -180,15 +180,15 @@
     - Recommend ptree extension for playground workspace
     - _Requirements: 13.1_
 
-- [ ] 16. Update Sample Files
-  - [ ] 16.1 Update samples/example.ptree with comprehensive features
+- [x] 16. Update Sample Files
+  - [x] 16.1 Update samples/example.ptree with comprehensive features
     - Include symlinks, inline metadata, summary lines
     - Use generic placeholder names
     - _Requirements: 5.1, 14.2_
-  - [ ] 16.2 Add samples/numeral-example.ptree
+  - [x] 16.2 Add samples/numeral-example.ptree
     - Demonstrate Roman numeral prefixed directories
     - _Requirements: 14.3_
-  - [ ] 16.3 Add samples/meta-example.ptree
+  - [x] 16.3 Add samples/meta-example.ptree
     - Demonstrate META nodes with // suffix
     - _Requirements: 14.4_
 

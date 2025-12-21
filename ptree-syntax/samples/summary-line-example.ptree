@@ -1,16 +1,5 @@
-@ptree: spec
+@ptree: default
 @style: unicode
-@version: 1.0.0
-@name_type:[
-    ROOT: 'SCREAM_TYPE',
-    DIR: 'High_Type',
-    FILE: 'smol-type'
-]
-@separation_delimiters: [
-    '-',
-    '_',
-    '.'
-]
 
 APPLICATION-1.0.0//
 ├── readme.md
