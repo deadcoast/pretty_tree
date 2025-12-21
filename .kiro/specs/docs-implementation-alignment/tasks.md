@@ -1,0 +1,235 @@
+# Implementation Plan
+
+- [x] 1. Fix Documentation Path References
+  - [x] 1.1 Update docs/ptree-spec/README.md with correct relative paths
+    - Change "ptree-training/01_VISION_AND_GOALS.md" to "01_VISION_AND_GOALS.md"
+    - Fix all 15 broken links to spec documents
+    - _Requirements: 1.1, 1.2_
+  - [x] 1.2 Write property test for documentation link validity
+    - **Property 1: Documentation Link Validity**
+    - **Validates: Requirements 1.3**
+
+- [x] 2. Update Canonical Header Documentation
+  - [x] 2.1 Update docs/ptree-spec/00_PTREE.md canonical header example
+    - Add EXT, META, NUMERAL to @name_type block
+    - Use correct spelling "separation_delimiters"
+    - _Requirements: 2.1, 2.3_
+  - [x] 2.2 Update docs/ptree-python/SPEC.md entity types table
+    - Add all six entities: ROOT, DIR, FILE, EXT, META, NUMERAL
+    - Update canonical header example
+    - _Requirements: 2.2_
+
+- [x] 3. Complete UniRule Documentation
+  - [x] 3.1 Update docs/ptree-python/GRAMMAR.md with all UniRules
+    - Document UniRule_1 through UniRule_6
+    - Include rule IDs (PT001-PT015) for each UniRule
+    - Add correct and incorrect examples with explanations
+    - _Requirements: 3.1, 3.2, 3.3_
+
+- [ ] 4. Update Semantic Token Documentation
+  - [ ] 4.1 Update docs/ptree-python/SEMANTIC_TOKENS.md with all 18 token types
+    - Add ptreeAttribute, ptreeAttributeKey, ptreeAttributeValue, ptreeInlineComment
+    - Document nt_index_type and nt_numeral modifiers
+    - Add theme customization examples for new tokens
+    - _Requirements: 4.1, 4.2, 4.3_
+  - [ ] 4.2 Write property test for semantic token documentation completeness
+    - **Property 2: Semantic Token Documentation Completeness**
+    - **Validates: Requirements 4.1**
+
+- [ ] 5. Checkpoint - Ensure documentation updates are complete
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [ ] 6. Create Playground Directory Structure
+  - [ ] 6.1 Create playground folder with subdirectories
+    - Create ptree-syntax/playground/ with demos/, profiles/, rules/, config/, themes/, scripts/
+    - _Requirements: 13.1_
+  - [ ] 6.2 Create playground README.md
+    - Document playground purpose and feature list
+    - _Requirements: 13.4_
+  - [ ] 6.3 Create QUICKSTART.md with step-by-step instructions
+    - Include 2-minute syntax highlighting guide
+    - Include validation testing instructions
+    - Include fixer testing instructions
+    - _Requirements: 18.1_
+
+- [ ] 7. Create Feature Demo Files
+  - [ ] 7.1 Create demos/01-basic-tree.ptree
+    - Demonstrate basic tree structure with scaffold characters
+    - Include inline comments explaining the demo
+    - _Requirements: 14.1, 14.2_
+  - [ ] 7.2 Create demos/02-name-types.ptree
+    - Demonstrate NAME_TYPE validation for ROOT, DIR, FILE
+    - Include valid and invalid examples
+    - _Requirements: 14.1, 14.3_
+  - [ ] 7.3 Create demos/03-roman-numerals.ptree
+    - Demonstrate NUMERAL prefix pattern (I_, II_, III_)
+    - _Requirements: 14.1_
+  - [ ] 7.4 Create demos/04-index-files.ptree
+    - Demonstrate (index) prefix convention
+    - Show (index), (index)-name, (index)_name patterns
+    - _Requirements: 14.1, 8.3_
+  - [ ] 7.5 Create demos/05-symlinks.ptree
+    - Demonstrate ` -> ` arrow syntax
+    - Show both file and directory symlink targets
+    - _Requirements: 14.1, 5.3, 9.3_
+  - [ ] 7.6 Create demos/06-inline-metadata.ptree
+    - Demonstrate bracket attributes [key=value]
+    - Demonstrate inline comments # comment
+    - _Requirements: 14.1, 5.2_
+  - [ ] 7.7 Create demos/07-summary-lines.ptree
+    - Demonstrate "N directories, M files" format
+    - _Requirements: 14.1_
+  - [ ] 7.8 Create demos/08-all-features.ptree
+    - Comprehensive demo exercising all features
+    - _Requirements: 5.1_
+
+- [ ] 8. Create Profile Comparison Files
+  - [ ] 8.1 Create profiles/default-profile.ptree
+    - Example using default profile settings
+    - _Requirements: 15.1_
+  - [ ] 8.2 Create profiles/spec-profile.ptree
+    - Example using spec profile with canonical headers
+    - _Requirements: 15.1_
+  - [ ] 8.3 Create profiles/README.md explaining differences
+    - Document validation behavior differences between profiles
+    - _Requirements: 15.3_
+  - [ ] 8.4 Write property test for profile validation difference
+    - **Property 3: Profile Validation Difference**
+    - **Validates: Requirements 15.2**
+
+- [ ] 9. Checkpoint - Ensure demo files are valid
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [ ] 10. Create Rule Test Files
+  - [ ] 10.1 Create rules/pt001-root-marker.ptree
+    - Intentionally trigger PT001 (root marker) error
+    - Include comments explaining the rule
+    - _Requirements: 19.1, 19.3_
+  - [ ] 10.2 Create rules/pt002-dir-marker.ptree
+    - Intentionally trigger PT002 (directory marker) error
+    - _Requirements: 19.1_
+  - [ ] 10.3 Create rules/pt003-ptree-directive.ptree
+    - Intentionally trigger PT003 (missing @ptree) warning
+    - _Requirements: 19.1_
+  - [ ] 10.4 Create rules/pt004-name-types.ptree
+    - Intentionally trigger PT004 (NAME_TYPE mismatch) error
+    - _Requirements: 19.1_
+  - [ ] 10.5 Create rules/pt005-version-delimiter.ptree
+    - Intentionally trigger PT005 (UniRule_1) error
+    - _Requirements: 19.1_
+  - [ ] 10.6 Create rules/pt006-no-spaces.ptree
+    - Intentionally trigger PT006 (spaces in names) error
+    - _Requirements: 19.1_
+  - [ ] 10.7 Create rules/pt007-ext-lowercase.ptree
+    - Intentionally trigger PT007 (uppercase extension) warning
+    - _Requirements: 19.1_
+  - [ ] 10.8 Create rules/pt008-mixed-delimiters.ptree
+    - Intentionally trigger PT008 (UniRule_5) warning
+    - _Requirements: 19.1_
+  - [ ] 10.9 Create rules/pt009-sorting.ptree
+    - Demonstrate PT009 (sorting) rule behavior
+    - _Requirements: 19.1_
+  - [ ] 10.10 Write property test for rule test file validation
+    - **Property 4: Rule Test File Validation**
+    - **Validates: Requirements 19.2**
+
+- [ ] 11. Create Configuration Testing Files
+  - [ ] 11.1 Create config/.ptreerc.json example
+    - Show rule enable/disable configuration
+    - Show NAME_TYPE mapping customization
+    - _Requirements: 20.1, 20.3_
+  - [ ] 11.2 Create config/strict-config.ptree
+    - Example with strict configuration
+    - _Requirements: 20.1_
+  - [ ] 11.3 Create config/relaxed-config.ptree
+    - Example with relaxed configuration
+    - _Requirements: 20.1_
+
+- [ ] 12. Create Theme Testing Files
+  - [ ] 12.1 Create playground/.vscode/settings.json
+    - Include semantic token color customizations for all 18 token types
+    - _Requirements: 16.1_
+  - [ ] 12.2 Create themes/all-tokens.ptree
+    - File exercising all semantic token types
+    - _Requirements: 16.3_
+
+- [ ] 13. Checkpoint - Ensure all playground files are valid
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [ ] 14. Create CLI Test Scripts
+  - [ ] 14.1 Create scripts/test-validate.sh
+    - Demonstrate validate command with various options
+    - Include --format json example
+    - _Requirements: 17.1, 17.3_
+  - [ ] 14.2 Create scripts/test-gen.sh
+    - Demonstrate gen command with profile and name-type options
+    - _Requirements: 17.1, 17.3_
+  - [ ] 14.3 Create scripts/test-fix.sh
+    - Demonstrate fix command with --write option
+    - _Requirements: 17.1_
+  - [ ] 14.4 Create scripts/test-diff.sh
+    - Demonstrate --diff option for previewing fixes
+    - _Requirements: 17.3_
+
+- [ ] 15. Update Extension Development Setup
+  - [ ] 15.1 Update ptree-syntax/.vscode/launch.json
+    - Add "Run Extension with Playground" configuration
+    - Configure to open playground folder on F5
+    - _Requirements: 21.1_
+  - [ ] 15.2 Create playground/.vscode/extensions.json
+    - Recommend ptree extension for playground workspace
+    - _Requirements: 13.1_
+
+- [ ] 16. Update Sample Files
+  - [ ] 16.1 Update samples/example.ptree with comprehensive features
+    - Include symlinks, inline metadata, summary lines
+    - Use generic placeholder names
+    - _Requirements: 5.1, 14.2_
+  - [ ] 16.2 Add samples/numeral-example.ptree
+    - Demonstrate Roman numeral prefixed directories
+    - _Requirements: 14.3_
+  - [ ] 16.3 Add samples/meta-example.ptree
+    - Demonstrate META nodes with // suffix
+    - _Requirements: 14.4_
+
+- [ ] 17. Update CLI Documentation
+  - [ ] 17.1 Update ptree-syntax/README.md CLI section
+    - Document --format json option
+    - Document --diff option
+    - Document --name-type option with available NAME_TYPEs
+    - _Requirements: 6.1, 6.2, 6.3_
+
+- [ ] 18. Update Configuration Documentation
+  - [ ] 18.1 Update docs/ptree-python/GRAMMAR.md configuration section
+    - Document EXT and NUMERAL in ENTITY_NAME_TYPES
+    - Document FILE_EXTENSION_SPLIT option
+    - Document all rule IDs PT001-PT015
+    - _Requirements: 7.1, 7.2, 7.3_
+  - [ ] 18.2 Document index-type NAME_TYPE in GRAMMAR.md
+    - Include pattern, examples, and usage
+    - _Requirements: 8.1_
+
+- [ ] 19. Update Symlink and Inline Metadata Documentation
+  - [ ] 19.1 Update docs/ptree-python/SPEC.md symlink section
+    - Document ` -> ` syntax
+    - Include file and directory symlink examples
+    - _Requirements: 9.1, 9.3_
+  - [ ] 19.2 Update docs/ptree-python/SPEC.md inline metadata section
+    - Document bracket attribute syntax [key=value]
+    - Document inline comment syntax # comment
+    - Document two-space delimiter requirement
+    - _Requirements: 10.1, 10.2, 10.3_
+  - [ ] 19.3 Update docs/ptree-python/SPEC.md summary line section
+    - Document "N directories, M files" pattern
+    - Explain metadata treatment
+    - _Requirements: 11.1, 11.2_
+
+- [ ] 20. Update Error Handling Documentation
+  - [ ] 20.1 Create or update error handling documentation
+    - Document all rule IDs PT000-PT015 with error messages
+    - Document error recovery behavior
+    - Document JSON parse error reporting
+    - _Requirements: 12.1, 12.3_
+
+- [ ] 21. Final Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.

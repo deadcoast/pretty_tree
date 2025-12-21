@@ -105,7 +105,10 @@ Example:
 @name_type:[
   ROOT: 'SCREAM_TYPE',
   DIR: 'High_Type',
-  FILE: 'smol-type'
+  FILE: 'smol-type',
+  EXT: 'smol-type',
+  META: 'SCREAM_TYPE',
+  NUMERAL: 'NUMERAL'
 ]
 
 @separation_delimiters: [

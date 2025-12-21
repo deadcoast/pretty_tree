@@ -125,11 +125,32 @@ The delimiter used to append a version to a name, e.g.:
 
 ## UNIVERSAL RULES
 
-Universal Rules (UniRules) are naming conventions that apply across all NAME_TYPEs to ensure consistency and prevent ambiguity.
+Universal Rules (UniRules) are naming conventions that apply across all NAME_TYPEs to ensure consistency and prevent ambiguity. Each UniRule is enforced by one or more validation rules (PT001-PT015).
 
-### [UniRule_1] Version Delimiter Conflict
+### Rule ID Quick Reference
+
+| Rule ID | UniRule | Description | Default Severity |
+|---------|---------|-------------|------------------|
+| PT000 | - | Parser errors and unknown directives | warning/info |
+| PT001 | UniRule_3 | Root label must end with `//` | error |
+| PT002 | UniRule_2 | Directory nodes must end with `/` | error |
+| PT003 | - | Require `@ptree` directive | warning |
+| PT004 | - | Enforce NAME_TYPE patterns by entity | error |
+| PT005 | UniRule_1 | Version delimiter conflict | error |
+| PT006 | UniRule_4 | No spaces in node names | error |
+| PT007 | - | Extensions should be lowercase | warning |
+| PT008 | UniRule_5 | No mixing `-` and `_` in bare names | warning |
+| PT009 | - | Sibling sorting (dirs first, then files) | warning (disabled) |
+| PT010 | - | (spec) `@ptree` must be "spec" | error |
+| PT011 | - | (spec) `@style` must be "unicode" | error |
+| PT012 | - | (spec) `@version` must be SEMVER | error |
+| PT013 | - | (spec) `@name_type` block required | error |
+| PT014 | - | (spec) `@separation_delimiters` required | error |
+| PT015 | - | (spec) Root label must be `PTREE-<@version>//` | error |
 
 ---
+
+### [UniRule_1] Version Delimiter Conflict
 
 [NAME_TYPE] and [VERSION_DELIMITER] MUST NEVER use the same delimiter character **when the NAME_TYPE has a WORD_DELIMITER**.
 
@@ -139,19 +160,24 @@ Universal Rules (UniRules) are naming conventions that apply across all NAME_TYP
 
 **Rule ID:** PT005
 
-**Why:** This prevents ambiguous scanning like `NAME_TYPE_1.0.0` where `_` is doing double-duty as both word separator and version delimiter.
+**Severity:** error (default)
+
+**Why:** This prevents ambiguous scanning like `NAME_TYPE_1.0.0` where `_` is doing double-duty as both word separator and version delimiter. Without this rule, parsers cannot reliably determine where the name ends and the version begins.
 
 #### EXAMPLES
 
 ---
 [E01] [SCREAM_TYPE]
 
-INCORRECT:
+SCREAM_TYPE uses `_` as word delimiter, so version delimiter must be `-`.
+
+❌ INCORRECT:
 
 - `[SCREAM_TYPE]_[SEMVER]`
 - output: `API_CLIENT_1.0.0`
+- **Error:** Version delimiter "_" must not match the SCREAM_TYPE word delimiter "_" (UniRule_1).
 
-CORRECT:
+✅ CORRECT:
 
 - `[SCREAM_TYPE]-[SEMVER]`
 - output: `API_CLIENT-1.0.0`
@@ -159,12 +185,15 @@ CORRECT:
 ---
 [E02] [Cap-Type]
 
-INCORRECT:
+Cap-Type uses `-` as word delimiter, so version delimiter must be `_`.
+
+❌ INCORRECT:
 
 - `[Cap-Type]-[SEMVER]`
 - output: `User-Guide-1.0.0`
+- **Error:** Version delimiter "-" must not match the Cap-Type word delimiter "-" (UniRule_1).
 
-CORRECT:
+✅ CORRECT:
 
 - `[Cap-Type]_[SEMVER]`
 - output: `User-Guide_1.0.0`
@@ -172,12 +201,15 @@ CORRECT:
 ---
 [E03] [snake_type]
 
-INCORRECT:
+snake_type uses `_` as word delimiter, so version delimiter must be `-`.
+
+❌ INCORRECT:
 
 - `[snake_type]_[SEMVER]`
 - output: `user_guide_1.0.0`
+- **Error:** Version delimiter "_" must not match the snake_type word delimiter "_" (UniRule_1).
 
-CORRECT:
+✅ CORRECT:
 
 - `[snake_type]-[SEMVER]`
 - output: `user_guide-1.0.0`
@@ -185,7 +217,9 @@ CORRECT:
 ---
 [E04] [CamelType]
 
-CORRECT (both allowed):
+CamelType has no word delimiter, so both `-` and `_` are allowed.
+
+✅ CORRECT (both allowed):
 
 - `[CamelType]-[SEMVER]` → `BuildTools-1.0.0`
 - `[CamelType]_[SEMVER]` → `BuildTools_1.0.0`
@@ -193,17 +227,20 @@ CORRECT (both allowed):
 ---
 [E05] [smol-type]
 
-INCORRECT:
+smol-type uses `-` as word delimiter, so version delimiter must be `_`.
+
+❌ INCORRECT:
 
 - `[smol-type]-[SEMVER]` → `data-dictionary-1.0.0`
+- **Error:** Version delimiter "-" must not match the smol-type word delimiter "-" (UniRule_1).
 
-CORRECT:
+✅ CORRECT:
 
 - `[smol-type]_[SEMVER]` → `data-dictionary_1.0.0`
 
 ---
 
-### [UniRule_2]
+### [UniRule_2] Directory Marker
 
 [DIR] nodes MUST end with `/`.
 
@@ -215,7 +252,13 @@ This is the opinionated choice `(A)`:
 
 **Rule ID:** PT002
 
-**Examples:**
+**Severity:** error (default)
+
+**Mode:** `parents` (default) - only validates nodes that have children
+
+**Why:** Without trailing slashes, it's impossible to distinguish directories from extensionless files without filesystem access. This rule ensures ptree documents are self-describing.
+
+#### EXAMPLES
 
 ✅ CORRECT:
 ```ptree
@@ -230,10 +273,11 @@ This is the opinionated choice `(A)`:
 ├── docs
 └── tests
 ```
+**Error:** Parent node has children but does not end with "/" (directory marker).
 
 ---
 
-### [UniRule_3]
+### [UniRule_3] Root Label Marker
 
 [ROOT] label MUST end with `//` in the **default ruleset**.
 
@@ -241,7 +285,11 @@ This makes the root label visually distinct from real filesystem directories (wh
 
 **Rule ID:** PT001
 
-**Examples:**
+**Severity:** error (default)
+
+**Why:** The double-slash `//` clearly distinguishes the root label (a logical name for the tree) from actual filesystem paths. This prevents confusion when copying paths from ptree documents.
+
+#### EXAMPLES
 
 ✅ CORRECT:
 ```ptree
@@ -256,10 +304,11 @@ PTREE-1.0.0/
 ├── src/
 └── README.md
 ```
+**Error:** Root line should be a root label ending with "//" (default ruleset).
 
 ---
 
-### [UniRule_4]
+### [UniRule_4] No Spaces in Names
 
 Node names MUST NOT contain spaces in the default ruleset.
 
@@ -270,7 +319,11 @@ Use:
 
 **Rule ID:** PT006
 
-**Examples:**
+**Severity:** error (default)
+
+**Why:** Spaces in filenames cause issues with shell commands, URLs, and many tools. Using delimiters like `-` or `_` ensures compatibility across platforms and toolchains.
+
+#### EXAMPLES
 
 ✅ CORRECT:
 ```ptree
@@ -285,10 +338,11 @@ Use:
 ├── User Guide/
 └── getting started.md
 ```
+**Error:** Spaces are not allowed in node names in the default ruleset. Use "-" or "_".
 
 ---
 
-### [UniRule_5]
+### [UniRule_5] No Mixed Delimiters
 
 [NAME_TYPE] MUST NOT mix `-` and `_` in a single bare name.
 
@@ -296,24 +350,30 @@ This rule prevents ambiguous names where the delimiter purpose is unclear.
 
 **Rule ID:** PT008
 
-**Examples:**
+**Severity:** warning (default)
+
+**Why:** Mixing delimiters makes it impossible to determine the intended NAME_TYPE. Is `my_project-name` a snake_type with an errant hyphen, or a smol-type with an errant underscore? Consistent delimiter usage enables reliable classification.
+
+#### EXAMPLES
 
 ✅ CORRECT:
-- `data-dictionary`
-- `data_dictionary`
-- `user-guide-v2`
-- `user_guide_v2`
+- `data-dictionary` (smol-type, uses `-`)
+- `data_dictionary` (snake_type, uses `_`)
+- `user-guide-v2` (smol-type, consistent `-`)
+- `user_guide_v2` (snake_type, consistent `_`)
 
 ❌ INCORRECT:
 - `data_dictionary-file`
 - `user-guide_v2`
 - `my_project-name`
 
+**Error:** Do not mix '-' and '_' in the same bare name (UniRule_5).
+
 **Note:** This rule applies to the bare name only, not to version suffixes. A name like `data-dictionary_1.0.0` is valid because `_` is the version delimiter, not part of the bare name.
 
 ---
 
-### [UniRule_6]
+### [UniRule_6] Dot Reservation
 
 `.` is reserved for:
 
@@ -323,7 +383,11 @@ This rule prevents ambiguous names where the delimiter purpose is unclear.
 
 If dotted base names are not desired, disable dotted NAME_TYPES and/or enable stricter rules.
 
-**Examples:**
+**Related Rules:** PT004 (NAME_TYPE enforcement), PT007 (extension validation)
+
+**Why:** Dots have special meaning in filenames (extension separator) and versions (SEMVER). Unrestricted dot usage in base names creates parsing ambiguity. The `dot.smol-type` NAME_TYPE provides an escape hatch for legitimate use cases like `tsconfig.base.json`.
+
+#### EXAMPLES
 
 ✅ CORRECT (extension separator):
 ```ptree
@@ -332,18 +396,259 @@ If dotted base names are not desired, disable dotted NAME_TYPES and/or enable st
 └── data.tar.gz
 ```
 
-✅ CORRECT (dot.smol-type):
+✅ CORRECT (dot.smol-type NAME_TYPE):
 ```ptree
 ├── tsconfig.base.json
 ├── vite.config.ts
 └── eslint.config.js
 ```
 
-❌ INCORRECT (ambiguous dot usage):
+❌ INCORRECT (ambiguous dot usage without dot.smol-type):
 ```ptree
 ├── my.project.name/
 └── user.data.file
 ```
+**Error:** DIR name "my.project.name" does not match any allowed NAME_TYPES.
+
+---
+
+## Additional Validation Rules
+
+Beyond the UniRules, ptree provides additional validation rules for specific use cases.
+
+### [PT000] Parser Errors
+
+Reports parser errors and unknown directives.
+
+**Severity:** warning (parser errors), info (unknown directives)
+
+**Examples:**
+
+```ptree
+@unknown_directive: value
+```
+**Info:** Unknown directive "@unknown_directive". This directive will be ignored.
+
+---
+
+### [PT003] Require @ptree Directive
+
+The `@ptree` directive SHOULD be present in the document header.
+
+**Severity:** warning (default)
+
+**Why:** The `@ptree` directive declares the profile and enables profile-specific validation. Without it, the validator uses default settings which may not match the author's intent.
+
+#### EXAMPLES
+
+✅ CORRECT:
+```ptree
+@ptree: default
+
+PROJECT//
+├── src/
+└── README.md
+```
+
+❌ INCORRECT (missing directive):
+```ptree
+PROJECT//
+├── src/
+└── README.md
+```
+**Warning:** Missing required directive: @ptree: <version>
+
+---
+
+### [PT004] NAME_TYPE Enforcement
+
+Entity names (ROOT, DIR, FILE, META) MUST match their configured NAME_TYPE patterns.
+
+**Severity:** error (default)
+
+**Why:** Consistent naming conventions improve readability and enable tooling. This rule enforces the NAME_TYPE patterns defined in `ENTITY_NAME_TYPES`.
+
+#### EXAMPLES
+
+With default config (`DIR: ['Cap-Type', 'High_Type', 'CamelType', 'dotdir']`):
+
+✅ CORRECT:
+```ptree
+├── User-Guide/
+├── User_Guide/
+├── UserGuide/
+└── .github/
+```
+
+❌ INCORRECT:
+```ptree
+├── user-guide/
+└── USER_GUIDE/
+```
+**Error:** DIR name "user-guide" does not match any allowed NAME_TYPES (Cap-Type, High_Type, CamelType, dotdir).
+
+---
+
+### [PT007] Extension Validation
+
+File extensions SHOULD be lowercase.
+
+**Severity:** warning (default)
+
+**Why:** Lowercase extensions are the convention across most platforms and tools. Mixed-case extensions can cause issues on case-sensitive filesystems.
+
+#### EXAMPLES
+
+✅ CORRECT:
+```ptree
+├── readme.md
+├── config.json
+└── image.png
+```
+
+❌ INCORRECT:
+```ptree
+├── README.MD
+├── Config.JSON
+└── Image.PNG
+```
+**Warning:** File extension should be lowercase (found: .MD).
+
+---
+
+### [PT009] Sibling Sorting
+
+Within each directory, list directories first, then files; each group sorted lexicographically.
+
+**Severity:** warning (default)
+
+**Enabled:** false (default) - opt-in rule
+
+**Options:**
+- `case_sensitive`: false (default) - case-insensitive sorting
+
+**Why:** Consistent ordering makes trees easier to scan and compare. This matches the default behavior of many file explorers and the `tree` command.
+
+#### EXAMPLES
+
+✅ CORRECT:
+```ptree
+├── docs/
+├── src/
+├── tests/
+├── README.md
+└── package.json
+```
+
+❌ INCORRECT:
+```ptree
+├── README.md
+├── docs/
+├── package.json
+├── src/
+└── tests/
+```
+**Warning:** Sibling ordering violation: expected directories first, then files; each group lexicographically.
+
+---
+
+## Spec Profile Rules (PT010-PT015)
+
+The spec profile (`@ptree: spec`) enables additional rules for canonical ptree documents. These rules are disabled by default and only activate when the profile is set to "spec".
+
+### [PT010] Spec @ptree Value
+
+In spec profile, `@ptree` directive value MUST be "spec".
+
+**Severity:** error
+
+---
+
+### [PT011] Spec @style Value
+
+In spec profile, `@style` directive MUST be "unicode".
+
+**Severity:** error
+
+---
+
+### [PT012] Spec @version Required
+
+In spec profile, `@version` directive is required and MUST be valid SEMVER.
+
+**Severity:** error
+
+---
+
+### [PT013] Spec @name_type Block
+
+In spec profile, `@name_type` block is required and MUST declare canonical NAME_TYPES:
+
+```ptree
+@name_type:[
+    ROOT: 'SCREAM_TYPE',
+    DIR: 'High_Type',
+    FILE: 'smol-type'
+]
+```
+
+**Severity:** error
+
+---
+
+### [PT014] Spec @separation_delimiters Block
+
+In spec profile, `@separation_delimiters` block is required and MUST declare:
+
+```ptree
+@separation_delimiters: [
+    '-',
+    '_',
+    '.'
+]
+```
+
+**Severity:** error
+
+---
+
+### [PT015] Spec Root Label Format
+
+In spec profile, root label MUST be `PTREE-<@version>//` where the version matches the `@version` directive.
+
+**Severity:** error
+
+#### EXAMPLES
+
+✅ CORRECT:
+```ptree
+@ptree: spec
+@style: unicode
+@version: 1.0.0
+@name_type:[
+    ROOT: 'SCREAM_TYPE',
+    DIR: 'High_Type',
+    FILE: 'smol-type'
+]
+@separation_delimiters: [
+    '-',
+    '_',
+    '.'
+]
+
+PTREE-1.0.0//
+├── Docs/
+└── readme.md
+```
+
+❌ INCORRECT (version mismatch):
+```ptree
+@ptree: spec
+@version: 2.0.0
+
+PTREE-1.0.0//
+```
+**Error:** Root label version "1.0.0" must match @version "2.0.0".
 
 ---
 

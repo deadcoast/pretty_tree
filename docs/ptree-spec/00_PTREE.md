@@ -125,19 +125,22 @@ A PTREE document can declare its intent up front:
 ```ptree
 @ptree: spec
 @style: unicode
-@version: 0.0.2
+@version: 1.0.0
 @name_type:[
     ROOT: 'SCREAM_TYPE',
     DIR: 'High_Type',
-    FILE: 'smol-type'
+    FILE: 'smol-type',
+    EXT: 'smol-type',
+    META: 'SCREAM_TYPE',
+    NUMERAL: 'NUMERAL'
 ]
-@seperation_delimiters: [
+@separation_delimiters: [
     '-',
     '_',
     '.'
 ]
 
-PTREE-0.0.2//
+PTREE-1.0.0//
 ├── readme.md
 ├── changelog.md
 └── Docs/
