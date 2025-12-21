@@ -138,4 +138,82 @@ suite('Parser Tests', () => {
     // Should have error about depth jump
     assert.ok(doc.errors.some(e => e.message.includes('depth') || e.message.includes('jump')));
   });
+
+  test('parses Roman numeral prefixed directories', () => {
+    const text = `ROOT//
+├── I_Introduction/
+├── II_Content/
+│   └── chapter.md
+├── III_Conclusion/
+└── IV_Appendix/`;
+    const doc = parsePtreeDocument(text);
+    
+    assert.strictEqual(doc.nodes.length, 5);
+    
+    const intro = doc.nodes.find(n => n.name === 'I_Introduction/');
+    const content = doc.nodes.find(n => n.name === 'II_Content/');
+    const conclusion = doc.nodes.find(n => n.name === 'III_Conclusion/');
+    const appendix = doc.nodes.find(n => n.name === 'IV_Appendix/');
+    
+    assert.strictEqual(intro?.numeralPrefix, 'I');
+    assert.strictEqual(content?.numeralPrefix, 'II');
+    assert.strictEqual(conclusion?.numeralPrefix, 'III');
+    assert.strictEqual(appendix?.numeralPrefix, 'IV');
+    
+    // Non-directory nodes should not have numeral prefix
+    const chapter = doc.nodes.find(n => n.name === 'chapter.md');
+    assert.strictEqual(chapter?.numeralPrefix, undefined);
+  });
+
+  test('does not parse invalid Roman numeral prefixes', () => {
+    const text = `ROOT//
+├── IIII_Invalid/
+├── VV_AlsoInvalid/
+└── regular_dir/`;
+    const doc = parsePtreeDocument(text);
+    
+    // IIII and VV are not valid Roman numerals
+    const invalid1 = doc.nodes.find(n => n.name === 'IIII_Invalid/');
+    const invalid2 = doc.nodes.find(n => n.name === 'VV_AlsoInvalid/');
+    const regular = doc.nodes.find(n => n.name === 'regular_dir/');
+    
+    assert.strictEqual(invalid1?.numeralPrefix, undefined);
+    assert.strictEqual(invalid2?.numeralPrefix, undefined);
+    assert.strictEqual(regular?.numeralPrefix, undefined);
+  });
+
+  test('parses index file prefix', () => {
+    const text = `ROOT//
+├── (index).md
+├── (index)-introduction.md
+├── (index)_chapter.md
+└── regular-file.md`;
+    const doc = parsePtreeDocument(text);
+    
+    assert.strictEqual(doc.nodes.length, 4);
+    
+    const index1 = doc.nodes.find(n => n.name === '(index).md');
+    const index2 = doc.nodes.find(n => n.name === '(index)-introduction.md');
+    const index3 = doc.nodes.find(n => n.name === '(index)_chapter.md');
+    const regular = doc.nodes.find(n => n.name === 'regular-file.md');
+    
+    assert.strictEqual(index1?.isIndexFile, true);
+    assert.strictEqual(index2?.isIndexFile, true);
+    assert.strictEqual(index3?.isIndexFile, true);
+    assert.strictEqual(regular?.isIndexFile, undefined);
+  });
+
+  test('does not mark directories as index files', () => {
+    const text = `ROOT//
+├── (index)/
+└── (index)-dir/`;
+    const doc = parsePtreeDocument(text);
+    
+    // Directories should not be marked as index files
+    const dir1 = doc.nodes.find(n => n.name === '(index)/');
+    const dir2 = doc.nodes.find(n => n.name === '(index)-dir/');
+    
+    assert.strictEqual(dir1?.isIndexFile, undefined);
+    assert.strictEqual(dir2?.isIndexFile, undefined);
+  });
 });

@@ -24,6 +24,8 @@ export type PtreeNode = {
   startCol: number; // start of name in the raw line
   endCol: number; // end of name in the raw line
   hasChildren: boolean;
+  numeralPrefix?: string; // Roman numeral prefix if present (e.g., "I", "II", "III")
+  isIndexFile?: boolean; // True if file name starts with (index) prefix
 };
 
 export type PtreeParseError = {
@@ -42,6 +44,59 @@ export type PtreeDocument = {
 };
 
 const DIRECTIVE_RE = /^\s*(@[A-Za-z][A-Za-z0-9_-]*)(?:\s*[:=])?(.*)$/;
+
+// Roman numeral prefix pattern: [NUMERAL]_[remainder]
+const NUMERAL_PREFIX_RE = /^([IVXLCDM]+)_(.+)$/;
+
+// Index file pattern: (index) prefix followed by optional separator and name
+const INDEX_FILE_RE = /^\(index\)(?:[-_])?(.*)$/;
+
+/**
+ * Parse an index file prefix from a file name.
+ * Matches pattern: (index) or (index)-name or (index)_name
+ * @param name The file name to parse
+ * @returns Object with isIndex flag and remainder (the part after the prefix)
+ */
+export function parseIndexFile(name: string): { isIndex: boolean; remainder: string } {
+  const match = name.match(INDEX_FILE_RE);
+  if (match) {
+    return { isIndex: true, remainder: match[1] || '' };
+  }
+  return { isIndex: false, remainder: name };
+}
+
+/**
+ * Parse a Roman numeral prefix from a directory name.
+ * Matches pattern: [NUMERAL]_[remainder] (e.g., "I_Introduction", "II_Content")
+ * @param name The directory name to parse
+ * @returns Object with numeral (or null if no match) and remainder
+ */
+export function parseNumeralPrefix(name: string): { numeral: string | null; remainder: string } {
+  const match = name.match(NUMERAL_PREFIX_RE);
+  if (match) {
+    return { numeral: match[1], remainder: match[2] };
+  }
+  return { numeral: null, remainder: name };
+}
+
+/**
+ * Validate that a string is a valid Roman numeral (I-M, values 1-1000).
+ * Uses the standard Roman numeral format with subtractive notation.
+ * @param s The string to validate
+ * @returns true if the string is a valid Roman numeral
+ */
+export function isValidRomanNumeral(s: string): boolean {
+  if (!s || s.length === 0) {
+    return false;
+  }
+  // Standard Roman numeral regex supporting values 1-3999
+  // M{0,3} = 0-3000
+  // (CM|CD|D?C{0,3}) = 0-900 (CM=900, CD=400, D=500, C=100)
+  // (XC|XL|L?X{0,3}) = 0-90 (XC=90, XL=40, L=50, X=10)
+  // (IX|IV|V?I{0,3}) = 0-9 (IX=9, IV=4, V=5, I=1)
+  const ROMAN_RE = /^M{0,3}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$/;
+  return ROMAN_RE.test(s) && s.length > 0;
+}
 
 // Unicode or ASCII connectors.
 const NODE_RE = /^((?:(?:(?:\u2502|\|) {3}| {4})*))((?:\u251C\u2500\u2500|\u2514\u2500\u2500|\|--|`--))\s+(.+)$/;
@@ -189,6 +244,26 @@ export function parsePtreeDocument(text: string): PtreeDocument {
       const startCol = line.indexOf(remainder);
       const endCol = startCol + name.length;
 
+      // Check for Roman numeral prefix in directory names
+      let numeralPrefix: string | undefined;
+      if (name.endsWith('/')) {
+        // Strip trailing slash for numeral parsing
+        const dirName = name.slice(0, -1);
+        const { numeral } = parseNumeralPrefix(dirName);
+        if (numeral && isValidRomanNumeral(numeral)) {
+          numeralPrefix = numeral;
+        }
+      }
+
+      // Check for index file prefix in file names (not directories)
+      let isIndexFile: boolean | undefined;
+      if (!name.endsWith('/') && !name.endsWith('//')) {
+        const { isIndex } = parseIndexFile(name);
+        if (isIndex) {
+          isIndexFile = true;
+        }
+      }
+
       nodes.push({
         line: i,
         raw: line,
@@ -198,7 +273,9 @@ export function parsePtreeDocument(text: string): PtreeDocument {
         symlinkTarget,
         startCol,
         endCol,
-        hasChildren: false
+        hasChildren: false,
+        numeralPrefix,
+        isIndexFile
       });
       continue;
     }

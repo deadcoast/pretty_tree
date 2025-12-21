@@ -9,7 +9,7 @@ It is intentionally **product- and implementation-agnostic**:
 - It does **not** prescribe editor internals, regexes, token scopes, or parser code.
 - It focuses on **meaning**, **intent**, **interoperability**, and **how people should use PTREE**.
 
-If you are looking for implementation details (grammar files, folding providers, CLI flags, validators), those belong in tooling docs and reference implementations—not in this suite.
+If you are looking for implementation details (grammar files, folding providers, CLI flags, validators) SEE [ptree syntax docs](ptree-syntax/docs/)
 
 ---
 
@@ -59,39 +59,50 @@ PTREE exists to fill that gap with a standard that is:
 
 ## The suite at a glance
 
-1. **01 — Vision and Goals**  
+1. [**01 — Vision and Goals**](01_VISION_AND_GOALS.md)
    What PTREE is trying to accomplish, and what it intentionally avoids.
 
-2. **02 — Design Principles**  
+2. [**02 — Design Principles**](02_DESIGN_PRINCIPLES.md)
    The philosophy behind the standard: readability, stability, interoperability.
 
-3. **03 — Concepts and Mental Model**  
+3. [**03 — Concepts and Mental Model**](03_CONCEPTS.md)
    How to think about PTREE documents (tree, nodes, profiles, naming).
 
-4. **04 — Authoring Guide**  
+4. [**04 — Authoring Guide**](04_AUTHORING_GUIDE.md)
    How humans should write PTREE that is useful long-term.
 
-5. **05 — Profiles**  
+5. [**05 — Profiles**](05_PROFILES.md)
    Why PTREE supports profiles (like “spec” vs “default”) and what each is for.
 
-6. **06 — Configuration and Rule Model**  
+6. [**06 — Configuration and Rule Model**](06_CONFIGURATION_MODEL.md)
    The “markdownlint-style” configuration philosophy, without implementation detail.
 
-7. **07 — Use Cases**  
+7. [**07 — Use Cases**](07_USE_CASES.md)
    Where PTREE is most valuable in real workflows.
 
-8. **08 — Interoperability**  
+8. [**08 — Interoperability**](08_INTEROPERABILITY.md)
    How PTREE relates to Markdown, `tree` output, ASCII vs Unicode, and other systems.
 
-9. **09 — Examples and Patterns**  
+9. [**09 — Examples and Patterns**](09_EXAMPLES.md)
    Canonical patterns and example trees (generic/sanitized).
 
-10. **10 — Governance and Versioning**  
+10. [**10 — Governance and Versioning**](10_GOVERNANCE_VERSIONING.md)
    How PTREE evolves without breaking documents.
 
-11. **11 — Rationale**  
+11. [**11 — Rationale**](11_RATIONALE.md)
    The reasons behind the “opinionated” choices.
 
+12. [**12 — Glossary**](12_GLOSSARY.md)
+   The terms used in the spec.
+
+13. [**13 — FAQ**](13_FAQ.md)
+   Frequently asked questions.
+
+14.[**14 - Adoption Guide**](14_ADOPTION_GUIDE.md)
+   How to adopt PTREE in your project or team.
+
+15. [**15 — Positioning**](15_POSITIONING.md)
+   How to position PTREE in your documentation.
 ---
 
 ## Quick definition

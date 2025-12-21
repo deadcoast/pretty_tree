@@ -1,6 +1,6 @@
 # Implementation Plan
 
-- [-] 1. Extend NAME_TYPE Registry with NUMERAL and index-type
+- [x] 1. Extend NAME_TYPE Registry with NUMERAL and index-type
   - [x] 1.1 Add NUMERAL NAME_TYPE definition to ptree.default-config.json
     - Add pattern `^[IVXLCDM]+$` with examples I, II, III, IV, V, X, L, C, D, M
     - Set word_delimiter to null, allowed_version_delimiters to ["-", "_"]
@@ -18,37 +18,37 @@
     - **Property 2: NAME_TYPE Pattern-Example Consistency**
     - **Validates: Requirements 1.2**
 
-- [ ] 2. Implement Roman Numeral Parser
-  - [ ] 2.1 Create parseNumeralPrefix function in parser.ts
+- [x] 2. Implement Roman Numeral Parser
+  - [x] 2.1 Create parseNumeralPrefix function in parser.ts
     - Parse `[NUMERAL]_[remainder]` pattern from directory names
     - Return { numeral: string | null, remainder: string }
     - _Requirements: 4.1, 4.3_
-  - [ ] 2.2 Create isValidRomanNumeral validation function
+  - [x] 2.2 Create isValidRomanNumeral validation function
     - Validate Roman numeral format (I-M, values 1-1000)
     - Use regex: `^M{0,3}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$`
     - _Requirements: 4.5_
-  - [ ] 2.3 Extend PtreeNode type with numeralPrefix field
+  - [x] 2.3 Extend PtreeNode type with numeralPrefix field
     - Add optional numeralPrefix: string field
     - Populate during parsing when NUMERAL pattern detected
     - _Requirements: 4.1_
-  - [ ] 2.4 Write property test for Roman numeral validation
+  - [x] 2.4 Write property test for Roman numeral validation
     - **Property 6: Roman Numeral Validation**
     - **Validates: Requirements 4.5**
 
-- [ ] 3. Implement Index File Recognition
-  - [ ] 3.1 Create parseIndexFile function in parser.ts
+- [x] 3. Implement Index File Recognition
+  - [x] 3.1 Create parseIndexFile function in parser.ts
     - Parse `(index)` prefix pattern
     - Return { isIndex: boolean, remainder: string }
     - _Requirements: 3.2_
-  - [ ] 3.2 Extend PtreeNode type with isIndexFile field
+  - [x] 3.2 Extend PtreeNode type with isIndexFile field
     - Add optional isIndexFile: boolean field
     - Populate during parsing when (index) prefix detected
     - _Requirements: 3.2_
-  - [ ] 3.3 Update validator to allow (index) prefix in FILE names
+  - [x] 3.3 Update validator to allow (index) prefix in FILE names
     - Skip NAME_TYPE validation for (index) prefix portion
     - Validate remainder against FILE NAME_TYPE rules
     - _Requirements: 3.5_
-  - [ ] 3.4 Write property test for index file recognition
+  - [x] 3.4 Write property test for index file recognition
     - **Property 12: Index File Recognition**
     - **Validates: Requirements 3.2, 3.5**
 

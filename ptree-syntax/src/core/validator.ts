@@ -1,4 +1,4 @@
-import { PtreeDocument, PtreeNode } from './parser';
+import { PtreeDocument, PtreeNode, parseIndexFile } from './parser';
 import { NameTypeDef, PtreeConfig, RuleSetting, Severity } from './config';
 
 export type LintMessage = {
@@ -407,7 +407,18 @@ export function validatePtreeDocument(doc: PtreeDocument, config: PtreeConfig): 
       if (allowed.length === 0) continue;
 
       const bareWithExt = stripTrailingMarkers(node.name);
-      const fileBase = kind === 'FILE' ? splitFileParts(bareWithExt, fileSplit).stem : bareWithExt;
+      let fileBase = kind === 'FILE' ? splitFileParts(bareWithExt, fileSplit).stem : bareWithExt;
+
+      // For index files, validate only the remainder after the (index) prefix
+      if (kind === 'FILE' && node.isIndexFile) {
+        const { remainder } = parseIndexFile(fileBase);
+        // If remainder is empty (just "(index)"), skip NAME_TYPE validation
+        if (remainder === '') {
+          continue;
+        }
+        // Validate the remainder against FILE NAME_TYPE rules
+        fileBase = remainder;
+      }
 
       const { base, versionDelimiter, version } = splitVersion(fileBase);
 

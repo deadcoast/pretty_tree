@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark light" />
+  <title>PTREE — Pretty Tree</title>
+  <meta name="description" content="PTREE standardizes directory trees for docs: readable, foldable, Markdown-native, and lintable with configurable naming rules." />
+  <meta property="og:title" content="PTREE — Pretty Tree" />
+  <meta property="og:description" content="Directory trees that read like documentation and behave like code." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Optional: swap to your brand font. System font stack is already used. -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="site-header" id="top">
+    <div class="container header-row">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">⎇</div>
+        <div class="brand-text">
+          <div class="brand-name">PTREE</div>
+          <div class="brand-tag">Pretty Tree Standard</div>
+        </div>
+      </div>
+
+      <nav class="nav" aria-label="Primary">
+        <a href="#features">Features</a>
+        <a href="#profiles">Profiles</a>
+        <a href="#examples">Examples</a>
+        <a href="#faq">FAQ</a>
+        <a href="#get-started" class="nav-cta">Get Started</a>
+      </nav>
+
+      <div class="header-actions">
+        <button class="btn ghost" id="themeToggle" type="button" aria-label="Toggle theme">
+          <span class="btn-ico" aria-hidden="true">☾</span>
+          <span class="btn-text">Theme</span>
+        </button>
+        <a class="btn primary" href="#get-started">
+          <span class="btn-ico" aria-hidden="true">⬇</span>
+          <span class="btn-text">Download</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <div class="pill">
+            <span class="dot" aria-hidden="true"></span>
+            <span><strong>PTREE</strong> is a documentation-first directory tree format</span>
+          </div>
+
+          <h1>Directory trees that read like documentation <span class="muted">and behave like code.</span></h1>
+
+          <p class="lead">
+            PTREE is a small standard for representing project structure in plain text—
+            so trees are <strong>consistent</strong>, <strong>scan-friendly</strong>, <strong>Markdown-native</strong>,
+            and <strong>toolable</strong> (folding, validation, safe fixes).
+          </p>
+
+          <div class="cta-row">
+            <a class="btn primary" href="#get-started">
+              <span class="btn-ico" aria-hidden="true">🚀</span>
+              <span class="btn-text">Get started</span>
+            </a>
+            <a class="btn" href="#examples">
+              <span class="btn-ico" aria-hidden="true">👀</span>
+              <span class="btn-text">See examples</span>
+            </a>
+            <a class="btn ghost" href="#why">
+              <span class="btn-ico" aria-hidden="true">🎯</span>
+              <span class="btn-text">Why PTREE</span>
+            </a>
+          </div>
+
+          <div class="meta-row">
+            <div class="meta">
+              <div class="meta-k">Works in</div>
+              <div class="meta-v">Markdown, READMEs, PRs, Tickets</div>
+            </div>
+            <div class="meta">
+              <div class="meta-k">Designed for</div>
+              <div class="meta-v">Humans + tools</div>
+            </div>
+            <div class="meta">
+              <div class="meta-k">Adoption</div>
+              <div class="meta-v">Start flexible → go strict</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-card" aria-label="PTREE example">
+          <div class="card-head">
+            <div class="tabs" role="tablist" aria-label="Example tabs">
+              <button class="tab active" type="button" role="tab" aria-selected="true" data-tab="spec">spec</button>
+              <button class="tab" type="button" role="tab" aria-selected="false" data-tab="default">default</button>
+            </div>
+            <button class="btn small ghost" type="button" data-copy="#heroCode">
+              <span class="btn-ico" aria-hidden="true">⧉</span>
+              <span class="btn-text">Copy</span>
+            </button>
+          </div>
+
+          <pre class="code" id="heroCode"><code data-code="spec">@ptree: spec
+@style: unicode
+@version: 0.0.2
+@name_type:[
+    ROOT: 'SCREAM_TYPE',
+    DIR: 'High_Type',
+    FILE: 'smol-type'
+]
+@seperation_delimiters: [
+    '-',
+    '_',
+    '.'
+]
+
+PTREE-0.0.2//
+├── readme.md
+├── changelog.md
+└── Docs/
+    ├── overview.md
+    └── authoring-guide.md</code><code data-code="default" class="hide">@ptree: 1.0
+@style: unicode
+@root: ./
+
+my-project/
+├── README.md
+├── docs/
+│   ├── overview.md
+│   └── authoring.md
+└── src/
+    ├── index.ts
+    └── tree_parser.ts</code></pre>
+
+          <div class="card-foot">
+            <div class="hint">
+              <span class="hint-ico" aria-hidden="true">✨</span>
+              <span>With tooling: folding, lint-style validation, semantic highlighting.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WHY -->
+    <section class="section" id="why">
+      <div class="container">
+        <div class="section-head">
+          <h2>Why PTREE exists</h2>
+          <p>
+            Directory trees are everywhere—but they’re usually inconsistent, noisy, and unvalidated.
+            PTREE is built to make “a tree in your docs” <strong>standard</strong>, <strong>readable</strong>, and <strong>maintainable</strong>.
+          </p>
+        </div>
+
+        <div class="grid-3">
+          <div class="card">
+            <div class="card-icon" aria-hidden="true">🧠</div>
+            <h3>Readable at a glance</h3>
+            <p>Structure is obvious: root, folders, files, extensions, and metadata are visually distinct.</p>
+          </div>
+
+          <div class="card">
+            <div class="card-icon" aria-hidden="true">🧩</div>
+            <h3>Standard everywhere</h3>
+            <p>One predictable format for READMEs, onboarding, architecture docs, PRs, and tickets.</p>
+          </div>
+
+          <div class="card">
+            <div class="card-icon" aria-hidden="true">🛠️</div>
+            <h3>Toolable like code</h3>
+            <p>Validation, safe fixes, folding, and config-driven rules—without losing portability.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="section alt" id="features">
+      <div class="container">
+        <div class="section-head">
+          <h2>What PTREE is designed to do</h2>
+          <p>PTREE stays simple on purpose. The power comes from consistency and clear intent.</p>
+        </div>
+
+        <div class="grid-2">
+          <div class="feature">
+            <div class="feature-icon" aria-hidden="true">📌</div>
+            <div>
+              <h3>Declare intent</h3>
+              <p>Optional header directives communicate style, profile, and naming rules so tools and humans agree on meaning.</p>
+            </div>
+          </div>
+
+          <div class="feature">
+            <div class="feature-icon" aria-hidden="true">🧾</div>
+            <div>
+              <h3>Stay diff-friendly</h3>
+              <p>Stable formatting reduces noise in code review. Changes in structure look like changes in structure.</p>
+            </div>
+          </div>
+
+          <div class="feature">
+            <div class="feature-icon" aria-hidden="true">🧰</div>
+            <div>
+              <h3>Enable lint-style rules</h3>
+              <p>Like markdown linting: ship a default ruleset, allow repo customization, and keep docs consistent over time.</p>
+            </div>
+          </div>
+
+          <div class="feature">
+            <div class="feature-icon" aria-hidden="true">🧱</div>
+            <div>
+              <h3>Embed in Markdown</h3>
+              <p>Use fenced blocks (<code>```ptree</code>) so trees render cleanly and remain plain text—no screenshots needed.</p>
+            </div>
+          </div>
+
+          <div class="feature">
+            <div class="feature-icon" aria-hidden="true">🧲</div>
+            <div>
+              <h3>Scale to large trees</h3>
+              <p>Folding/collapse keeps huge layouts readable. PTREE is designed for real-world doc trees, not tiny examples.</p>
+            </div>
+          </div>
+
+          <div class="feature">
+            <div class="feature-icon" aria-hidden="true">🔌</div>
+            <div>
+              <h3>Interoperate</h3>
+              <p>Unicode and ASCII scaffolds, compatibility with classic tree visuals, and a clean path to generators/parsers.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROFILES -->
+    <section class="section" id="profiles">
+      <div class="container">
+        <div class="section-head">
+          <h2>Profiles</h2>
+          <p>
+            PTREE supports different strictness levels. Start flexible, then tighten the rules when a team wants “one standard way”.
+          </p>
+        </div>
+
+        <div class="grid-2">
+          <div class="profile card">
+            <div class="profile-top">
+              <h3>default</h3>
+              <span class="badge">flexible</span>
+            </div>
+            <ul class="list">
+              <li>Great for adoption and compatibility</li>
+              <li>Works well for illustrative docs</li>
+              <li>Allows multiple naming styles by choice</li>
+            </ul>
+            <div class="profile-cta">
+              <a class="btn" href="#get-started">Use default</a>
+            </div>
+          </div>
+
+          <div class="profile card">
+            <div class="profile-top">
+              <h3>spec</h3>
+              <span class="badge strong">canonical</span>
+            </div>
+            <ul class="list">
+              <li>Strict, opinionated, and consistent</li>
+              <li>Ideal for long-lived, enforceable docs</li>
+              <li>Config-driven naming + validation-ready</li>
+            </ul>
+            <div class="profile-cta">
+              <a class="btn primary" href="#get-started">Use spec</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="section alt" id="how">
+      <div class="container">
+        <div class="section-head">
+          <h2>How it works</h2>
+          <p>PTREE is plain text. Tooling is optional—but when you use it, it makes PTREE feel like a real language mode.</p>
+        </div>
+
+        <div class="steps">
+          <div class="step">
+            <div class="step-n">1</div>
+            <div>
+              <h3>Write or generate a tree</h3>
+              <p>Create a <code>.ptree</code> file or embed a <code>```ptree</code> block in Markdown.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-n">2</div>
+            <div>
+              <h3>Choose your strictness</h3>
+              <p>Use <code>@ptree: default</code> (or a version) for flexible mode, or <code>@ptree: spec</code> for canonical rules.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-n">3</div>
+            <div>
+              <h3>Keep it clean with tools</h3>
+              <p>Validation catches drift, and safe auto-fixes handle formatting without breaking meaning.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXAMPLES -->
+    <section class="section" id="examples">
+      <div class="container">
+        <div class="section-head">
+          <h2>Examples</h2>
+          <p>PTREE is meant for real docs. Here are common patterns: a README layout, a generated tree, and a docs-heavy structure.</p>
+        </div>
+
+        <div class="examples">
+          <article class="example card">
+            <div class="card-head">
+              <h3>README “project layout”</h3>
+              <button class="btn small ghost" type="button" data-copy="#ex1">
+                <span class="btn-ico" aria-hidden="true">⧉</span>
+                <span class="btn-text">Copy</span>
+              </button>
+            </div>
+            <pre class="code" id="ex1"><code>@ptree: spec
+@style: unicode
+@version: 0.0.2
+@name_type:[
+    ROOT: 'SCREAM_TYPE',
+    DIR: 'High_Type',
+    FILE: 'smol-type'
+]
+@seperation_delimiters: [
+    '-',
+    '_',
+    '.'
+]
+
+PTREE-0.0.2//
+├── readme.md
+├── license
+├── Docs/
+│   ├── overview.md
+│   └── api-reference.md
+└── Src/
+    ├── index.ts
+    └── tree-parser.ts</code></pre>
+          </article>
+
+          <article class="example card">
+            <div class="card-head">
+              <h3>Template / scaffold output</h3>
+              <button class="btn small ghost" type="button" data-copy="#ex2">
+                <span class="btn-ico" aria-hidden="true">⧉</span>
+                <span class="btn-text">Copy</span>
+              </button>
+            </div>
+            <pre class="code" id="ex2"><code>@ptree: spec
+@style: unicode
+@version: 0.0.2
+@name_type:[
+    ROOT: 'SCREAM_TYPE',
+    DIR: 'High_Type',
+    FILE: 'smol-type'
+]
+@seperation_delimiters: [
+    '-',
+    '_',
+    '.'
+]
+
+PTREE-0.0.2//
+└── Template/
+    ├── readme.md
+    ├── changelog.md
+    ├── Docs/
+    │   └── getting-started.md
+    └── Src/
+        ├── index.ts
+        └── config-loader.ts</code></pre>
+          </article>
+
+          <article class="example card">
+            <div class="card-head">
+              <h3>Docs-heavy structure (fold-friendly)</h3>
+              <button class="btn small ghost" type="button" data-copy="#ex3">
+                <span class="btn-ico" aria-hidden="true">⧉</span>
+                <span class="btn-text">Copy</span>
+              </button>
+            </div>
+            <pre class="code" id="ex3"><code>@ptree: spec
+@style: unicode
+@version: 0.0.2
+@name_type:[
+    ROOT: 'SCREAM_TYPE',
+    DIR: 'High_Type',
+    FILE: 'smol-type'
+]
+@seperation_delimiters: [
+    '-',
+    '_',
+    '.'
+]
+
+PTREE-0.0.2//
+└── Docs/
+    ├── Overview/
+    │   ├── intro.md
+    │   └── glossary.md
+    ├── Guides/
+    │   ├── authoring.md
+    │   └── conventions.md
+    └── Reference/
+        ├── spec.md
+        └── faq.md</code></pre>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- GET STARTED -->
+    <section class="section alt" id="get-started">
+      <div class="container">
+        <div class="section-head">
+          <h2>Get started</h2>
+          <p>Pick the path that matches your workflow. PTREE stays plain text either way.</p>
+        </div>
+
+        <div class="grid-3">
+          <div class="card">
+            <div class="card-icon" aria-hidden="true">🧩</div>
+            <h3>VS Code extension</h3>
+            <p>Folding, highlighting, and validation while you write docs.</p>
+            <div class="card-actions">
+              <a class="btn primary" href="#top">Add link</a>
+              <a class="btn ghost" href="#how">What you get</a>
+            </div>
+            <p class="micro">Replace “Add link” with your Marketplace URL.</p>
+          </div>
+
+          <div class="card">
+            <div class="card-icon" aria-hidden="true">🧪</div>
+            <h3>CLI</h3>
+            <p>Generate trees, validate in CI, and apply safe auto-fixes.</p>
+            <div class="card-actions">
+              <a class="btn primary" href="#top">Add link</a>
+              <a class="btn ghost" href="#profiles">Pick profile</a>
+            </div>
+            <p class="micro">Replace “Add link” with your NPM/GitHub link.</p>
+          </div>
+
+          <div class="card">
+            <div class="card-icon" aria-hidden="true">📚</div>
+            <h3>Spec + docs</h3>
+            <p>Understand PTREE’s goals, profiles, and authoring guidelines.</p>
+            <div class="card-actions">
+              <a class="btn primary" href="#top">Add link</a>
+              <a class="btn ghost" href="#faq">FAQ</a>
+            </div>
+            <p class="micro">Replace “Add link” with your docs site link.</p>
+          </div>
+        </div>
+
+        <div class="callout">
+          <div class="callout-ico" aria-hidden="true">✅</div>
+          <div class="callout-body">
+            <div class="callout-title">Adoption tip</div>
+            <div class="callout-text">
+              Start by using PTREE in Markdown. When your team is ready, enable the spec profile and validate in CI.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section" id="faq">
+      <div class="container">
+        <div class="section-head">
+          <h2>FAQ</h2>
+          <p>Fast answers to the most common questions.</p>
+        </div>
+
+        <div class="accordion" data-accordion>
+          <details class="acc">
+            <summary>Is PTREE just another <code>tree</code> output?</summary>
+            <div class="acc-body">
+              PTREE starts where typical tree output ends: it standardizes structure for docs and enables tooling
+              (folding, validation, profiles, safe auto-fixes) without losing portability.
+            </div>
+          </details>
+
+          <details class="acc">
+            <summary>Do I need tooling for PTREE to be useful?</summary>
+            <div class="acc-body">
+              No. PTREE is plain text and stays readable anywhere. Tooling makes it nicer (folding/highlighting/validation),
+              but PTREE doesn’t depend on it.
+            </div>
+          </details>
+
+          <details class="acc">
+            <summary>Is PTREE meant to mirror the filesystem exactly?</summary>
+            <div class="acc-body">
+              It can—but it doesn’t have to. PTREE supports both:
+              illustrative docs (“here’s the shape”) and enforceable trees (“this must match reality”).
+            </div>
+          </details>
+
+          <details class="acc">
+            <summary>Why require directories to end with <code>/</code>?</summary>
+            <div class="acc-body">
+              It removes ambiguity for humans and tools, improves highlighting, and makes validation stable—especially in large trees.
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-row">
+      <div class="footer-left">
+        <div class="brand small">
+          <div class="logo" aria-hidden="true">⎇</div>
+          <div class="brand-text">
+            <div class="brand-name">PTREE</div>
+            <div class="brand-tag">Pretty Tree Standard</div>
+          </div>
+        </div>
+        <p class="micro">Plain text. Documentation-first. Toolable when you want it.</p>
+      </div>
+
+      <div class="footer-right">
+        <a href="#top">Back to top ↑</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
