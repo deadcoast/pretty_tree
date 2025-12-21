@@ -204,4 +204,60 @@ PTREE-0.0.1//
     const errors = msgs.filter(m => m.severity === 'error');
     assert.strictEqual(errors.length, 0, `Unexpected errors: ${JSON.stringify(errors)}`);
   });
+
+  test('PT004: validates symlink names against NAME_TYPE rules', () => {
+    const text = `@ptree: 1.0
+PTREE//
+├── valid-link -> target/
+├── Invalid_Link -> target/`;
+    const doc = parsePtreeDocument(text);
+    const msgs = validatePtreeDocument(doc, DEFAULT_CONFIG);
+    
+    // valid-link matches smol-type, Invalid_Link does not
+    const pt004 = msgs.find(m => m.code === 'PT004' && m.message.includes('Invalid_Link'));
+    assert.ok(pt004, 'Should report PT004 for symlink name not matching FILE NAME_TYPE');
+    
+    // valid-link should not trigger PT004
+    const validLinkError = msgs.find(m => m.code === 'PT004' && m.message.includes('valid-link'));
+    assert.ok(!validLinkError, 'Should not report PT004 for valid symlink name');
+  });
+
+  test('PT006: validates symlink names for spaces', () => {
+    const text = `@ptree: 1.0
+PTREE//
+├── my link -> target/`;
+    const doc = parsePtreeDocument(text);
+    const msgs = validatePtreeDocument(doc, DEFAULT_CONFIG);
+    
+    const pt006 = msgs.find(m => m.code === 'PT006');
+    assert.ok(pt006, 'Should report PT006 for spaces in symlink name');
+  });
+
+  test('symlink target is not validated as part of name', () => {
+    const text = `@ptree: 1.0
+PTREE//
+├── valid-link -> Invalid Target Path/`;
+    const doc = parsePtreeDocument(text);
+    const msgs = validatePtreeDocument(doc, DEFAULT_CONFIG);
+    
+    // The target path should not be validated - only the symlink name
+    const pt006 = msgs.find(m => m.code === 'PT006');
+    assert.ok(!pt006, 'Should not report PT006 for spaces in symlink target');
+    
+    // valid-link should be valid
+    const pt004 = msgs.find(m => m.code === 'PT004' && m.message.includes('valid-link'));
+    assert.ok(!pt004, 'Should not report PT004 for valid symlink name');
+  });
+
+  test('symlink to directory is classified as FILE', () => {
+    const text = `@ptree: 1.0
+PTREE//
+├── link-to-dir -> ../Some_Dir/`;
+    const doc = parsePtreeDocument(text);
+    const msgs = validatePtreeDocument(doc, DEFAULT_CONFIG);
+    
+    // link-to-dir should be validated as FILE (symlinks are files)
+    const pt004 = msgs.find(m => m.code === 'PT004' && m.message.includes('link-to-dir'));
+    assert.ok(!pt004, 'Symlink to directory should be validated as FILE');
+  });
 });

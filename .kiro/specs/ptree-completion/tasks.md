@@ -239,47 +239,47 @@
 - [x] 18. Final Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [-] 19. Write remaining property tests
-  - [-] 19.1 Write property test for validator determinism
+- [x] 19. Write remaining property tests
+  - [x] 19.1 Write property test for validator determinism
     - **Property 10: Validator Determinism**
     - **Validates: Requirements 1.5**
 
-- [ ] 20. Implement Symlink Support
-  - [ ] 20.1 Update parser to recognize symlink syntax
+- [x] 20. Implement Symlink Support
+  - [x] 20.1 Update parser to recognize symlink syntax
     - Parse ` -> ` arrow syntax to extract name and target
     - _Requirements: 16.1_
-  - [ ] 20.2 Extend PtreeNode type with symlinkTarget field
+  - [x] 20.2 Extend PtreeNode type with symlinkTarget field
     - Add optional symlinkTarget: string field
     - _Requirements: 16.1_
-  - [ ] 20.3 Update validator to validate symlink names
+  - [x] 20.3 Update validator to validate symlink names
     - Validate name portion against appropriate NAME_TYPE rules
     - _Requirements: 16.2_
-  - [ ] 20.4 Add semantic tokens for symlink components
+  - [x] 20.4 Add semantic tokens for symlink components
     - Emit distinct tokens for name, arrow, and target
     - _Requirements: 16.3, 13.5_
 
-- [ ] 21. Implement Inline Metadata Support
-  - [ ] 21.1 Update parser to recognize bracket attributes
+- [x] 21. Implement Inline Metadata Support
+  - [x] 21.1 Update parser to recognize bracket attributes
     - Parse `[key=value, key2=value2]` after two+ spaces
     - _Requirements: 17.1_
-  - [ ] 21.2 Update parser to recognize inline comments
+  - [x] 21.2 Update parser to recognize inline comments
     - Parse `# comment` after two+ spaces
     - _Requirements: 17.2_
-  - [ ] 21.3 Add semantic tokens for inline metadata
+  - [x] 21.3 Add semantic tokens for inline metadata
     - Emit distinct tokens for attributes and comments
     - _Requirements: 17.3, 13.6_
-  - [ ] 21.4 Update validator to exclude metadata from name validation
+  - [x] 21.4 Update validator to exclude metadata from name validation
     - Validate only the name portion against NAME_TYPE rules
     - _Requirements: 17.4_
 
-- [ ] 22. Implement Summary Line Support
-  - [ ] 22.1 Update parser to recognize summary lines
+- [x] 22. Implement Summary Line Support
+  - [x] 22.1 Update parser to recognize summary lines
     - Match pattern `N directories, M files`
     - _Requirements: 18.1_
-  - [ ] 22.2 Treat summary lines as metadata
+  - [x] 22.2 Treat summary lines as metadata
     - Don't affect tree structure
     - _Requirements: 18.2_
-  - [ ] 22.3 Add semantic token for summary lines
+  - [x] 22.3 Add semantic token for summary lines
     - Emit ptreeMeta token type
     - _Requirements: 18.3_
 

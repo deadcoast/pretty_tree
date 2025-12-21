@@ -1,5 +1,5 @@
 import * as assert from 'assert';
-import { parsePtreeDocument } from '../../core/parser';
+import { parsePtreeDocument, parseSummaryLine } from '../../core/parser';
 
 suite('Parser Tests', () => {
   test('parses empty document', () => {
@@ -215,5 +215,68 @@ suite('Parser Tests', () => {
     
     assert.strictEqual(dir1?.isIndexFile, undefined);
     assert.strictEqual(dir2?.isIndexFile, undefined);
+  });
+
+  test('parses summary line', () => {
+    const text = `ROOT//
+├── Src/
+│   └── index.ts
+└── readme.md
+
+8 directories, 20 files`;
+    const doc = parsePtreeDocument(text);
+    
+    assert.ok(doc.summaryLine);
+    assert.strictEqual(doc.summaryLine.directories, 8);
+    assert.strictEqual(doc.summaryLine.files, 20);
+    assert.strictEqual(doc.summaryLine.raw, '8 directories, 20 files');
+    
+    // Summary line should not be in nodes
+    assert.strictEqual(doc.nodes.length, 3);
+  });
+
+  test('parses summary line with singular forms', () => {
+    const text = `ROOT//
+└── file.txt
+
+1 directory, 1 file`;
+    const doc = parsePtreeDocument(text);
+    
+    assert.ok(doc.summaryLine);
+    assert.strictEqual(doc.summaryLine.directories, 1);
+    assert.strictEqual(doc.summaryLine.files, 1);
+  });
+
+  test('parseSummaryLine function', () => {
+    // Valid summary lines
+    assert.deepStrictEqual(parseSummaryLine('8 directories, 20 files'), { directories: 8, files: 20 });
+    assert.deepStrictEqual(parseSummaryLine('1 directory, 1 file'), { directories: 1, files: 1 });
+    assert.deepStrictEqual(parseSummaryLine('  3 directories, 5 files  '), { directories: 3, files: 5 });
+    
+    // Invalid lines
+    assert.strictEqual(parseSummaryLine('not a summary'), null);
+    assert.strictEqual(parseSummaryLine('8 dirs, 20 files'), null);
+    assert.strictEqual(parseSummaryLine(''), null);
+  });
+
+  test('summary line does not affect tree structure', () => {
+    const text = `ROOT//
+├── Src/
+│   └── index.ts
+└── readme.md
+
+3 directories, 2 files`;
+    const doc = parsePtreeDocument(text);
+    
+    // Verify tree structure is correct
+    assert.strictEqual(doc.nodes.length, 3);
+    assert.strictEqual(doc.nodes[0].name, 'Src/');
+    assert.strictEqual(doc.nodes[0].hasChildren, true);
+    assert.strictEqual(doc.nodes[1].name, 'index.ts');
+    assert.strictEqual(doc.nodes[1].depth, 1);
+    assert.strictEqual(doc.nodes[2].name, 'readme.md');
+    
+    // Summary line is stored separately
+    assert.ok(doc.summaryLine);
   });
 });

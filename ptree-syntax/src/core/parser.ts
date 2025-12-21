@@ -20,6 +20,21 @@ export type PtreeRoot = {
   endCol: number;
 };
 
+/**
+ * Inline metadata structure for bracket attributes and inline comments.
+ * Metadata appears after two or more spaces following the node name.
+ */
+export type InlineMetadata = {
+  /** Bracket attributes like [key=value, key2=value2] */
+  attributes?: Record<string, string>;
+  /** Inline comment text (without the leading #) */
+  comment?: string;
+  /** Start column of the metadata in the raw line */
+  startCol?: number;
+  /** End column of the metadata in the raw line */
+  endCol?: number;
+};
+
 export type PtreeNode = {
   line: number;
   raw: string;
@@ -34,6 +49,7 @@ export type PtreeNode = {
   isIndexFile?: boolean; // True if file name starts with (index) prefix
   stem?: string; // For FILE entities: the base name without extension(s)
   extension?: string; // For FILE entities: the full extension string (e.g., "ts", "test.ts", "tar.gz")
+  inlineMetadata?: InlineMetadata; // Bracket attributes or inline comments after 2+ spaces
 };
 
 export type PtreeParseError = {
@@ -54,6 +70,20 @@ export type CommentLine = {
   endCol: number;
 };
 
+/**
+ * Represents a summary line in the ptree document.
+ * Summary lines are typically appended by tree generators (e.g., `tree` command)
+ * and follow the pattern "N directories, M files".
+ */
+export type SummaryLine = {
+  line: number;
+  raw: string;
+  directories: number;
+  files: number;
+  startCol: number;
+  endCol: number;
+};
+
 export type PtreeDocument = {
   directives: Record<string, string>;
   directiveLines: PtreeDirective[];
@@ -64,6 +94,8 @@ export type PtreeDocument = {
   blankLines: number[];
   /** Comment lines for round-trip support */
   commentLines: CommentLine[];
+  /** Optional summary line (e.g., "8 directories, 20 files") */
+  summaryLine?: SummaryLine;
 };
 
 const DIRECTIVE_RE = /^\s*(@[A-Za-z][A-Za-z0-9_-]*)(?:\s*[:=])?(.*)$/;
@@ -174,7 +206,23 @@ export function isValidRomanNumeral(s: string): boolean {
 // Unicode or ASCII connectors.
 const NODE_RE = /^((?:(?:(?:\u2502|\|) {3}| {4})*))((?:\u251C\u2500\u2500|\u2514\u2500\u2500|\|--|`--))\s+(.+)$/;
 
-const SUMMARY_RE = /^\s*\d+\s+directories?,\s+\d+\s+files?\s*$/;
+const SUMMARY_RE = /^\s*\d+\s+director(?:y|ies),\s+\d+\s+files?\s*$/;
+
+/**
+ * Parse a summary line like "N directories, M files" or "1 directory, 1 file".
+ * @param line The line to parse
+ * @returns Object with directories and files counts, or null if not a summary line
+ */
+export function parseSummaryLine(line: string): { directories: number; files: number } | null {
+  const match = line.trim().match(/^(\d+)\s+director(?:y|ies),\s+(\d+)\s+files?$/i);
+  if (match) {
+    return {
+      directories: parseInt(match[1], 10),
+      files: parseInt(match[2], 10)
+    };
+  }
+  return null;
+}
 
 function countDepth(prefix: string): number {
   let depth = 0;
@@ -185,7 +233,105 @@ function countDepth(prefix: string): number {
   return depth;
 }
 
-function splitNodeRemainder(remainder: string): { name: string; trailing: string; symlinkTarget?: string } {
+/**
+ * Parse bracket attributes from a string like "[key=value, key2=value2]"
+ * @param attrString The string inside the brackets (without the brackets)
+ * @returns Record of key-value pairs
+ */
+function parseBracketAttributes(attrString: string): Record<string, string> {
+  const attrs: Record<string, string> = {};
+  // Split by comma, handling potential whitespace
+  const pairs = attrString.split(',');
+  for (const pair of pairs) {
+    const trimmed = pair.trim();
+    if (!trimmed) {continue;}
+    
+    const eqIdx = trimmed.indexOf('=');
+    if (eqIdx !== -1) {
+      const key = trimmed.slice(0, eqIdx).trim();
+      const value = trimmed.slice(eqIdx + 1).trim();
+      if (key) {
+        attrs[key] = value;
+      }
+    } else {
+      // Key without value (boolean flag)
+      if (trimmed) {
+        attrs[trimmed] = '';
+      }
+    }
+  }
+  return attrs;
+}
+
+/**
+ * Parse inline metadata from the trailing part of a node line.
+ * Metadata must be preceded by 2+ spaces.
+ * Supports:
+ * - Bracket attributes: [key=value, key2=value2]
+ * - Inline comments: # comment text
+ * - Both: [key=value]  # comment
+ * 
+ * @param trailing The trailing part of the line after the name
+ * @param trailingStartCol The column where trailing starts in the raw line
+ * @returns Parsed inline metadata or undefined if none found
+ */
+export function parseInlineMetadata(
+  trailing: string,
+  trailingStartCol: number
+): InlineMetadata | undefined {
+  if (!trailing || trailing.trim().length === 0) {
+    return undefined;
+  }
+
+  // Look for metadata patterns (must be preceded by 2+ spaces in the original trailing)
+  // The trailing already starts after the name, so we check if it starts with 2+ spaces
+  const leadingSpaceMatch = trailing.match(/^(\s{2,})/);
+  if (!leadingSpaceMatch) {
+    return undefined;
+  }
+
+  const afterSpaces = trailing.slice(leadingSpaceMatch[1].length);
+  if (!afterSpaces.trim()) {
+    return undefined;
+  }
+
+  const metadata: InlineMetadata = {};
+  let currentPos = leadingSpaceMatch[1].length;
+  let remaining = afterSpaces;
+
+  // Try to parse bracket attributes first: [key=value, key2=value2]
+  const bracketMatch = remaining.match(/^\[([^\]]*)\]/);
+  if (bracketMatch) {
+    metadata.attributes = parseBracketAttributes(bracketMatch[1]);
+    metadata.startCol = trailingStartCol + currentPos;
+    currentPos += bracketMatch[0].length;
+    remaining = remaining.slice(bracketMatch[0].length);
+    
+    // Check for inline comment after bracket attributes
+    const commentAfterBracket = remaining.match(/^\s{2,}#\s*(.*)/);
+    if (commentAfterBracket) {
+      metadata.comment = commentAfterBracket[1];
+      metadata.endCol = trailingStartCol + trailing.length;
+    } else {
+      metadata.endCol = trailingStartCol + currentPos;
+    }
+    
+    return metadata;
+  }
+
+  // Try to parse inline comment: # comment text
+  const commentMatch = remaining.match(/^#\s*(.*)/);
+  if (commentMatch) {
+    metadata.comment = commentMatch[1];
+    metadata.startCol = trailingStartCol + currentPos;
+    metadata.endCol = trailingStartCol + trailing.length;
+    return metadata;
+  }
+
+  return undefined;
+}
+
+function splitNodeRemainder(remainder: string): { name: string; trailing: string; symlinkTarget?: string; inlineMetadata?: InlineMetadata } {
   // Split into name and trailing metadata/comment/symlink suffix.
   // Metadata/comments require 2+ spaces before "#" or "[".
   const metaMatch = remainder.match(/\s{2,}(#|\[)/);
@@ -199,16 +345,30 @@ function splitNodeRemainder(remainder: string): { name: string; trailing: string
     const name = beforeMeta.slice(0, arrowIdx).trimEnd();
     const symlinkPart = beforeMeta.slice(arrowIdx);
     const target = beforeMeta.slice(arrowIdx + arrowToken.length).trim();
+    
+    // Parse inline metadata from the metaSuffix (if present)
+    // For symlinks, the trailing includes both the symlink part and metadata
+    const inlineMetadata = metaSuffix.length > 0 
+      ? parseInlineMetadata(metaSuffix, 0) // startCol will be adjusted by caller
+      : undefined;
+    
     return {
       name,
       trailing: `${symlinkPart}${metaSuffix}`,
-      symlinkTarget: target.length > 0 ? target : undefined
+      symlinkTarget: target.length > 0 ? target : undefined,
+      inlineMetadata
     };
   }
 
+  // Parse inline metadata from the metaSuffix (if present)
+  const inlineMetadata = metaSuffix.length > 0 
+    ? parseInlineMetadata(metaSuffix, 0) // startCol will be adjusted by caller
+    : undefined;
+
   return {
     name: beforeMeta.trimEnd(),
-    trailing: metaSuffix
+    trailing: metaSuffix,
+    inlineMetadata
   };
 }
 
@@ -244,6 +404,7 @@ export function parsePtreeDocument(text: string): PtreeDocument {
   const errors: PtreeParseError[] = [];
   const blankLines: number[] = [];
   const commentLines: CommentLine[] = [];
+  let summaryLine: SummaryLine | undefined;
 
   let root: PtreeRoot | undefined;
 
@@ -266,6 +427,24 @@ export function parsePtreeDocument(text: string): PtreeDocument {
         startCol,
         endCol: startCol + trimmed.length
       });
+      continue;
+    }
+    
+    // Check for summary line (e.g., "8 directories, 20 files")
+    if (SUMMARY_RE.test(line)) {
+      const parsed = parseSummaryLine(line);
+      if (parsed) {
+        const startCol = firstNonWhitespaceColumn(line);
+        const trimmed = line.trim();
+        summaryLine = {
+          line: i,
+          raw: line,
+          directories: parsed.directories,
+          files: parsed.files,
+          startCol,
+          endCol: startCol + trimmed.length
+        };
+      }
       continue;
     }
 
@@ -385,9 +564,19 @@ export function parsePtreeDocument(text: string): PtreeDocument {
       const remainder = nm[3] ?? '';
       const depth = countDepth(prefix);
 
-      const { name, trailing, symlinkTarget } = splitNodeRemainder(remainder);
+      const { name, trailing, symlinkTarget, inlineMetadata: parsedMetadata } = splitNodeRemainder(remainder);
       const startCol = line.indexOf(remainder);
       const endCol = startCol + name.length;
+
+      // Adjust inline metadata column positions relative to the line
+      let inlineMetadata: InlineMetadata | undefined;
+      if (parsedMetadata) {
+        inlineMetadata = {
+          ...parsedMetadata,
+          startCol: parsedMetadata.startCol !== undefined ? endCol + parsedMetadata.startCol : undefined,
+          endCol: parsedMetadata.endCol !== undefined ? endCol + parsedMetadata.endCol : undefined
+        };
+      }
 
       // Check for Roman numeral prefix in directory names
       let numeralPrefix: string | undefined;
@@ -433,7 +622,8 @@ export function parsePtreeDocument(text: string): PtreeDocument {
         numeralPrefix,
         isIndexFile,
         stem,
-        extension
+        extension,
+        inlineMetadata
       });
       continue;
     }
@@ -462,7 +652,7 @@ export function parsePtreeDocument(text: string): PtreeDocument {
     }
   }
 
-  return { directives, directiveLines, root, nodes, errors, blankLines, commentLines };
+  return { directives, directiveLines, root, nodes, errors, blankLines, commentLines, summaryLine };
 }
 
 /**
@@ -519,6 +709,11 @@ export function printPtreeDocument(
     for (const comment of doc.commentLines) {
       lineMap.set(comment.line, comment.raw);
     }
+  }
+  
+  // Add summary line (if present)
+  if (doc.summaryLine) {
+    lineMap.set(doc.summaryLine.line, doc.summaryLine.raw);
   }
   
   // Sort by line number and build output

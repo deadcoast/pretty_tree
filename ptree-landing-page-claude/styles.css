@@ -13,16 +13,19 @@
   --bg-surface: #161b22;
   --bg-elevated: #1c2128;
   
-  /* Phosphor glow colors */
-  --phosphor: #00ff88;
-  --phosphor-dim: #00cc6a;
-  --phosphor-glow: rgba(0, 255, 136, 0.15);
-  --phosphor-subtle: rgba(0, 255, 136, 0.08);
+  /* Primary: Teal (from logo center) */
+  --primary: #2eb8b8;
+  --primary-dim: #1a9999;
+  --primary-glow: rgba(46, 184, 184, 0.2);
+  --primary-subtle: rgba(46, 184, 184, 0.1);
   
-  /* Amber accent (secondary CRT color) */
-  --amber: #ffb000;
-  --amber-dim: #cc8c00;
-  --amber-glow: rgba(255, 176, 0, 0.15);
+  /* Secondary: Green (from logo left wing) */
+  --green: #7ac143;
+  --green-glow: rgba(122, 193, 67, 0.2);
+  
+  /* Accent: Blue (from logo right wing) */
+  --blue: #2e5eb8;
+  --blue-glow: rgba(46, 94, 184, 0.15);
   
   /* Text hierarchy */
   --text-bright: #e6edf3;
@@ -74,14 +77,14 @@ body {
 }
 
 a {
-  color: var(--phosphor);
+  color: var(--primary);
   text-decoration: none;
   transition: all 0.15s ease;
 }
 
 a:hover {
   color: var(--text-bright);
-  text-shadow: 0 0 10px var(--phosphor-glow);
+  text-shadow: 0 0 10px var(--primary-glow);
 }
 
 code {
@@ -95,7 +98,7 @@ code {
 
 /* Utility classes */
 .dim { color: var(--text-dim); }
-.accent { color: var(--phosphor); }
+.accent { color: var(--primary); }
 .sr-only {
   position: absolute;
   width: 1px;
@@ -112,9 +115,9 @@ code {
   left: -9999px;
   top: 16px;
   background: var(--bg-elevated);
-  color: var(--phosphor);
+  color: var(--primary);
   padding: 12px 16px;
-  border: 1px solid var(--phosphor);
+  border: 1px solid var(--primary);
   border-radius: var(--radius);
   z-index: 100;
 }
@@ -189,47 +192,57 @@ code {
 .logo-group {
   display: flex;
   align-items: center;
-  gap: 12px;
-}
-
-.logo-box {
-  width: 40px;
-  height: 40px;
-  display: grid;
-  place-items: center;
-  background: var(--bg-surface);
-  border: 1px solid var(--phosphor);
-  border-radius: var(--radius);
-  box-shadow: 0 0 20px var(--phosphor-glow), inset 0 0 20px var(--phosphor-subtle);
-}
-
-.logo-box.small {
-  width: 28px;
-  height: 28px;
-}
-
-.logo-char {
-  font-size: 20px;
-  color: var(--phosphor);
-  text-shadow: 0 0 10px var(--phosphor);
-}
-
-.logo-box.small .logo-char {
-  font-size: 14px;
-}
-
-.logo-text {
-  display: flex;
-  align-items: baseline;
   gap: 8px;
 }
 
+
+
+/* Hero logo showcase - fills column width below terminal */
+.hero-logo-showcase {
+  margin-top: 32px;
+  padding: 24px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hero-logo {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  filter: drop-shadow(0 0 40px var(--primary-glow));
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.hero-logo:hover {
+  transform: scale(1.01);
+  filter: drop-shadow(0 0 60px var(--primary-glow));
+}
+
+
+
 .logo-name {
-  font-family: var(--font-display);
-  font-size: 28px;
-  font-weight: 400;
-  letter-spacing: 0.1em;
-  color: var(--text-bright);
+  font-family: var(--font-mono);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  background: linear-gradient(135deg, var(--green) 0%, var(--primary) 50%, var(--blue) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.footer-logo-text {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--green) 0%, var(--primary) 50%, var(--blue) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .logo-ver {
@@ -256,9 +269,9 @@ code {
 }
 
 .nav-link:hover {
-  color: var(--phosphor);
-  background: var(--phosphor-subtle);
-  text-shadow: 0 0 10px var(--phosphor-glow);
+  color: var(--primary);
+  background: var(--primary-subtle);
+  text-shadow: 0 0 10px var(--primary-glow);
 }
 
 .nav-external {
@@ -298,16 +311,16 @@ code {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--phosphor-subtle), transparent);
-  border-color: var(--phosphor);
-  color: var(--phosphor);
-  box-shadow: 0 0 20px var(--phosphor-glow);
+  background: linear-gradient(135deg, var(--primary-subtle), transparent);
+  border-color: var(--primary);
+  color: var(--primary);
+  box-shadow: 0 0 20px var(--primary-glow);
 }
 
 .btn-primary:hover {
-  background: var(--phosphor);
+  background: var(--primary);
   color: var(--bg-deep);
-  box-shadow: 0 0 30px var(--phosphor-glow), 0 4px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 30px var(--primary-glow), 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .btn-ghost {
@@ -316,9 +329,9 @@ code {
 }
 
 .btn-ghost:hover {
-  border-color: var(--phosphor);
-  color: var(--phosphor);
-  box-shadow: 0 0 20px var(--phosphor-glow);
+  border-color: var(--primary);
+  color: var(--primary);
+  box-shadow: 0 0 20px var(--primary-glow);
 }
 
 .btn-lg {
@@ -346,8 +359,8 @@ code {
 }
 
 .copy-btn:hover {
-  color: var(--phosphor);
-  border-color: var(--phosphor);
+  color: var(--primary);
+  border-color: var(--primary);
 }
 
 .copy-btn.small {
@@ -367,8 +380,9 @@ code {
 .hero {
   padding: 80px 0 60px;
   background: 
-    radial-gradient(ellipse 80% 50% at 50% -20%, var(--phosphor-glow), transparent),
-    radial-gradient(ellipse 60% 40% at 100% 0%, var(--amber-glow), transparent);
+    radial-gradient(ellipse 60% 40% at 0% -10%, var(--green-glow), transparent),
+    radial-gradient(ellipse 80% 50% at 50% -20%, var(--primary-glow), transparent),
+    radial-gradient(ellipse 60% 40% at 100% 0%, var(--blue-glow), transparent);
 }
 
 .hero-grid {
@@ -376,6 +390,12 @@ code {
   grid-template-columns: 1fr;
   gap: 48px;
   align-items: start;
+}
+
+.hero-right {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
 .hero-content {
@@ -396,10 +416,10 @@ code {
 .badge-dot {
   width: 8px;
   height: 8px;
-  background: var(--phosphor);
+  background: var(--primary);
   border-radius: 50%;
   animation: pulse 2s infinite;
-  box-shadow: 0 0 10px var(--phosphor);
+  box-shadow: 0 0 10px var(--primary);
 }
 
 @keyframes pulse {
@@ -429,8 +449,8 @@ code {
 }
 
 .title-line.accent {
-  color: var(--phosphor);
-  text-shadow: 0 0 30px var(--phosphor-glow);
+  color: var(--primary);
+  text-shadow: 0 0 30px var(--primary-glow);
 }
 
 .cursor {
@@ -474,8 +494,8 @@ code {
   display: block;
   font-family: var(--font-display);
   font-size: 32px;
-  color: var(--phosphor);
-  text-shadow: 0 0 10px var(--phosphor-glow);
+  color: var(--primary);
+  text-shadow: 0 0 10px var(--primary-glow);
 }
 
 .stat-label {
@@ -555,13 +575,13 @@ code {
 }
 
 /* Syntax tokens */
-.token-directive { color: var(--amber); }
-.token-value { color: var(--phosphor); }
+.token-directive { color: var(--green); }
+.token-value { color: var(--primary); }
 .token-root { color: var(--text-bright); font-weight: 700; }
 .token-branch { color: var(--text-muted); }
-.token-dir { color: var(--amber); }
+.token-dir { color: var(--green); }
 .token-file { color: var(--text-main); }
-.token-prompt { color: var(--phosphor); font-weight: 700; }
+.token-prompt { color: var(--primary); font-weight: 700; }
 .token-comment { color: var(--text-muted); font-style: italic; }
 .token-success { color: var(--success); }
 .token-error { color: var(--error); }
@@ -591,7 +611,7 @@ code {
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.15em;
-  color: var(--phosphor);
+  color: var(--primary);
   margin-bottom: 12px;
 }
 
@@ -622,8 +642,8 @@ code {
 }
 
 .feature-card:hover {
-  border-color: var(--phosphor);
-  box-shadow: 0 0 30px var(--phosphor-glow);
+  border-color: var(--primary);
+  box-shadow: 0 0 30px var(--primary-glow);
   transform: translateY(-4px);
 }
 
@@ -632,17 +652,17 @@ code {
   height: 48px;
   display: grid;
   place-items: center;
-  background: var(--phosphor-subtle);
-  border: 1px solid var(--phosphor);
+  background: var(--primary-subtle);
+  border: 1px solid var(--primary);
   border-radius: var(--radius);
   margin-bottom: 20px;
-  box-shadow: 0 0 20px var(--phosphor-glow);
+  box-shadow: 0 0 20px var(--primary-glow);
 }
 
 .icon-glyph {
   font-size: 20px;
-  color: var(--phosphor);
-  text-shadow: 0 0 10px var(--phosphor);
+  color: var(--primary);
+  text-shadow: 0 0 10px var(--primary);
 }
 
 .feature-title {
@@ -680,8 +700,8 @@ code {
 }
 
 .profile-card.profile-featured {
-  border-color: var(--phosphor);
-  box-shadow: 0 0 40px var(--phosphor-glow);
+  border-color: var(--primary);
+  box-shadow: 0 0 40px var(--primary-glow);
 }
 
 .profile-header {
@@ -709,9 +729,9 @@ code {
 }
 
 .profile-badge.featured {
-  background: var(--phosphor-subtle);
-  border-color: var(--phosphor);
-  color: var(--phosphor);
+  background: var(--primary-subtle);
+  border-color: var(--primary);
+  color: var(--primary);
 }
 
 .profile-list {
@@ -734,7 +754,7 @@ code {
 }
 
 .list-marker {
-  color: var(--phosphor);
+  color: var(--primary);
   font-size: 10px;
   margin-top: 4px;
 }
@@ -747,7 +767,7 @@ code {
 }
 
 .profile-code code {
-  color: var(--phosphor);
+  color: var(--primary);
   background: none;
   border: none;
   padding: 0;
@@ -789,13 +809,13 @@ code {
 
 .demo-tab:hover {
   color: var(--text-main);
-  background: var(--phosphor-subtle);
+  background: var(--primary-subtle);
 }
 
 .demo-tab.active {
-  color: var(--phosphor);
-  border-bottom-color: var(--phosphor);
-  background: var(--phosphor-subtle);
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+  background: var(--primary-subtle);
 }
 
 .tab-num {
@@ -835,8 +855,8 @@ code {
 }
 
 .install-card:hover {
-  border-color: var(--phosphor);
-  box-shadow: 0 0 30px var(--phosphor-glow);
+  border-color: var(--primary);
+  box-shadow: 0 0 30px var(--primary-glow);
 }
 
 .install-header {
@@ -848,8 +868,8 @@ code {
 
 .install-icon {
   font-size: 18px;
-  color: var(--phosphor);
-  text-shadow: 0 0 10px var(--phosphor);
+  color: var(--primary);
+  text-shadow: 0 0 10px var(--primary);
 }
 
 .install-title {
@@ -876,7 +896,7 @@ code {
 
 .install-cmd code {
   flex: 1;
-  color: var(--phosphor);
+  color: var(--primary);
   background: none;
   border: none;
   padding: 0;
@@ -888,17 +908,18 @@ code {
 .ascii-divider {
   padding: 60px 24px;
   text-align: center;
-  overflow: hidden;
+  background: var(--bg-surface);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
 }
 
 .ascii-art {
   margin: 0;
   font-family: var(--font-mono);
-  font-size: clamp(6px, 1.5vw, 11px);
-  line-height: 1.4;
-  color: var(--text-muted);
-  display: inline-block;
-  text-align: left;
+  font-size: clamp(12px, 3vw, 24px);
+  line-height: 1.1;
+  color: var(--primary);
+  text-shadow: 0 0 20px var(--primary-glow);
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -907,7 +928,9 @@ code {
 .cta-section {
   padding: 100px 0;
   background: 
-    radial-gradient(ellipse 80% 60% at 50% 100%, var(--phosphor-glow), transparent);
+    radial-gradient(ellipse 60% 50% at 20% 100%, var(--green-glow), transparent),
+    radial-gradient(ellipse 80% 60% at 50% 100%, var(--primary-glow), transparent),
+    radial-gradient(ellipse 60% 50% at 80% 100%, var(--blue-glow), transparent);
 }
 
 .cta-box {
@@ -975,7 +998,7 @@ code {
 }
 
 .footer-links a:hover {
-  color: var(--phosphor);
+  color: var(--primary);
 }
 
 .footer-copy {
@@ -992,8 +1015,8 @@ code {
   
   .hero-grid {
     grid-template-columns: 1fr 1fr;
-    gap: 60px;
-    align-items: center;
+    gap: 48px;
+    align-items: start;
   }
   
   .hero {
@@ -1009,7 +1032,7 @@ code {
 
 @media (min-width: 1024px) {
   .hero-grid {
-    gap: 80px;
+    gap: 64px;
   }
   
   .hero-content {
@@ -1039,20 +1062,18 @@ code {
   
   .demo-tab.active {
     border-bottom: none;
-    border-left-color: var(--phosphor);
+    border-left-color: var(--primary);
   }
   
-  .ascii-divider {
-    display: none;
-  }
+
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
    ANIMATIONS
    ───────────────────────────────────────────────────────────────────────────── */
 @keyframes glow {
-  0%, 100% { box-shadow: 0 0 20px var(--phosphor-glow); }
-  50% { box-shadow: 0 0 40px var(--phosphor-glow); }
+  0%, 100% { box-shadow: 0 0 20px var(--primary-glow); }
+  50% { box-shadow: 0 0 40px var(--primary-glow); }
 }
 
 /* Prefer reduced motion */

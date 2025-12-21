@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 
 import type { PtreeConfig } from './core/config';
-import { parsePtreeDocument, parseNumeralPrefix, isValidRomanNumeral, parseIndexFile, type PtreeDirective, type PtreeDocument, type PtreeNode, type PtreeRoot } from './core/parser';
+import { parsePtreeDocument, parseNumeralPrefix, isValidRomanNumeral, parseIndexFile, parseInlineMetadata, type InlineMetadata, type PtreeDirective, type PtreeDocument, type PtreeNode, type PtreeRoot, type SummaryLine } from './core/parser';
 
 /**
  * Semantic Tokens (dynamic highlighting)
@@ -28,7 +28,14 @@ export const PTREE_SEMANTIC_TOKEN_TYPES = [
   'ptreeSemver',
   'ptreeNameType',
   'ptreeNumeral',
-  'ptreeIndex'
+  'ptreeIndex',
+  'ptreeSymlink',
+  'ptreeSymlinkArrow',
+  'ptreeSymlinkTarget',
+  'ptreeAttribute',
+  'ptreeAttributeKey',
+  'ptreeAttributeValue',
+  'ptreeInlineComment'
 ] as const;
 
 export const PTREE_BASE_TOKEN_MODIFIERS = [
@@ -303,6 +310,18 @@ export class PtreeSemanticTokensProvider implements vscode.DocumentSemanticToken
       pushSortedNonOverlapping(builder, n.line, toks);
     }
 
+    // 4) Summary line (e.g., "8 directories, 20 files")
+    if (doc.summaryLine) {
+      const s = doc.summaryLine;
+      if (s.line >= 0 && s.line < document.lineCount) {
+        const lineText = document.lineAt(s.line).text;
+        const toks: Tok[] = [];
+        // Emit the entire summary line as ptreeMeta token
+        toks.push({ start: s.startCol, len: s.endCol - s.startCol, type: 'ptreeMeta' });
+        pushSortedNonOverlapping(builder, s.line, toks);
+      }
+    }
+
     return builder.build();
   }
 
@@ -370,11 +389,38 @@ export class PtreeSemanticTokensProvider implements vscode.DocumentSemanticToken
     const { bare, marker } = stripTrailingMarkers(node.name);
     const nameStart = node.startCol;
 
-    // Inline metadata/comments (after endCol)
-    if (node.endCol < lineText.length) {
+    // Handle symlink trailing part with distinct tokens
+    // The trailing field contains: " -> target" and optionally metadata after
+    if (node.symlinkTarget !== undefined && node.trailing.length > 0) {
+      // Find the arrow in the trailing part
+      const arrowToken = ' -> ';
+      const arrowIdx = node.trailing.indexOf(arrowToken);
+      if (arrowIdx !== -1) {
+        const trailingStart = node.endCol;
+        
+        // Emit arrow token (including leading space)
+        const arrowStart = trailingStart + arrowIdx;
+        out.push({ start: arrowStart, len: arrowToken.length, type: 'ptreeSymlinkArrow' });
+        
+        // Emit target token
+        const targetStart = arrowStart + arrowToken.length;
+        const targetLen = node.symlinkTarget.length;
+        out.push({ start: targetStart, len: targetLen, type: 'ptreeSymlinkTarget' });
+        
+        // Handle any metadata after the target (e.g., "  [attr=value]" or "  # comment")
+        const afterTarget = node.trailing.slice(arrowIdx + arrowToken.length + targetLen);
+        if (afterTarget.trim().length > 0) {
+          const metaStart = targetStart + targetLen;
+          // Try to parse and tokenize inline metadata
+          this.tokenizeInlineMetadata(afterTarget, metaStart, out);
+        }
+      }
+    } else if (node.endCol < lineText.length) {
+      // Non-symlink: inline metadata/comments (after endCol)
       const metaPart = lineText.slice(node.endCol);
       if (metaPart.trim().length > 0) {
-        out.push({ start: node.endCol, len: lineText.length - node.endCol, type: 'ptreeMeta' });
+        // Try to parse and tokenize inline metadata
+        this.tokenizeInlineMetadata(metaPart, node.endCol, out);
       }
     }
 
@@ -526,6 +572,10 @@ export class PtreeSemanticTokensProvider implements vscode.DocumentSemanticToken
       // If no remainder, just the (index) prefix is the whole file name
     } else {
       // Standard FILE handling (no index prefix)
+      // Determine if this is a symlink - use ptreeSymlink token type for symlinks
+      const isSymlink = node.symlinkTarget !== undefined;
+      const fileTokenType = isSymlink ? 'ptreeSymlink' : 'ptreeFile';
+      
       const allowed = allowedFor('FILE');
       const parts = splitFileParts(bare, fileSplit);
       const expected = findMatchingNameTypeId(parts.stem, allowed, compiled);
@@ -538,7 +588,7 @@ export class PtreeSemanticTokensProvider implements vscode.DocumentSemanticToken
       if (!ok) mods.push('mismatch');
 
       // Stem
-      out.push({ start: nameStart, len: parts.stem.length, type: 'ptreeFile', mods });
+      out.push({ start: nameStart, len: parts.stem.length, type: fileTokenType, mods });
 
       // Extension (everything after the chosen dot) with NAME_TYPE modifier
       if (parts.ext && parts.dotIndex !== null) {
@@ -561,6 +611,127 @@ export class PtreeSemanticTokensProvider implements vscode.DocumentSemanticToken
     if (marker) {
       // Not expected for files, but safe.
       out.push({ start: nameStart + bare.length, len: marker.length, type: 'ptreeMeta' });
+    }
+  }
+
+  /**
+   * Tokenize inline metadata (bracket attributes and/or inline comments).
+   * Emits distinct tokens for:
+   * - Bracket delimiters [ ]
+   * - Attribute keys
+   * - Attribute values
+   * - Inline comment # and text
+   * 
+   * @param metaPart The metadata portion of the line (including leading spaces)
+   * @param startCol The column where metaPart starts in the line
+   * @param out The token array to push to
+   */
+  private tokenizeInlineMetadata(metaPart: string, startCol: number, out: Tok[]) {
+    // Check for leading spaces (metadata requires 2+ spaces)
+    const leadingSpaceMatch = metaPart.match(/^(\s{2,})/);
+    if (!leadingSpaceMatch) {
+      // No proper metadata prefix, emit as generic meta
+      out.push({ start: startCol, len: metaPart.length, type: 'ptreeMeta' });
+      return;
+    }
+
+    let currentPos = startCol + leadingSpaceMatch[1].length;
+    let remaining = metaPart.slice(leadingSpaceMatch[1].length);
+
+    // Try to parse bracket attributes: [key=value, key2=value2]
+    const bracketMatch = remaining.match(/^\[([^\]]*)\]/);
+    if (bracketMatch) {
+      const bracketStart = currentPos;
+      const bracketContent = bracketMatch[1];
+      
+      // Opening bracket
+      out.push({ start: bracketStart, len: 1, type: 'ptreeAttribute' });
+      
+      // Parse and tokenize key=value pairs
+      let contentPos = bracketStart + 1;
+      const pairs = bracketContent.split(',');
+      for (let i = 0; i < pairs.length; i++) {
+        const pair = pairs[i];
+        const trimmedPair = pair.trim();
+        
+        // Find the actual position of this pair in the content
+        const pairStartInContent = bracketContent.indexOf(pair, contentPos - bracketStart - 1);
+        const pairStart = bracketStart + 1 + pairStartInContent;
+        
+        // Skip leading whitespace in the pair
+        const leadingWs = pair.match(/^\s*/)?.[0].length ?? 0;
+        const keyStart = pairStart + leadingWs;
+        
+        const eqIdx = trimmedPair.indexOf('=');
+        if (eqIdx !== -1) {
+          const key = trimmedPair.slice(0, eqIdx);
+          const value = trimmedPair.slice(eqIdx + 1);
+          
+          // Key token
+          out.push({ start: keyStart, len: key.length, type: 'ptreeAttributeKey' });
+          
+          // Equals sign (as meta)
+          out.push({ start: keyStart + key.length, len: 1, type: 'ptreeMeta' });
+          
+          // Value token
+          if (value.length > 0) {
+            out.push({ start: keyStart + key.length + 1, len: value.length, type: 'ptreeAttributeValue' });
+          }
+        } else if (trimmedPair.length > 0) {
+          // Boolean flag (key without value)
+          out.push({ start: keyStart, len: trimmedPair.length, type: 'ptreeAttributeKey' });
+        }
+        
+        // Comma separator (if not last)
+        if (i < pairs.length - 1) {
+          const commaPos = pairStart + pair.length;
+          out.push({ start: commaPos, len: 1, type: 'ptreeMeta' });
+        }
+        
+        contentPos = pairStart + pair.length + 1; // +1 for comma
+      }
+      
+      // Closing bracket
+      out.push({ start: bracketStart + bracketContent.length + 1, len: 1, type: 'ptreeAttribute' });
+      
+      currentPos = bracketStart + bracketMatch[0].length;
+      remaining = remaining.slice(bracketMatch[0].length);
+    }
+
+    // Try to parse inline comment: # comment text (may follow bracket attributes)
+    const commentMatch = remaining.match(/^\s{2,}#\s*(.*)/);
+    if (commentMatch) {
+      const commentFullMatch = remaining.match(/^(\s{2,})(#)(\s*)(.*)/);
+      if (commentFullMatch) {
+        const spacesLen = commentFullMatch[1].length;
+        const hashStart = currentPos + spacesLen;
+        
+        // Hash symbol
+        out.push({ start: hashStart, len: 1, type: 'ptreeInlineComment' });
+        
+        // Comment text (if any)
+        const commentText = commentFullMatch[4];
+        if (commentText.length > 0) {
+          const textStart = hashStart + 1 + commentFullMatch[3].length;
+          out.push({ start: textStart, len: commentText.length, type: 'ptreeInlineComment' });
+        }
+      }
+    } else if (remaining.match(/^#\s*(.*)/)) {
+      // Comment without 2+ space prefix (directly after bracket attributes)
+      const directCommentMatch = remaining.match(/^(#)(\s*)(.*)/);
+      if (directCommentMatch) {
+        const hashStart = currentPos;
+        
+        // Hash symbol
+        out.push({ start: hashStart, len: 1, type: 'ptreeInlineComment' });
+        
+        // Comment text (if any)
+        const commentText = directCommentMatch[3];
+        if (commentText.length > 0) {
+          const textStart = hashStart + 1 + directCommentMatch[2].length;
+          out.push({ start: textStart, len: commentText.length, type: 'ptreeInlineComment' });
+        }
+      }
     }
   }
 }

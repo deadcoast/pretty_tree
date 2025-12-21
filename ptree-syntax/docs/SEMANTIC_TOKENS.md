@@ -46,6 +46,9 @@ The extension contributes these token types:
 | `ptreeNameType` | Name type identifiers | `High_Type`, `smol-type` |
 | `ptreeNumeral` | Roman numeral prefixes | `I`, `II`, `III`, `IV` |
 | `ptreeIndex` | Index file prefix | `(index)` |
+| `ptreeSymlink` | Symlink name (before arrow) | `current`, `latest` |
+| `ptreeSymlinkArrow` | Symlink arrow operator | ` -> ` |
+| `ptreeSymlinkTarget` | Symlink target path | `releases/v1.0.0/` |
 
 ---
 
@@ -124,13 +127,22 @@ Example highlighting for `(index)-overview.md`:
 - `overview` → `ptreeFile` with `nt_smol_type`
 - `md` → `ptreeExtension` with `nt_smol_type`
 
-### Symlinks
+### Symlinks (`ptreeSymlink`, `ptreeSymlinkArrow`, `ptreeSymlinkTarget`)
 
-When a node contains ` -> ` arrow syntax (e.g., `current -> releases/v1.0.0/`), the provider:
+When a node contains ` -> ` arrow syntax (e.g., `current -> releases/v1.0.0/`), the provider emits distinct tokens for each component:
 
-1. Emits appropriate token for the name portion (`ptreeDir` or `ptreeFile`)
-2. Emits `ptreeMeta` for the arrow and surrounding spaces
-3. Emits `ptreeMeta` for the target path
+1. `ptreeSymlink` for the symlink name (with NAME_TYPE modifier)
+2. `ptreeSymlinkArrow` for the arrow operator (` -> `)
+3. `ptreeSymlinkTarget` for the target path
+4. `ptreeMeta` for any trailing metadata after the target
+
+Example highlighting for `current -> releases/v1.0.0/  [type=dir]`:
+- `current` → `ptreeSymlink` with `nt_smol_type`
+- ` -> ` → `ptreeSymlinkArrow`
+- `releases/v1.0.0/` → `ptreeSymlinkTarget`
+- `  [type=dir]` → `ptreeMeta`
+
+Symlink names are validated against FILE NAME_TYPE rules, as symlinks are classified as files regardless of whether they point to directories.
 
 ### Inline Metadata
 
@@ -184,6 +196,17 @@ You can customize colors via your `settings.json`:
       },
       "ptreeIndex": {
         "foreground": "#56D4DD",
+        "fontStyle": "italic"
+      },
+      "ptreeSymlink": {
+        "foreground": "#56D4DD",
+        "fontStyle": "italic"
+      },
+      "ptreeSymlinkArrow": {
+        "foreground": "#6A737D"
+      },
+      "ptreeSymlinkTarget": {
+        "foreground": "#9ECBFF",
         "fontStyle": "italic"
       },
       "ptreeDir.mismatch": {
@@ -251,6 +274,9 @@ You can also customize per theme:
 | `ptreeNameType` | `nt_*`, `unknown` | NAME_TYPE identifiers in directives |
 | `ptreeNumeral` | (none) | Roman numeral prefixes |
 | `ptreeIndex` | (none) | Index file `(index)` prefix |
+| `ptreeSymlink` | `nt_smol_type`, `mismatch` | Symlink names |
+| `ptreeSymlinkArrow` | (none) | Symlink arrow operator ` -> ` |
+| `ptreeSymlinkTarget` | (none) | Symlink target paths |
 
 ---
 

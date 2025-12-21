@@ -189,10 +189,19 @@
       "patterns": [
         {
           "comment": "Symlink arrow and target (name -> target).",
-          "match": "\\s+(->)\\s+",
+          "match": "(\\s+)(->)(\\s+)([^\\s\\[#][^\\[#]*?)(?=\\s{2,}(?:#|\\[)|$)",
           "captures": {
             "1": {
+              "name": "comment.block.tree-space.ptree"
+            },
+            "2": {
               "name": "keyword.operator.symlink.ptree"
+            },
+            "3": {
+              "name": "comment.block.tree-space.ptree"
+            },
+            "4": {
+              "name": "string.unquoted.symlink-target.ptree"
             }
           }
         }
