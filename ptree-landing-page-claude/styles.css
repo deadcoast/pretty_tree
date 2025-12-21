@@ -197,13 +197,8 @@ code {
 
 
 
-/* Hero logo showcase - fills column width below terminal */
+/* Hero logo showcase - left column */
 .hero-logo-showcase {
-  margin-top: 32px;
-  padding: 24px;
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -218,7 +213,7 @@ code {
 }
 
 .hero-logo:hover {
-  transform: scale(1.01);
+  transform: scale(1.02);
   filter: drop-shadow(0 0 60px var(--primary-glow));
 }
 
@@ -389,18 +384,28 @@ code {
   display: grid;
   grid-template-columns: 1fr;
   gap: 48px;
-  align-items: start;
+  align-items: center;
+}
+
+.hero-left {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.hero-content {
+  max-width: 100%;
 }
 
 .hero-right {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 32px;
 }
 
-.hero-content {
-  max-width: 540px;
-}
+
+
+
 
 .terminal-badge {
   display: inline-flex;
@@ -1016,7 +1021,7 @@ code {
   .hero-grid {
     grid-template-columns: 1fr 1fr;
     gap: 48px;
-    align-items: start;
+    align-items: center;
   }
   
   .hero {
@@ -1033,10 +1038,6 @@ code {
 @media (min-width: 1024px) {
   .hero-grid {
     gap: 64px;
-  }
-  
-  .hero-content {
-    max-width: none;
   }
 }
 
