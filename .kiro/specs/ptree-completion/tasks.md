@@ -105,17 +105,17 @@
 - [x] 8. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [-] 9. Implement Parser Round-Trip Support
-  - [-] 9.1 Extend PtreeDirective type with position fields
+- [x] 9. Implement Parser Round-Trip Support
+  - [x] 9.1 Extend PtreeDirective type with position fields
     - Add keyStartCol, keyEndCol, valueStartCol, valueEndCol, separatorChar
     - _Requirements: 7.2_
-  - [ ] 9.2 Create printPtreeDocument function in parser.ts
+  - [x] 9.2 Create printPtreeDocument function in parser.ts
     - Serialize AST back to text preserving original formatting
     - _Requirements: 7.1, 7.3_
-  - [ ] 9.3 Update parser to preserve whitespace and comment positions
+  - [x] 9.3 Update parser to preserve whitespace and comment positions
     - Store blank lines and comments in AST
     - _Requirements: 7.2_
-  - [ ] 9.4 Write property test for parser round-trip consistency
+  - [x] 9.4 Write property test for parser round-trip consistency
     - **Property 1: Parser Round-Trip Consistency**
     - **Validates: Requirements 7.1, 7.3**
 

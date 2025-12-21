@@ -43,12 +43,27 @@ export type PtreeParseError = {
   endCol?: number;
 };
 
+/**
+ * Represents a comment line in the ptree document.
+ * Used for round-trip support to preserve comments.
+ */
+export type CommentLine = {
+  line: number;
+  raw: string;
+  startCol: number;
+  endCol: number;
+};
+
 export type PtreeDocument = {
   directives: Record<string, string>;
   directiveLines: PtreeDirective[];
   root?: PtreeRoot;
   nodes: PtreeNode[];
   errors: PtreeParseError[];
+  /** Line numbers of blank lines for round-trip support */
+  blankLines: number[];
+  /** Comment lines for round-trip support */
+  commentLines: CommentLine[];
 };
 
 const DIRECTIVE_RE = /^\s*(@[A-Za-z][A-Za-z0-9_-]*)(?:\s*[:=])?(.*)$/;
@@ -216,7 +231,7 @@ function firstNonWhitespaceColumn(line: string): number {
 
 function classifyRoot(raw: string): 'rootLabel' | 'rootPath' {
   const trimmed = raw.trimEnd();
-  if (trimmed.endsWith('//')) return 'rootLabel';
+  if (trimmed.endsWith('//')) {return 'rootLabel';}
   return 'rootPath';
 }
 
@@ -227,14 +242,32 @@ export function parsePtreeDocument(text: string): PtreeDocument {
   const directiveLines: PtreeDirective[] = [];
   const nodes: PtreeNode[] = [];
   const errors: PtreeParseError[] = [];
+  const blankLines: number[] = [];
+  const commentLines: CommentLine[] = [];
 
   let root: PtreeRoot | undefined;
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
 
-    if (line.trim().length === 0) continue;
-    if (isCommentLine(line)) continue;
+    // Track blank lines for round-trip support
+    if (line.trim().length === 0) {
+      blankLines.push(i);
+      continue;
+    }
+    
+    // Track comment lines for round-trip support
+    if (isCommentLine(line)) {
+      const startCol = firstNonWhitespaceColumn(line);
+      const trimmed = line.trim();
+      commentLines.push({
+        line: i,
+        raw: line,
+        startCol,
+        endCol: startCol + trimmed.length
+      });
+      continue;
+    }
 
     if (isDirectiveLine(line)) {
       const m = line.match(DIRECTIVE_RE);
@@ -243,6 +276,30 @@ export function parsePtreeDocument(text: string): PtreeDocument {
         const keyRaw = m[1].trim();
         let valueRaw = (m[2] ?? '').trimEnd();
         let rawBlock = line;
+
+        // Calculate position fields for round-trip support
+        const keyStartCol = line.indexOf(keyRaw);
+        const keyEndCol = keyStartCol + keyRaw.length;
+        
+        // Find separator character (: or =)
+        let separatorChar: ':' | '=' | null = null;
+        const afterKey = line.slice(keyEndCol);
+        const sepMatch = afterKey.match(/^\s*([:=])/);
+        if (sepMatch) {
+          separatorChar = sepMatch[1] as ':' | '=';
+        }
+        
+        // Calculate value start position
+        let valueStartCol = keyEndCol;
+        if (sepMatch) {
+          valueStartCol = keyEndCol + afterKey.indexOf(sepMatch[1]) + 1;
+          // Skip whitespace after separator
+          const afterSep = line.slice(valueStartCol);
+          const wsMatch = afterSep.match(/^\s*/);
+          if (wsMatch) {
+            valueStartCol += wsMatch[0].length;
+          }
+        }
 
         // Support multi-line bracket blocks, e.g.:
         //   @name_type:[
@@ -255,7 +312,9 @@ export function parsePtreeDocument(text: string): PtreeDocument {
         // If the value ends with '[' (or begins with '[') and the brackets don't close, consume lines until they do.
         if (depth > 0) {
           const parts: string[] = [];
-          if (valueRaw.length > 0) parts.push(valueRaw);
+          if (valueRaw.length > 0) {
+            parts.push(valueRaw);
+          }
           let j = i + 1;
           while (depth > 0 && j < lines.length) {
             const nxt = lines[j];
@@ -270,8 +329,24 @@ export function parsePtreeDocument(text: string): PtreeDocument {
 
         const key = keyRaw.slice(1);
         const value = valueRaw.trim();
+        
+        // Calculate value end position (for single-line directives, it's the end of value on the line)
+        const valueEndCol = rawBlock.includes('\n') 
+          ? rawBlock.length  // Multi-line: end of entire block
+          : valueStartCol + value.length;
+        
         directives[key] = value;
-        directiveLines.push({ line: startLine, key, value, raw: rawBlock });
+        directiveLines.push({ 
+          line: startLine, 
+          key, 
+          value, 
+          raw: rawBlock,
+          keyStartCol,
+          keyEndCol,
+          valueStartCol,
+          valueEndCol,
+          separatorChar
+        });
       }
       continue;
     }
@@ -359,7 +434,7 @@ export function parsePtreeDocument(text: string): PtreeDocument {
   for (let idx = 0; idx < nodes.length; idx++) {
     const node = nodes[idx];
     const next = nodes[idx + 1];
-    if (!next) continue;
+    if (!next) {continue;}
 
     if (next.depth > node.depth) {
       node.hasChildren = true;
@@ -375,5 +450,80 @@ export function parsePtreeDocument(text: string): PtreeDocument {
     }
   }
 
-  return { directives, directiveLines, root, nodes, errors };
+  return { directives, directiveLines, root, nodes, errors, blankLines, commentLines };
+}
+
+/**
+ * Serialize a PtreeDocument AST back to text, preserving original formatting.
+ * This enables round-trip parsing: parse(print(doc)) should produce an equivalent AST.
+ * 
+ * The function uses the `raw` field from each element to preserve exact formatting,
+ * including whitespace, comments, and original line structure.
+ * 
+ * @param doc The PtreeDocument to serialize
+ * @param options Optional configuration for printing
+ * @returns The serialized text representation
+ */
+export function printPtreeDocument(
+  doc: PtreeDocument,
+  options?: {
+    /** If true, include blank lines from the original document (default: true) */
+    preserveBlankLines?: boolean;
+    /** If true, include comment lines from the original document (default: true) */
+    preserveComments?: boolean;
+  }
+): string {
+  const preserveBlankLines = options?.preserveBlankLines ?? true;
+  const preserveComments = options?.preserveComments ?? true;
+  
+  // Build a map of line numbers to their content for proper ordering
+  const lineMap = new Map<number, string>();
+  
+  // Add directive lines
+  for (const directive of doc.directiveLines) {
+    // For multi-line directives, the raw field contains all lines joined with \n
+    lineMap.set(directive.line, directive.raw);
+  }
+  
+  // Add root line
+  if (doc.root) {
+    lineMap.set(doc.root.line, doc.root.raw);
+  }
+  
+  // Add node lines
+  for (const node of doc.nodes) {
+    lineMap.set(node.line, node.raw);
+  }
+  
+  // Add blank lines
+  if (preserveBlankLines) {
+    for (const lineNum of doc.blankLines) {
+      lineMap.set(lineNum, '');
+    }
+  }
+  
+  // Add comment lines
+  if (preserveComments) {
+    for (const comment of doc.commentLines) {
+      lineMap.set(comment.line, comment.raw);
+    }
+  }
+  
+  // Sort by line number and build output
+  const sortedLineNumbers = Array.from(lineMap.keys()).sort((a, b) => a - b);
+  
+  const lines: string[] = [];
+  for (const lineNum of sortedLineNumbers) {
+    const content = lineMap.get(lineNum);
+    if (content !== undefined) {
+      // Handle multi-line content (like bracket block directives)
+      if (content.includes('\n')) {
+        lines.push(...content.split('\n'));
+      } else {
+        lines.push(content);
+      }
+    }
+  }
+  
+  return lines.join('\n');
 }
