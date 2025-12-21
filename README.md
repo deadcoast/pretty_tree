@@ -2,6 +2,8 @@
 
 ptree is a plain-text, standardized directory tree format (`.ptree`) with a VS Code extension and optional CLI. Its first priority is syntax highlighting for directory trees across editors and docs; Markdown is a common host, not the goal. Spec 1.0.0 is the current draft, implemented by extension/CLI 0.0.5.
 
+  [![Website](https://img.shields.io/badge/website-ptree-blue)](https://deadcoast.github.io/pretty_tree)
+
 ## Why ptree
 - Directory trees are usually pasted as bland text with no structure or labels.
 - ptree adds stable markers so editors can highlight folders, files, and extensions.
