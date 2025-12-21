@@ -1,0 +1,41 @@
+# ============================================
+# DEMO: Basic Tree Structure
+# ============================================
+#
+# This demo shows the fundamental ptree syntax:
+# - Scaffold characters (├── └── │)
+# - Directory markers (trailing /)
+# - Root label (trailing //)
+# - File entries (no trailing /)
+#
+# Scaffold characters create the visual tree:
+#   ├── = branch with siblings below
+#   └── = last branch at this level
+#   │   = vertical connector for nested items
+#
+# ============================================
+
+@ptree: default
+@style: unicode
+
+MY_PROJECT//
+├── readme.md
+├── license
+├── package.json
+├── Src/
+│   ├── index.ts
+│   ├── Utils/
+│   │   ├── helpers.ts
+│   │   └── constants.ts
+│   └── Core/
+│       ├── parser.ts
+│       └── validator.ts
+├── Tests/
+│   ├── index.test.ts
+│   └── utils.test.ts
+├── Docs/
+│   ├── getting-started.md
+│   └── api-reference.md
+└── Config/
+    ├── default.json
+    └── production.json

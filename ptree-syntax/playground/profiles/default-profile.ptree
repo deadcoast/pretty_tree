@@ -1,0 +1,43 @@
+# ============================================
+# PROFILE: Default Profile
+# ============================================
+#
+# This file demonstrates the DEFAULT profile,
+# which is flexible and forgiving.
+#
+# Key characteristics:
+# - @ptree directive is optional (warning if missing)
+# - Multiple NAME_TYPEs allowed per entity
+# - No canonical header requirements
+# - PT010-PT015 rules are DISABLED
+#
+# Compare with spec-profile.ptree to see
+# the difference in validation strictness.
+#
+# ============================================
+
+@ptree: default
+@style: unicode
+
+MY_PROJECT//
+├── src/
+│   ├── Core/
+│   │   ├── parser.ts
+│   │   └── validator.ts
+│   └── Utils/
+│       └── helpers.ts
+├── docs/
+│   ├── User-Guide/
+│   │   └── getting-started.md
+│   └── Api-Docs/
+│       └── reference.md
+├── tests/
+│   └── unit/
+│       └── parser.test.ts
+├── .gitignore
+├── .editorconfig
+├── package.json
+├── tsconfig.json
+└── readme.md
+
+8 directories, 10 files

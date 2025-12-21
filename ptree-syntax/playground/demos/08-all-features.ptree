@@ -1,0 +1,87 @@
+# ============================================
+# DEMO: All Features Combined
+# ============================================
+#
+# This comprehensive demo exercises all ptree
+# features in a single file:
+#
+# ✓ Canonical header with all directives
+# ✓ NAME_TYPE validation (ROOT, DIR, FILE, EXT, META, NUMERAL)
+# ✓ Roman numeral prefixes (I_, II_, III_)
+# ✓ Index file convention (index)
+# ✓ Symbolic links (->)
+# ✓ Inline metadata [key=value]
+# ✓ Inline comments # comment
+# ✓ Summary line
+#
+# Use this file to verify all semantic tokens
+# are highlighting correctly in your theme.
+#
+# ============================================
+
+@ptree: spec
+@style: unicode
+@version: 1.0.0
+@name_type:[
+    ROOT: 'SCREAM_TYPE',
+    DIR: 'High_Type',
+    FILE: 'smol-type',
+    EXT: 'smol-type',
+    META: 'SCREAM_TYPE',
+    NUMERAL: 'NUMERAL'
+]
+@separation_delimiters: [
+    '-',
+    '_',
+    '.'
+]
+
+PTREE-1.0.0//
+├── readme.md  [status=published]  # Project overview
+├── changelog.md  # Version history
+├── license  [type=MIT]
+├── package.json
+├── tsconfig.json
+├── I_Introduction/
+│   ├── (index).md
+│   ├── overview.md  [priority=high]
+│   └── getting-started.md
+├── II_Core/
+│   ├── (index).ts  [entry=true]
+│   ├── parser.ts  [tested=true, coverage=95]
+│   ├── validator.ts  [tested=true, coverage=88]
+│   ├── fixer.ts
+│   └── Types/
+│       ├── (index).ts
+│       └── interfaces.ts
+├── III_Utils/
+│   ├── (index).ts
+│   ├── helpers.ts  [deprecated=false]
+│   └── constants.ts  [immutable=true]
+├── IV_Tests/
+│   ├── parser.test.ts  [suite=unit]
+│   ├── validator.test.ts  [suite=unit]
+│   └── Fixtures/
+│       └── sample-data.json
+├── V_Docs/
+│   ├── (index).md
+│   ├── api-reference.md  [generated=true]
+│   └── Examples/
+│       ├── basic-usage.md
+│       └── advanced-config.md
+├── Config/
+│   ├── base.json  [env=all]
+│   ├── development.json  [env=dev]  # Local settings
+│   └── production.json  [env=prod, secure=true]
+├── Shared/
+│   ├── types.ts -> ../II_Core/Types/interfaces.ts
+│   ├── utils.ts -> ../III_Utils/helpers.ts
+│   └── Config/ -> ../Config/
+├── Scripts/
+│   ├── build.sh  [platform=unix]
+│   └── deploy.sh  [platform=unix, requires=docker]
+└── Node_Modules/
+    ├── core -> ../II_Core/
+    └── utils -> ../III_Utils/
+
+12 directories, 32 files

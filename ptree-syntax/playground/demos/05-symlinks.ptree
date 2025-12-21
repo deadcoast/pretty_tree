@@ -1,0 +1,75 @@
+# ============================================
+# DEMO: Symbolic Links (Symlinks)
+# ============================================
+#
+# Symlinks are represented with the arrow syntax:
+#   name -> target
+#
+# The arrow must have spaces on both sides: ` -> `
+#
+# File symlinks:
+#   readme.md -> ../docs/readme.md
+#
+# Directory symlinks (target ends with /):
+#   config/ -> ../shared/config/
+#
+# Symlinks get special semantic highlighting:
+#   - Link name: ptreeSymlink
+#   - Arrow: ptreeSymlinkArrow
+#   - Target: ptreeSymlinkTarget
+#
+# ============================================
+
+@ptree: spec
+@style: unicode
+@version: 1.0.0
+@name_type:[
+    ROOT: 'SCREAM_TYPE',
+    DIR: 'High_Type',
+    FILE: 'smol-type'
+]
+@separation_delimiters: [
+    '-',
+    '_',
+    '.'
+]
+
+PTREE-1.0.0//
+├── readme.md
+├── package.json
+├── Packages/
+│   ├── Core/
+│   │   ├── package.json
+│   │   └── Src/
+│   │       ├── index.ts
+│   │       └── types.ts
+│   ├── Utils/
+│   │   ├── package.json
+│   │   └── Src/
+│   │       └── helpers.ts
+│   └── Cli/
+│       ├── package.json
+│       └── Src/
+│           └── main.ts
+├── Apps/
+│   ├── Web/
+│   │   └── Src/
+│   │       └── app.tsx
+│   └── Api/
+│       └── Src/
+│           └── server.ts
+├── Shared/
+│   ├── types.ts -> ../Packages/Core/Src/types.ts
+│   ├── utils.ts -> ../Packages/Utils/Src/helpers.ts
+│   └── Config/ -> ../Config/
+├── Config/
+│   ├── base.json
+│   ├── development.json
+│   └── production.json
+├── Node_Modules/
+│   ├── core -> ../Packages/Core/
+│   ├── utils -> ../Packages/Utils/
+│   └── cli -> ../Packages/Cli/
+└── Docs/
+    ├── readme.md -> ../readme.md
+    └── Api/ -> ../Apps/Api/Docs/

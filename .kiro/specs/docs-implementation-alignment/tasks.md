@@ -26,78 +26,78 @@
     - Add correct and incorrect examples with explanations
     - _Requirements: 3.1, 3.2, 3.3_
 
-- [ ] 4. Update Semantic Token Documentation
-  - [ ] 4.1 Update docs/ptree-python/SEMANTIC_TOKENS.md with all 18 token types
+- [x] 4. Update Semantic Token Documentation
+  - [x] 4.1 Update docs/ptree-python/SEMANTIC_TOKENS.md with all 18 token types
     - Add ptreeAttribute, ptreeAttributeKey, ptreeAttributeValue, ptreeInlineComment
     - Document nt_index_type and nt_numeral modifiers
     - Add theme customization examples for new tokens
     - _Requirements: 4.1, 4.2, 4.3_
-  - [ ] 4.2 Write property test for semantic token documentation completeness
+  - [x] 4.2 Write property test for semantic token documentation completeness
     - **Property 2: Semantic Token Documentation Completeness**
     - **Validates: Requirements 4.1**
 
-- [ ] 5. Checkpoint - Ensure documentation updates are complete
+- [x] 5. Checkpoint - Ensure documentation updates are complete
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 6. Create Playground Directory Structure
-  - [ ] 6.1 Create playground folder with subdirectories
+- [x] 6. Create Playground Directory Structure
+  - [x] 6.1 Create playground folder with subdirectories
     - Create ptree-syntax/playground/ with demos/, profiles/, rules/, config/, themes/, scripts/
     - _Requirements: 13.1_
-  - [ ] 6.2 Create playground README.md
+  - [x] 6.2 Create playground README.md
     - Document playground purpose and feature list
     - _Requirements: 13.4_
-  - [ ] 6.3 Create QUICKSTART.md with step-by-step instructions
+  - [x] 6.3 Create QUICKSTART.md with step-by-step instructions
     - Include 2-minute syntax highlighting guide
     - Include validation testing instructions
     - Include fixer testing instructions
     - _Requirements: 18.1_
 
-- [ ] 7. Create Feature Demo Files
-  - [ ] 7.1 Create demos/01-basic-tree.ptree
+- [x] 7. Create Feature Demo Files
+  - [x] 7.1 Create demos/01-basic-tree.ptree
     - Demonstrate basic tree structure with scaffold characters
     - Include inline comments explaining the demo
     - _Requirements: 14.1, 14.2_
-  - [ ] 7.2 Create demos/02-name-types.ptree
+  - [x] 7.2 Create demos/02-name-types.ptree
     - Demonstrate NAME_TYPE validation for ROOT, DIR, FILE
     - Include valid and invalid examples
     - _Requirements: 14.1, 14.3_
-  - [ ] 7.3 Create demos/03-roman-numerals.ptree
+  - [x] 7.3 Create demos/03-roman-numerals.ptree
     - Demonstrate NUMERAL prefix pattern (I_, II_, III_)
     - _Requirements: 14.1_
-  - [ ] 7.4 Create demos/04-index-files.ptree
+  - [x] 7.4 Create demos/04-index-files.ptree
     - Demonstrate (index) prefix convention
     - Show (index), (index)-name, (index)_name patterns
     - _Requirements: 14.1, 8.3_
-  - [ ] 7.5 Create demos/05-symlinks.ptree
+  - [x] 7.5 Create demos/05-symlinks.ptree
     - Demonstrate ` -> ` arrow syntax
     - Show both file and directory symlink targets
     - _Requirements: 14.1, 5.3, 9.3_
-  - [ ] 7.6 Create demos/06-inline-metadata.ptree
+  - [x] 7.6 Create demos/06-inline-metadata.ptree
     - Demonstrate bracket attributes [key=value]
     - Demonstrate inline comments # comment
     - _Requirements: 14.1, 5.2_
-  - [ ] 7.7 Create demos/07-summary-lines.ptree
+  - [x] 7.7 Create demos/07-summary-lines.ptree
     - Demonstrate "N directories, M files" format
     - _Requirements: 14.1_
-  - [ ] 7.8 Create demos/08-all-features.ptree
+  - [x] 7.8 Create demos/08-all-features.ptree
     - Comprehensive demo exercising all features
     - _Requirements: 5.1_
 
-- [ ] 8. Create Profile Comparison Files
-  - [ ] 8.1 Create profiles/default-profile.ptree
+- [x] 8. Create Profile Comparison Files
+  - [x] 8.1 Create profiles/default-profile.ptree
     - Example using default profile settings
     - _Requirements: 15.1_
-  - [ ] 8.2 Create profiles/spec-profile.ptree
+  - [x] 8.2 Create profiles/spec-profile.ptree
     - Example using spec profile with canonical headers
     - _Requirements: 15.1_
-  - [ ] 8.3 Create profiles/README.md explaining differences
+  - [x] 8.3 Create profiles/README.md explaining differences
     - Document validation behavior differences between profiles
     - _Requirements: 15.3_
-  - [ ] 8.4 Write property test for profile validation difference
+  - [x] 8.4 Write property test for profile validation difference
     - **Property 3: Profile Validation Difference**
     - **Validates: Requirements 15.2**
 
-- [ ] 9. Checkpoint - Ensure demo files are valid
+- [-] 9. Checkpoint - Ensure demo files are valid
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 10. Create Rule Test Files

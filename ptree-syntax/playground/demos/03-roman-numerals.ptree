@@ -1,0 +1,67 @@
+# ============================================
+# DEMO: Roman Numeral Prefixes (NUMERAL)
+# ============================================
+#
+# Roman numerals (I, II, III, IV, V, etc.) can prefix
+# directory names to create numbered sections.
+#
+# Pattern: [NUMERAL]_[High_Type]
+# Examples: I_Introduction/, II_Getting_Started/
+#
+# Supported numerals: I through X (and beyond)
+#   I, II, III, IV, V, VI, VII, VIII, IX, X
+#
+# The NUMERAL entity type is declared in @name_type
+# to enable semantic highlighting of the prefix.
+#
+# ============================================
+
+@ptree: spec
+@style: unicode
+@version: 1.0.0
+@name_type:[
+    ROOT: 'SCREAM_TYPE',
+    DIR: 'High_Type',
+    FILE: 'smol-type',
+    NUMERAL: 'NUMERAL'
+]
+@separation_delimiters: [
+    '-',
+    '_',
+    '.'
+]
+
+PTREE-1.0.0//
+├── readme.md
+├── I_Introduction/
+│   ├── overview.md
+│   └── getting-started.md
+├── II_Core_Concepts/
+│   ├── architecture.md
+│   ├── data-models.md
+│   └── configuration.md
+├── III_User_Guide/
+│   ├── installation.md
+│   ├── basic-usage.md
+│   └── advanced-features.md
+├── IV_Api_Reference/
+│   ├── endpoints.md
+│   ├── authentication.md
+│   └── error-codes.md
+├── V_Examples/
+│   ├── quick-start.md
+│   ├── integration.md
+│   └── best-practices.md
+├── VI_Troubleshooting/
+│   ├── common-issues.md
+│   └── faq.md
+├── VII_Contributing/
+│   ├── guidelines.md
+│   └── code-of-conduct.md
+├── VIII_Changelog/
+│   └── releases.md
+├── IX_Appendix/
+│   ├── glossary.md
+│   └── references.md
+└── X_License/
+    └── license.md

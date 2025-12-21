@@ -1,0 +1,72 @@
+# ============================================
+# DEMO: Inline Metadata
+# ============================================
+#
+# Inline metadata adds context to tree nodes
+# without breaking the tree structure.
+#
+# Two types of inline metadata:
+#
+# 1. Bracket Attributes [key=value]
+#    - Multiple attributes: [key1=val1, key2=val2]
+#    - Must be separated from name by two spaces
+#
+# 2. Inline Comments # comment
+#    - Start with # character
+#    - Must be separated from name by two spaces
+#
+# You can combine both:
+#   file.ts  [status=done]  # Main entry point
+#
+# Semantic tokens:
+#   - ptreeAttribute: entire [key=value] block
+#   - ptreeAttributeKey: the key part
+#   - ptreeAttributeValue: the value part
+#   - ptreeInlineComment: the # comment
+#
+# ============================================
+
+@ptree: spec
+@style: unicode
+@version: 1.0.0
+@name_type:[
+    ROOT: 'SCREAM_TYPE',
+    DIR: 'High_Type',
+    FILE: 'smol-type'
+]
+@separation_delimiters: [
+    '-',
+    '_',
+    '.'
+]
+
+PTREE-1.0.0//
+├── readme.md  [status=published, author=team]
+├── changelog.md  # Track all version changes here
+├── license  [type=MIT]
+├── Config/
+│   ├── base.json  [env=all]
+│   ├── development.json  [env=dev]  # Local development settings
+│   ├── staging.json  [env=staging]
+│   └── production.json  [env=prod, secure=true]
+├── Src/
+│   ├── index.ts  [entry=true]  # Main entry point
+│   ├── Core/
+│   │   ├── parser.ts  [tested=true, coverage=95]
+│   │   ├── validator.ts  [tested=true, coverage=88]
+│   │   └── types.ts  # Shared type definitions
+│   └── Utils/
+│       ├── helpers.ts  [deprecated=false]
+│       └── constants.ts  [immutable=true]
+├── Tests/
+│   ├── parser.test.ts  [suite=unit]
+│   ├── validator.test.ts  [suite=unit]
+│   └── integration.test.ts  [suite=integration, slow=true]
+├── Docs/
+│   ├── api.md  [generated=true]  # Auto-generated from source
+│   ├── guide.md  [status=draft]
+│   └── examples.md  [status=review]  # Needs team review
+└── Scripts/
+    ├── build.sh  [platform=unix]
+    ├── deploy.sh  [platform=unix, requires=docker]
+    └── setup.ps1  [platform=windows]  # Windows setup script

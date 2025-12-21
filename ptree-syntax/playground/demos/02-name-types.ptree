@@ -1,0 +1,77 @@
+# ============================================
+# DEMO: NAME_TYPE Validation
+# ============================================
+#
+# NAME_TYPEs define naming conventions for entities:
+#
+# SCREAM_TYPE: ALL_CAPS_WITH_UNDERSCORES
+#   - Pattern: ^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$
+#   - Example: MY_PROJECT, API_SERVER
+#
+# High_Type: Title_Case_With_Underscores
+#   - Pattern: ^[A-Z][a-z0-9]*(_[A-Z][a-z0-9]*)*$
+#   - Example: My_Project, Api_Server
+#
+# smol-type: lowercase-with-dashes
+#   - Pattern: ^[a-z][a-z0-9]*(-[a-z0-9]+)*$
+#   - Example: my-project, api-server
+#
+# The @name_type directive maps entities to types:
+#   ROOT: naming convention for root label
+#   DIR: naming convention for directories
+#   FILE: naming convention for files
+#
+# ============================================
+
+@ptree: spec
+@style: unicode
+@version: 1.0.0
+@name_type:[
+    ROOT: 'SCREAM_TYPE',
+    DIR: 'High_Type',
+    FILE: 'smol-type'
+]
+@separation_delimiters: [
+    '-',
+    '_',
+    '.'
+]
+
+# ✅ VALID: All names follow their NAME_TYPE rules
+# Note: spec profile requires root to be "PTREE-<version>//"
+
+PTREE-1.0.0//
+├── readme.md
+├── changelog.md
+├── Src/
+│   ├── index.ts
+│   ├── Core/
+│   │   ├── parser.ts
+│   │   └── validator.ts
+│   └── Utils/
+│       └── helpers.ts
+├── Tests/
+│   └── parser.test.ts
+└── Docs/
+    └── api-reference.md
+
+
+# ============================================
+# INVALID EXAMPLES (uncomment to see errors)
+# ============================================
+#
+# These would trigger PT004 NAME_TYPE mismatch:
+#
+# Wrong ROOT (should be SCREAM_TYPE):
+# my-project-1.0.0//
+#
+# Wrong DIR (should be High_Type):
+# MY_PROJECT-1.0.0//
+# └── SRC/
+#
+# Wrong FILE (should be smol-type):
+# MY_PROJECT-1.0.0//
+# └── Src/
+#     └── Index.ts
+#
+# ============================================

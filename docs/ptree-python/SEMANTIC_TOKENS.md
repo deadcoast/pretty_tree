@@ -30,7 +30,7 @@ On each `.ptree` document, the provider:
 
 ## Token types
 
-The extension contributes these token types:
+The extension contributes 19 token types:
 
 | Token Type | Description | Example |
 |------------|-------------|---------|
@@ -41,7 +41,7 @@ The extension contributes these token types:
 | `ptreeDir` | Directory names | `src/`, `User_Guide/` |
 | `ptreeFile` | File stem (before extension) | `readme`, `parser` |
 | `ptreeExtension` | File extension portion | `md`, `ts`, `json` |
-| `ptreeMeta` | Inline metadata, markers, comments | `/`, `//`, `# comment` |
+| `ptreeMeta` | Inline metadata, markers, comments | `/`, `//` |
 | `ptreeSemver` | Semantic version tokens | `1.0.0`, `0.2.3-alpha` |
 | `ptreeNameType` | Name type identifiers | `High_Type`, `smol-type` |
 | `ptreeNumeral` | Roman numeral prefixes | `I`, `II`, `III`, `IV` |
@@ -49,6 +49,10 @@ The extension contributes these token types:
 | `ptreeSymlink` | Symlink name (before arrow) | `current`, `latest` |
 | `ptreeSymlinkArrow` | Symlink arrow operator | ` -> ` |
 | `ptreeSymlinkTarget` | Symlink target path | `releases/v1.0.0/` |
+| `ptreeAttribute` | Bracket attribute delimiters | `[`, `]` |
+| `ptreeAttributeKey` | Attribute key in brackets | `type`, `size` |
+| `ptreeAttributeValue` | Attribute value in brackets | `dir`, `1024` |
+| `ptreeInlineComment` | Inline comment hash and text | `# comment` |
 
 ---
 
@@ -144,17 +148,53 @@ Example highlighting for `current -> releases/v1.0.0/  [type=dir]`:
 
 Symlink names are validated against FILE NAME_TYPE rules, as symlinks are classified as files regardless of whether they point to directories.
 
-### Inline Metadata
+### Inline Metadata (`ptreeAttribute`, `ptreeAttributeKey`, `ptreeAttributeValue`, `ptreeInlineComment`)
 
-When a node has inline metadata (bracket attributes or comments), the provider:
+When a node has inline metadata (bracket attributes or comments), the provider emits distinct tokens for each component:
 
-1. Emits appropriate tokens for the name portion
-2. Emits `ptreeMeta` for everything after the name (attributes, comments)
+#### Bracket Attributes
 
-Example: `package.json  [type=node]`
+For bracket attributes like `[key=value, flag]`, the provider emits:
+
+1. `ptreeAttribute` for the bracket delimiters (`[` and `]`)
+2. `ptreeAttributeKey` for attribute keys (`key`, `flag`)
+3. `ptreeMeta` for the equals sign (`=`) and comma separators (`,`)
+4. `ptreeAttributeValue` for attribute values (`value`)
+
+Example highlighting for `package.json  [type=node, cached]`:
 - `package` → `ptreeFile`
 - `json` → `ptreeExtension`
-- `  [type=node]` → `ptreeMeta`
+- `[` → `ptreeAttribute`
+- `type` → `ptreeAttributeKey`
+- `=` → `ptreeMeta`
+- `node` → `ptreeAttributeValue`
+- `,` → `ptreeMeta`
+- `cached` → `ptreeAttributeKey`
+- `]` → `ptreeAttribute`
+
+#### Inline Comments
+
+For inline comments like `# comment text`, the provider emits:
+
+1. `ptreeInlineComment` for the hash symbol (`#`)
+2. `ptreeInlineComment` for the comment text
+
+Example highlighting for `readme.md  # documentation`:
+- `readme` → `ptreeFile`
+- `md` → `ptreeExtension`
+- `#` → `ptreeInlineComment`
+- `documentation` → `ptreeInlineComment`
+
+#### Combined Attributes and Comments
+
+Bracket attributes and inline comments can appear together:
+
+Example highlighting for `config.json  [env=prod]  # production config`:
+- `config` → `ptreeFile`
+- `json` → `ptreeExtension`
+- `[env=prod]` → attribute tokens as above
+- `#` → `ptreeInlineComment`
+- `production config` → `ptreeInlineComment`
 
 ---
 
@@ -209,6 +249,19 @@ You can customize colors via your `settings.json`:
         "foreground": "#9ECBFF",
         "fontStyle": "italic"
       },
+      "ptreeAttribute": {
+        "foreground": "#79B8FF"
+      },
+      "ptreeAttributeKey": {
+        "foreground": "#B392F0"
+      },
+      "ptreeAttributeValue": {
+        "foreground": "#9ECBFF"
+      },
+      "ptreeInlineComment": {
+        "foreground": "#6A737D",
+        "fontStyle": "italic"
+      },
       "ptreeDir.mismatch": {
         "foreground": "#F97583",
         "fontStyle": "underline"
@@ -240,6 +293,19 @@ You can also customize per theme:
         "ptreeNumeral": {
           "foreground": "#E5C07B",
           "fontStyle": "bold"
+        },
+        "ptreeAttribute": {
+          "foreground": "#61AFEF"
+        },
+        "ptreeAttributeKey": {
+          "foreground": "#E06C75"
+        },
+        "ptreeAttributeValue": {
+          "foreground": "#98C379"
+        },
+        "ptreeInlineComment": {
+          "foreground": "#5C6370",
+          "fontStyle": "italic"
         }
       }
     },
@@ -247,7 +313,41 @@ You can also customize per theme:
       "rules": {
         "ptreeNumeral": {
           "foreground": "#F9C513"
+        },
+        "ptreeAttribute": {
+          "foreground": "#79B8FF"
+        },
+        "ptreeAttributeKey": {
+          "foreground": "#B392F0"
+        },
+        "ptreeAttributeValue": {
+          "foreground": "#9ECBFF"
+        },
+        "ptreeInlineComment": {
+          "foreground": "#6A737D",
+          "fontStyle": "italic"
         }
+      }
+    }
+  }
+}
+```
+
+### Customizing Index and Numeral Modifiers
+
+You can style index files and numeral prefixes with their specific modifiers:
+
+```json
+{
+  "editor.semanticTokenColorCustomizations": {
+    "rules": {
+      "ptreeIndex.nt_index_type": {
+        "foreground": "#56D4DD",
+        "fontStyle": "italic"
+      },
+      "ptreeNumeral.nt_numeral": {
+        "foreground": "#F9C513",
+        "fontStyle": "bold"
       }
     }
   }
@@ -269,14 +369,34 @@ You can also customize per theme:
 | `ptreeDir` | `nt_high_type`, `nt_cap_type`, `mismatch` | Directory names |
 | `ptreeFile` | `nt_smol_type`, `nt_snake_type`, `mismatch` | File stems |
 | `ptreeExtension` | `nt_smol_type`, `mismatch` | File extensions |
-| `ptreeMeta` | (none) | Markers, comments, metadata |
+| `ptreeMeta` | (none) | Markers, separators, delimiters |
 | `ptreeSemver` | (none) | Version numbers |
 | `ptreeNameType` | `nt_*`, `unknown` | NAME_TYPE identifiers in directives |
-| `ptreeNumeral` | (none) | Roman numeral prefixes |
-| `ptreeIndex` | (none) | Index file `(index)` prefix |
+| `ptreeNumeral` | `nt_numeral` | Roman numeral prefixes |
+| `ptreeIndex` | `nt_index_type` | Index file `(index)` prefix |
 | `ptreeSymlink` | `nt_smol_type`, `mismatch` | Symlink names |
 | `ptreeSymlinkArrow` | (none) | Symlink arrow operator ` -> ` |
 | `ptreeSymlinkTarget` | (none) | Symlink target paths |
+| `ptreeAttribute` | (none) | Bracket delimiters `[` `]` |
+| `ptreeAttributeKey` | (none) | Attribute keys in brackets |
+| `ptreeAttributeValue` | (none) | Attribute values in brackets |
+| `ptreeInlineComment` | (none) | Inline comment `#` and text |
+
+### All Token Modifiers
+
+| Modifier | Description | Applied To |
+|----------|-------------|------------|
+| `nt_scream_type` | Matches SCREAM_TYPE pattern | Root, Dir, File |
+| `nt_high_type` | Matches High_Type pattern | Dir, File |
+| `nt_smol_type` | Matches smol-type pattern | Dir, File, Extension |
+| `nt_snake_type` | Matches snake_type pattern | Dir, File |
+| `nt_cameltype` | Matches CamelType pattern | Dir, File |
+| `nt_dot_smol_type` | Matches dot.smol-type pattern | Dir, File |
+| `nt_numeral` | Matches NUMERAL pattern | Numeral prefixes |
+| `nt_index_type` | Matches index-type pattern | Index file prefixes |
+| `nt_custom` | Fallback when no pattern matches | Any name token |
+| `mismatch` | Name doesn't match allowed types | Root, Dir, File, Extension |
+| `unknown` | Unknown NAME_TYPE in directive | NameType tokens |
 
 ---
 

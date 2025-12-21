@@ -1,0 +1,68 @@
+# ============================================
+# DEMO: Index File Convention
+# ============================================
+#
+# The (index) prefix marks entry point files.
+# This convention is common in web frameworks.
+#
+# Patterns:
+#   (index).ext      - Simple index file
+#   (index)-name.ext - Index with suffix (dash)
+#   (index)_name.ext - Index with suffix (underscore)
+#
+# Examples:
+#   (index).html     - Main HTML entry
+#   (index).ts       - Module entry point
+#   (index)-home.tsx - Named index variant
+#
+# Index files get special semantic highlighting
+# to distinguish them from regular files.
+#
+# ============================================
+
+@ptree: spec
+@style: unicode
+@version: 1.0.0
+@name_type:[
+    ROOT: 'SCREAM_TYPE',
+    DIR: 'High_Type',
+    FILE: 'smol-type'
+]
+@separation_delimiters: [
+    '-',
+    '_',
+    '.'
+]
+
+PTREE-1.0.0//
+├── (index).html
+├── (index).css
+├── (index).js
+├── Pages/
+│   ├── (index).html
+│   ├── (index)-home.html
+│   ├── (index)-about.html
+│   └── (index)-contact.html
+├── Components/
+│   ├── (index).ts
+│   ├── Header/
+│   │   ├── (index).tsx
+│   │   └── header.module.css
+│   ├── Footer/
+│   │   ├── (index).tsx
+│   │   └── footer.module.css
+│   └── Sidebar/
+│       ├── (index).tsx
+│       └── sidebar.module.css
+├── Styles/
+│   ├── (index).css
+│   ├── variables.css
+│   └── mixins.css
+├── Utils/
+│   ├── (index).ts
+│   ├── helpers.ts
+│   └── constants.ts
+└── Api/
+    ├── (index).ts
+    ├── (index)_client.ts
+    └── endpoints.ts

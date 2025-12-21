@@ -1,0 +1,60 @@
+# ============================================
+# PROFILE: Spec Profile (Canonical)
+# ============================================
+#
+# This file demonstrates the SPEC profile,
+# which enforces strict canonical headers.
+#
+# Key characteristics:
+# - @ptree: spec is REQUIRED (PT010)
+# - @style: unicode is REQUIRED (PT011)
+# - @version: SEMVER is REQUIRED (PT012)
+# - @name_type block is REQUIRED (PT013)
+# - @separation_delimiters is REQUIRED (PT014)
+# - Root must be PTREE-<version>// (PT015)
+# - Only High_Type for DIR, smol-type for FILE
+#
+# Compare with default-profile.ptree to see
+# the difference in validation strictness.
+#
+# ============================================
+
+@ptree: spec
+@style: unicode
+@version: 1.0.0
+@name_type:[
+    ROOT: 'SCREAM_TYPE',
+    DIR: 'High_Type',
+    FILE: 'smol-type',
+    EXT: 'smol-type',
+    META: 'SCREAM_TYPE',
+    NUMERAL: 'NUMERAL'
+]
+@separation_delimiters: [
+    '-',
+    '_',
+    '.'
+]
+
+PTREE-1.0.0//
+├── Src/
+│   ├── Core/
+│   │   ├── parser.ts
+│   │   └── validator.ts
+│   └── Utils/
+│       └── helpers.ts
+├── Docs/
+│   ├── User_Guide/
+│   │   └── getting-started.md
+│   └── Api_Docs/
+│       └── reference.md
+├── Tests/
+│   └── Unit/
+│       └── parser.test.ts
+├── .gitignore
+├── .editorconfig
+├── package.json
+├── tsconfig.json
+└── readme.md
+
+8 directories, 10 files
