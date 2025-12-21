@@ -102,7 +102,7 @@ function parseDelimiterListDirective(raw: string): string[] | null {
   //   '.'
   // ]
   const out: string[] = [];
-  const re = /['"]([\-_.])['"]/g;
+  const re = /['"]([-_.])['"]/g;
   let m: RegExpExecArray | null;
   while ((m = re.exec(raw)) !== null) {
     out.push(m[1]);
@@ -212,6 +212,31 @@ export function validatePtreeDocument(doc: PtreeDocument, config: PtreeConfig): 
     const start = e.startCol ?? 0;
     const end = e.endCol ?? start + 1;
     msgs.push(mkMsg('PT000', 'warning', e.message, e.line, start, end));
+  }
+
+  // Known directives that the system recognizes
+  const KNOWN_DIRECTIVES = new Set([
+    'ptree',
+    'style',
+    'version',
+    'name_type',
+    'separation_delimiters',
+    'seperation_delimiters', // Common typo, also accepted
+    'root'
+  ]);
+
+  // Emit info-level messages for unknown directives (don't block validation)
+  for (const directive of doc.directiveLines) {
+    if (!KNOWN_DIRECTIVES.has(directive.key)) {
+      msgs.push(mkMsg(
+        'PT000',
+        'info',
+        `Unknown directive "@${directive.key}". This directive will be ignored.`,
+        directive.line,
+        directive.keyStartCol,
+        directive.keyEndCol
+      ));
+    }
   }
 
   // PT003: require @ptree

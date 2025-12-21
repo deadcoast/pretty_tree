@@ -33,11 +33,96 @@ export type PtreeConfig = {
   RULES?: Record<string, RuleSetting> & { default?: boolean };
 };
 
+/**
+ * Error thrown when JSON parsing fails, includes file path and position information.
+ */
+export class JsonParseError extends Error {
+  constructor(
+    message: string,
+    public readonly filePath: string,
+    public readonly line?: number,
+    public readonly column?: number
+  ) {
+    const posInfo = line !== undefined && column !== undefined
+      ? ` at line ${line}, column ${column}`
+      : '';
+    super(`Failed to parse JSON file "${filePath}"${posInfo}: ${message}`);
+    this.name = 'JsonParseError';
+  }
+}
+
+/**
+ * Parse position information from a JSON.parse SyntaxError message.
+ * Different JS engines format the error differently, so we try multiple patterns.
+ */
+function parseJsonErrorPosition(error: SyntaxError, content: string): { line?: number; column?: number } {
+  const msg = error.message;
+  
+  // Try to extract position from error message
+  // V8/Node: "Unexpected token } in JSON at position 123"
+  // SpiderMonkey: "JSON.parse: expected ',' or '}' after property value in object at line 5 column 3"
+  
+  // Pattern 1: "at position N"
+  const posMatch = msg.match(/at position (\d+)/i);
+  if (posMatch) {
+    const pos = parseInt(posMatch[1], 10);
+    // Convert position to line/column
+    let line = 1;
+    let column = 1;
+    for (let i = 0; i < pos && i < content.length; i++) {
+      if (content[i] === '\n') {
+        line++;
+        column = 1;
+      } else {
+        column++;
+      }
+    }
+    return { line, column };
+  }
+  
+  // Pattern 2: "at line N column M"
+  const lineColMatch = msg.match(/at line (\d+) column (\d+)/i);
+  if (lineColMatch) {
+    return {
+      line: parseInt(lineColMatch[1], 10),
+      column: parseInt(lineColMatch[2], 10)
+    };
+  }
+  
+  // Pattern 3: "line N"
+  const lineMatch = msg.match(/line (\d+)/i);
+  if (lineMatch) {
+    return { line: parseInt(lineMatch[1], 10) };
+  }
+  
+  return {};
+}
+
 const USER_CONFIG_CANDIDATES = ['.ptreerc.json', '.ptree.json', 'ptree.config.json'];
 
+/**
+ * Read and parse a JSON file with enhanced error reporting.
+ * @throws {JsonParseError} If the file cannot be parsed, includes file path and position
+ */
 function readJsonFile<T>(filePath: string): T {
-  const raw = fs.readFileSync(filePath, 'utf8');
-  return JSON.parse(raw) as T;
+  let raw: string;
+  try {
+    raw = fs.readFileSync(filePath, 'utf8');
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    throw new JsonParseError(`Unable to read file: ${message}`, filePath);
+  }
+  
+  try {
+    return JSON.parse(raw) as T;
+  } catch (err) {
+    if (err instanceof SyntaxError) {
+      const { line, column } = parseJsonErrorPosition(err, raw);
+      throw new JsonParseError(err.message, filePath, line, column);
+    }
+    const message = err instanceof Error ? err.message : String(err);
+    throw new JsonParseError(message, filePath);
+  }
 }
 
 export type ConfigProfile = 'default' | 'spec';
@@ -97,7 +182,7 @@ export function loadEffectiveConfig(projectRoot: string, workspaceRoot?: string,
   const user = readJsonFile<Partial<PtreeConfig>>(userConfigPath);
 
   // Merge in a targeted way to keep NAME_TYPES/RULES/ENTITY_NAME_TYPES centrally managed.
-  const merged: PtreeConfig = deepMerge(base as any, user as any);
+  const merged: PtreeConfig = deepMerge(base as any, user as unknown);
 
   return { config: merged, defaultConfigPath, userConfigPath };
 }

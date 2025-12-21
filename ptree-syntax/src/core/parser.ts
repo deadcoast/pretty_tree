@@ -308,23 +308,35 @@ export function parsePtreeDocument(text: string): PtreeDocument {
         //     FILE: 'smol-type'
         //   ]
         const count = (s: string, re: RegExp) => (s.match(re) ?? []).length;
-        let depth = count(valueRaw, /\[/g) - count(valueRaw, /\]/g);
+        let bracketDepth = count(valueRaw, /\[/g) - count(valueRaw, /\]/g);
+        const openingLine = startLine; // Track opening line for error reporting
+        
         // If the value ends with '[' (or begins with '[') and the brackets don't close, consume lines until they do.
-        if (depth > 0) {
+        if (bracketDepth > 0) {
           const parts: string[] = [];
           if (valueRaw.length > 0) {
             parts.push(valueRaw);
           }
           let j = i + 1;
-          while (depth > 0 && j < lines.length) {
+          while (bracketDepth > 0 && j < lines.length) {
             const nxt = lines[j];
             parts.push(nxt);
             rawBlock += `\n${nxt}`;
-            depth += count(nxt, /\[/g) - count(nxt, /\]/g);
+            bracketDepth += count(nxt, /\[/g) - count(nxt, /\]/g);
             j += 1;
           }
           valueRaw = parts.join('\n').trimEnd();
           i = j - 1; // skip consumed lines
+          
+          // Report unclosed bracket block with opening line location
+          if (bracketDepth > 0) {
+            errors.push({
+              line: openingLine,
+              message: `Unclosed bracket block starting at line ${openingLine + 1}. Expected ${bracketDepth} more closing bracket(s).`,
+              startCol: keyStartCol,
+              endCol: line.length
+            });
+          }
         }
 
         const key = keyRaw.slice(1);

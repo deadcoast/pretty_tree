@@ -133,21 +133,21 @@
     - **Property 8: Fixer Idempotence**
     - **Validates: Requirements 8.3**
 
-- [-] 11. Implement Error Recovery Enhancements
-  - [-] 11.1 Update parser to continue after invalid lines
+- [x] 11. Implement Error Recovery Enhancements
+  - [x] 11.1 Update parser to continue after invalid lines
     - Collect errors but don't stop parsing
     - _Requirements: 9.1_
-  - [ ] 11.2 Update parser to report unclosed bracket blocks with opening line
+  - [x] 11.2 Update parser to report unclosed bracket blocks with opening line
     - Track bracket depth and report error at opening line
     - _Requirements: 9.2_
-  - [ ] 11.3 Update validator to emit info-level for unknown directives
+  - [x] 11.3 Update validator to emit info-level for unknown directives
     - Don't block validation for unknown directives
     - _Requirements: 9.3_
-  - [ ] 11.4 Update config loader to report JSON parse errors with position
+  - [x] 11.4 Update config loader to report JSON parse errors with position
     - Include file path and line/column in error message
     - _Requirements: 9.4_
 
-- [ ] 12. Checkpoint - Ensure all tests pass
+- [-] 12. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 13. Update Semantic Tokens for New Entities
