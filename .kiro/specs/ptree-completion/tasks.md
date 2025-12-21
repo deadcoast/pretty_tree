@@ -134,7 +134,7 @@
     - **Validates: Requirements 8.3**
 
 - [-] 11. Implement Error Recovery Enhancements
-  - [ ] 11.1 Update parser to continue after invalid lines
+  - [-] 11.1 Update parser to continue after invalid lines
     - Collect errors but don't stop parsing
     - _Requirements: 9.1_
   - [ ] 11.2 Update parser to report unclosed bracket blocks with opening line
