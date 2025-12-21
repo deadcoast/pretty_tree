@@ -119,21 +119,21 @@
     - **Property 1: Parser Round-Trip Consistency**
     - **Validates: Requirements 7.1, 7.3**
 
-- [ ] 10. Implement PT009 Sorting Enhancements
-  - [ ] 10.1 Update fixer to reorder nodes when PT009 is enabled
+- [x] 10. Implement PT009 Sorting Enhancements
+  - [x] 10.1 Update fixer to reorder nodes when PT009 is enabled
     - Sort directories first, then files, each group alphabetically
     - _Requirements: 8.3_
-  - [ ] 10.2 Update formatter to apply PT009 sorting by default
+  - [x] 10.2 Update formatter to apply PT009 sorting by default
     - Ensure formatter produces sorted output
     - _Requirements: 8.4_
-  - [ ] 10.3 Write property test for sorting transitivity
+  - [x] 10.3 Write property test for sorting transitivity
     - **Property 9: Sorting Transitivity (PT009)**
     - **Validates: Requirements 8.1, 8.2**
-  - [ ] 10.4 Write property test for fixer idempotence
+  - [x] 10.4 Write property test for fixer idempotence
     - **Property 8: Fixer Idempotence**
     - **Validates: Requirements 8.3**
 
-- [ ] 11. Implement Error Recovery Enhancements
+- [-] 11. Implement Error Recovery Enhancements
   - [ ] 11.1 Update parser to continue after invalid lines
     - Collect errors but don't stop parsing
     - _Requirements: 9.1_
