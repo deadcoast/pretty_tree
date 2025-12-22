@@ -199,13 +199,13 @@
     - Document --name-type option with available NAME_TYPEs
     - _Requirements: 6.1, 6.2, 6.3_
 
-- [ ] 18. Update Configuration Documentation
-  - [ ] 18.1 Update docs/ptree-python/GRAMMAR.md configuration section
+- [x] 18. Update Configuration Documentation
+  - [x] 18.1 Update docs/ptree-python/GRAMMAR.md configuration section
     - Document EXT and NUMERAL in ENTITY_NAME_TYPES
     - Document FILE_EXTENSION_SPLIT option
     - Document all rule IDs PT001-PT015
     - _Requirements: 7.1, 7.2, 7.3_
-  - [ ] 18.2 Document index-type NAME_TYPE in GRAMMAR.md
+  - [x] 18.2 Document index-type NAME_TYPE in GRAMMAR.md
     - Include pattern, examples, and usage
     - _Requirements: 8.1_
 

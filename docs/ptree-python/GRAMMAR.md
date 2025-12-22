@@ -129,24 +129,24 @@ Universal Rules (UniRules) are naming conventions that apply across all NAME_TYP
 
 ### Rule ID Quick Reference
 
-| Rule ID | UniRule | Description | Default Severity |
-|---------|---------|-------------|------------------|
-| PT000 | - | Parser errors and unknown directives | warning/info |
-| PT001 | UniRule_3 | Root label must end with `//` | error |
-| PT002 | UniRule_2 | Directory nodes must end with `/` | error |
-| PT003 | - | Require `@ptree` directive | warning |
-| PT004 | - | Enforce NAME_TYPE patterns by entity | error |
-| PT005 | UniRule_1 | Version delimiter conflict | error |
-| PT006 | UniRule_4 | No spaces in node names | error |
-| PT007 | - | Extensions should be lowercase | warning |
-| PT008 | UniRule_5 | No mixing `-` and `_` in bare names | warning |
-| PT009 | - | Sibling sorting (dirs first, then files) | warning (disabled) |
-| PT010 | - | (spec) `@ptree` must be "spec" | error |
-| PT011 | - | (spec) `@style` must be "unicode" | error |
-| PT012 | - | (spec) `@version` must be SEMVER | error |
-| PT013 | - | (spec) `@name_type` block required | error |
-| PT014 | - | (spec) `@separation_delimiters` required | error |
-| PT015 | - | (spec) Root label must be `PTREE-<@version>//` | error |
+| Rule ID | UniRule | Description | Default Severity | Default Enabled |
+|---------|---------|-------------|------------------|-----------------|
+| PT000 | - | Parser errors and unknown directives | warning/info | always |
+| PT001 | UniRule_3 | Root label must end with `//` | error | yes |
+| PT002 | UniRule_2 | Directory nodes must end with `/` | error | yes |
+| PT003 | - | Require `@ptree` directive | warning | yes |
+| PT004 | - | Enforce NAME_TYPE patterns by entity | error | yes |
+| PT005 | UniRule_1 | Version delimiter conflict | error | yes |
+| PT006 | UniRule_4 | No spaces in node names | error | yes |
+| PT007 | - | Extensions should be lowercase | warning | yes |
+| PT008 | UniRule_5 | No mixing `-` and `_` in bare names | warning | yes |
+| PT009 | - | Sibling sorting (dirs first, then files) | warning | **no** |
+| PT010 | - | (spec) `@ptree` must be "spec" | error | spec only |
+| PT011 | - | (spec) `@style` must be "unicode" | error | spec only |
+| PT012 | - | (spec) `@version` must be SEMVER | error | spec only |
+| PT013 | - | (spec) `@name_type` block required | error | spec only |
+| PT014 | - | (spec) `@separation_delimiters` required | error | spec only |
+| PT015 | - | (spec) Root label must be `PTREE-<@version>//` | error | spec only |
 
 ---
 
@@ -827,6 +827,24 @@ EXAMPLES:
 - `(index)`
 - `(index)-introduction`
 - `(index)-chapter-one`
+- `(index)-getting-started`
+
+PATTERN BREAKDOWN:
+
+```
+(index)              - Literal "(index)" prefix (required)
+(?:-[a-z0-9]+)*      - Optional kebab-case suffix segments
+```
+
+Valid patterns:
+- `(index)` - Bare index file
+- `(index)-name` - Index with single-word suffix
+- `(index)-multi-word` - Index with multi-word kebab suffix
+
+Invalid patterns:
+- `(Index)` - Uppercase not allowed
+- `(index)_name` - Underscore not allowed (use hyphen)
+- `index` - Missing parentheses
 
 USAGE:
 
@@ -835,17 +853,27 @@ Index files serve as the main entry point for a directory. The `(index)` prefix 
 In ptree, the `(index)` prefix:
 - Is recognized as a special FILE NAME_TYPE
 - Can be followed by an optional `-name` suffix
-- The remainder (after the prefix) is validated against FILE NAME_TYPE rules
+- The suffix (after the prefix) follows `smol-type` rules (lowercase kebab-case)
+- Commonly used with `.md` extension for documentation entry points
 
 Example tree:
 
 ```ptree
 Docs/
-├── (index).md
-├── (index)-overview.md
+├── (index).md              # Main entry point for Docs/
+├── (index)-overview.md     # Alternative overview page
+├── getting-started.md
 └── Getting_Started/
-    └── (index)-tutorial.md
+    ├── (index).md          # Entry point for Getting_Started/
+    └── (index)-tutorial.md # Tutorial variant
 ```
+
+WHY USE INDEX FILES:
+
+1. **Clear entry points**: Makes it obvious which file is the "main" file in a directory
+2. **Consistent navigation**: Documentation generators can auto-link to index files
+3. **Sorting**: Index files sort to the top when using `(` prefix
+4. **Semantic meaning**: Distinguishes entry points from regular content files
 
 ---
 
@@ -856,6 +884,107 @@ These are included by default for real-world compatibility:
 - `[dotfile]`: `.gitignore`, `.env`, `.editorconfig`
 - `[dotdir]`: `.github`, `.vscode`
 - `[dot.smol-type]`: `tsconfig.base`, `vite.config`
+
+---
+
+## Configuration Reference
+
+This section documents all configuration options available in ptree config files.
+
+### [ENTITY_NAME_TYPES]
+
+Maps entity types to arrays of allowed NAME_TYPE identifiers. This determines which naming conventions are valid for each type of node in the tree.
+
+```json
+{
+  "ENTITY_NAME_TYPES": {
+    "ROOT": ["SCREAM_TYPE"],
+    "DIR": ["Cap-Type", "High_Type", "CamelType", "dotdir"],
+    "FILE": ["smol-type", "snake_type", "CamelType", "dotfile", "dot.smol-type", "index-type"],
+    "EXT": ["smol-type"],
+    "META": ["SCREAM_TYPE"],
+    "NUMERAL": ["NUMERAL"]
+  }
+}
+```
+
+#### Entity Types
+
+| Entity | Description | Default NAME_TYPEs |
+|--------|-------------|-------------------|
+| `ROOT` | Root labels (nodes ending with `//`) | `SCREAM_TYPE` |
+| `DIR` | Directory names (nodes ending with `/`) | `Cap-Type`, `High_Type`, `CamelType`, `dotdir` |
+| `FILE` | File names (stem portion before extension) | `smol-type`, `snake_type`, `CamelType`, `dotfile`, `dot.smol-type`, `index-type` |
+| `EXT` | File extensions (portion after the split point) | `smol-type` |
+| `META` | Metadata nodes (nodes ending with `//`) | `SCREAM_TYPE` |
+| `NUMERAL` | Roman numeral prefixes in directory names | `NUMERAL` |
+
+#### EXT Entity
+
+The `EXT` entity type validates file extensions. By default, extensions must match `smol-type` (lowercase kebab-case).
+
+**Examples:**
+
+✅ Valid extensions:
+- `.md`
+- `.json`
+- `.tar.gz` (multi-part extension)
+- `.config.js`
+
+❌ Invalid extensions (with PT007 enabled):
+- `.MD` (uppercase)
+- `.JSON` (uppercase)
+
+#### NUMERAL Entity
+
+The `NUMERAL` entity type validates Roman numeral prefixes used in numbered documentation sections. The validator recognizes the `[NUMERAL]_[NAME]` pattern and validates:
+
+1. The numeral portion against the `NUMERAL` NAME_TYPE
+2. The remainder against the configured `DIR` NAME_TYPE
+
+**Examples:**
+
+✅ Valid numeral-prefixed directories:
+- `I_Introduction/`
+- `II_Getting_Started/`
+- `III_Advanced_Topics/`
+- `IV_Reference/`
+- `X_Appendix/`
+
+---
+
+### [FILE_EXTENSION_SPLIT]
+
+Determines how to split a filename into base name and extension for NAME_TYPE validation.
+
+```json
+{
+  "FILE_EXTENSION_SPLIT": "lastDot"
+}
+```
+
+#### Options
+
+| Value | Description | Example |
+|-------|-------------|---------|
+| `lastDot` | Split at the last dot. Extension is the final segment. | `parser.test.ts` → base: `parser.test`, ext: `ts` |
+| `firstDot` | Split at the first dot. Extension includes all segments after. | `parser.test.ts` → base: `parser`, ext: `test.ts` |
+
+#### Profile Defaults
+
+- **default profile**: `lastDot` - More permissive, allows dots in base names
+- **spec profile**: `firstDot` - Stricter, validates only the stem before the first dot
+
+#### Use Cases
+
+**`lastDot` (default)**:
+- Best for projects with dotted base names like `tsconfig.base.json`
+- The `dot.smol-type` NAME_TYPE handles these cases
+
+**`firstDot` (spec)**:
+- Best for canonical documentation trees
+- Keeps FILE NAME_TYPE validation simple
+- Multi-part extensions like `.test.ts`, `.config.json` are treated as extensions
 
 ---
 
