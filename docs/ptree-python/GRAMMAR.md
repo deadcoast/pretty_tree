@@ -652,6 +652,181 @@ PTREE-1.0.0//
 
 ---
 
+## Error Handling
+
+This section documents how ptree handles errors during parsing, validation, and configuration loading.
+
+### Error Message Reference
+
+All validation rules produce diagnostic messages with a rule ID prefix (PT000-PT015). These messages appear in the VS Code Problems panel and CLI output.
+
+#### Complete Rule ID Reference
+
+| Rule ID | Category | Error Message Template | Severity |
+|---------|----------|----------------------|----------|
+| PT000 | Parser | `Unrecognized line (not directive/root/node/summary).` | warning |
+| PT000 | Parser | `Unknown directive "@{name}". This directive will be ignored.` | info |
+| PT000 | Parser | `Unclosed bracket block starting at line {n}. Expected {m} more closing bracket(s).` | warning |
+| PT000 | Parser | `Indent jump: depth {a} → {b} (skipped levels).` | warning |
+| PT001 | Structure | `Missing root line. Expected a root label ending with "//" or a root path ending with "/".` | error |
+| PT001 | Structure | `Root line should be a root label ending with "//" (default ruleset).` | error |
+| PT002 | Structure | `Parent node has children but does not end with "/" (directory marker).` | error |
+| PT003 | Directive | `Missing required directive: @ptree: <version>` | warning |
+| PT004 | NAME_TYPE | `Root name "{name}" does not match any allowed ROOT NAME_TYPES.` | error |
+| PT004 | NAME_TYPE | `{entity} name "{name}" does not match any allowed NAME_TYPES ({types}).` | error |
+| PT005 | UniRule_1 | `Version delimiter "{d}" must not match the {type} word delimiter "{d}" (UniRule_1).` | error |
+| PT005 | UniRule_1 | `Version delimiter "{d}" is not allowed for NAME_TYPE {type}. Allowed: [{list}].` | error |
+| PT006 | UniRule_4 | `Spaces are not allowed in node names in the default ruleset. Use "-" or "_".` | error |
+| PT007 | Extension | `File extension should be lowercase (found: .{ext}).` | warning |
+| PT007 | Extension | `Extension segment "{seg}" does not match any allowed EXT NAME_TYPES ({types}).` | warning |
+| PT008 | UniRule_5 | `Do not mix '-' and '_' in the same bare name (UniRule_5).` | warning |
+| PT009 | Sorting | `Sibling ordering violation: expected directories first, then files; each group lexicographically.` | warning |
+| PT010 | Spec | `Missing required directive: @ptree: spec` | error |
+| PT010 | Spec | `@ptree must be "spec" (found "{value}").` | error |
+| PT011 | Spec | `Missing required directive: @style: unicode` | error |
+| PT011 | Spec | `@style must be "unicode" (found "{value}").` | error |
+| PT012 | Spec | `Missing required directive: @version: <SEMVER>` | error |
+| PT012 | Spec | `@version must be SEMVER (found "{value}").` | error |
+| PT013 | Spec | `Missing or invalid @name_type block. Expected ROOT/DIR/FILE mapping.` | error |
+| PT013 | Spec | `@name_type is missing {entity}: '{type}'.` | error |
+| PT013 | Spec | `@name_type {entity} must be '{expected}' (found '{actual}').` | error |
+| PT014 | Spec | `Missing or invalid @separation_delimiters list.` | error |
+| PT014 | Spec | `@separation_delimiters missing: {delimiters}` | error |
+| PT014 | Spec | `@separation_delimiters contains unknown delimiters: {delimiters}` | error |
+| PT015 | Spec | `Missing root label line (expected PTREE-<@version>//).` | error |
+| PT015 | Spec | `Root label must end with // in spec mode.` | error |
+| PT015 | Spec | `Root label base must be "PTREE" (found "{base}").` | error |
+| PT015 | Spec | `Root label version "{v1}" must match @version "{v2}".` | error |
+| PT015 | Spec | `Root label must include version delimiter and version (expected PTREE-${@version}//).` | error |
+
+### Error Recovery Behavior
+
+The ptree parser and validator are designed to be resilient and continue processing even when errors are encountered.
+
+#### Parser Error Recovery
+
+1. **Unrecognized Lines**: Lines that don't match any known pattern (directive, root, node, comment, summary) are recorded as PT000 errors but don't stop parsing. The parser continues to the next line.
+
+2. **Unclosed Bracket Blocks**: When a multi-line directive block (like `@name_type:[...]`) has unclosed brackets, the parser:
+   - Consumes lines until brackets are balanced or end-of-file
+   - Reports the error with the opening line number
+   - Continues parsing subsequent lines
+
+3. **Depth Jump Errors**: When a node's depth increases by more than 1 level (skipping indent levels), the parser:
+   - Records the error with the affected line
+   - Still adds the node to the AST
+   - Continues processing children normally
+
+4. **Malformed Directives**: Directives with invalid syntax are:
+   - Recorded as errors
+   - Not added to the directives map
+   - Don't prevent other directives from being parsed
+
+#### Validator Error Recovery
+
+1. **Multiple Errors Per Node**: A single node can trigger multiple validation errors (e.g., both PT004 and PT008). All applicable errors are reported.
+
+2. **Missing Root**: If no root line is found, PT001 is reported but validation continues for all nodes.
+
+3. **Profile Detection**: If `@ptree` directive is missing or invalid, the validator falls back to the default profile.
+
+4. **NAME_TYPE Lookup Failures**: If a NAME_TYPE referenced in config doesn't exist, the validator skips that check rather than crashing.
+
+### Configuration Error Handling
+
+#### JSON Parse Errors
+
+When loading configuration files (`.ptreerc.json`, `.ptree.json`, `ptree.config.json`), JSON parse errors are reported with:
+
+- **File path**: The full path to the configuration file
+- **Line and column**: Position of the syntax error (when available)
+- **Error message**: Description of the JSON syntax issue
+
+Example error output:
+
+```
+Error loading config: /path/to/.ptreerc.json
+  Parse error at line 5, column 12: Unexpected token '}', expected ':'
+```
+
+#### Configuration Validation
+
+Invalid configuration values are handled gracefully:
+
+| Issue | Behavior |
+|-------|----------|
+| Unknown rule ID | Ignored (no error) |
+| Invalid severity value | Falls back to "warning" |
+| Missing NAME_TYPE definition | Rule check skipped for that type |
+| Invalid regex pattern | NAME_TYPE matching disabled |
+| Wrong value type | Uses default value |
+
+#### Config File Search Order
+
+The extension searches for config files in this order:
+
+1. `.ptreerc.json`
+2. `.ptree.json`
+3. `ptree.config.json`
+
+If no config file is found, the built-in default configuration is used.
+
+### CLI Error Output
+
+The CLI supports multiple output formats for errors:
+
+#### Default Format (Human-Readable)
+
+```
+samples/example.ptree:5:4: error PT004 - DIR name "user-guide" does not match any allowed NAME_TYPES.
+samples/example.ptree:8:4: warning PT007 - File extension should be lowercase (found: .MD).
+```
+
+#### JSON Format (`--format json`)
+
+```json
+{
+  "file": "samples/example.ptree",
+  "diagnostics": [
+    {
+      "code": "PT004",
+      "severity": "error",
+      "message": "DIR name \"user-guide\" does not match any allowed NAME_TYPES.",
+      "line": 5,
+      "startCol": 4,
+      "endCol": 14
+    },
+    {
+      "code": "PT007",
+      "severity": "warning",
+      "message": "File extension should be lowercase (found: .MD).",
+      "line": 8,
+      "startCol": 4,
+      "endCol": 15
+    }
+  ]
+}
+```
+
+### VS Code Integration
+
+In VS Code, errors appear in:
+
+1. **Problems Panel**: All diagnostics grouped by file
+2. **Editor Squiggles**: Underlines at error locations
+3. **Hover Information**: Error details on hover
+4. **Quick Fixes**: Available fixes via lightbulb menu
+
+Severity levels map to VS Code diagnostic severities:
+
+| ptree Severity | VS Code Severity | Squiggle Color |
+|----------------|------------------|----------------|
+| `error` | Error | Red |
+| `warning` | Warning | Yellow |
+| `info` | Information | Blue |
+
+---
+
 ## [NAME_TYPES] DEFINITIONS
 
 The authoritative registry is shipped in:

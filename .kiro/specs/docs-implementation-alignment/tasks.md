@@ -209,23 +209,23 @@
     - Include pattern, examples, and usage
     - _Requirements: 8.1_
 
-- [ ] 19. Update Symlink and Inline Metadata Documentation
-  - [ ] 19.1 Update docs/ptree-python/SPEC.md symlink section
+- [x] 19. Update Symlink and Inline Metadata Documentation
+  - [x] 19.1 Update docs/ptree-python/SPEC.md symlink section
     - Document ` -> ` syntax
     - Include file and directory symlink examples
     - _Requirements: 9.1, 9.3_
-  - [ ] 19.2 Update docs/ptree-python/SPEC.md inline metadata section
+  - [x] 19.2 Update docs/ptree-python/SPEC.md inline metadata section
     - Document bracket attribute syntax [key=value]
     - Document inline comment syntax # comment
     - Document two-space delimiter requirement
     - _Requirements: 10.1, 10.2, 10.3_
-  - [ ] 19.3 Update docs/ptree-python/SPEC.md summary line section
+  - [x] 19.3 Update docs/ptree-python/SPEC.md summary line section
     - Document "N directories, M files" pattern
     - Explain metadata treatment
     - _Requirements: 11.1, 11.2_
 
-- [ ] 20. Update Error Handling Documentation
-  - [ ] 20.1 Create or update error handling documentation
+- [x] 20. Update Error Handling Documentation
+  - [x] 20.1 Create or update error handling documentation
     - Document all rule IDs PT000-PT015 with error messages
     - Document error recovery behavior
     - Document JSON parse error reporting
