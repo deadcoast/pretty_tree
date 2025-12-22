@@ -261,8 +261,8 @@
     - Add ptreeAttribute, ptreeAttributeKey, ptreeAttributeValue, ptreeInlineComment
     - _Requirements: 4.1_
 
-- [ ] 25. Update docs/INDEX.md
-  - [ ] 25.1 Add implementation documentation links
+- [x] 25. Update docs/INDEX.md
+  - [x] 25.1 Add implementation documentation links
     - Add links to ptree-python docs (SPEC.md, GRAMMAR.md, SEMANTIC_TOKENS.md, CONTRIBUTING.md)
     - _Requirements: 1.1_
 

@@ -19,3 +19,10 @@ Support:
 - [13 — FAQ](ptree-spec/13_FAQ.md)
 - [14 — Adoption Guide](ptree-spec/14_ADOPTION_GUIDE.md)
 - [15 — What PTREE Is Designed To Do](ptree-spec/15_POSITIONING.md)
+
+Implementation:
+- [Format Specification](ptree-python/SPEC.md)
+- [Grammar and Naming Rules](ptree-python/GRAMMAR.md)
+- [Semantic Tokens](ptree-python/SEMANTIC_TOKENS.md)
+- [Contributing Guide](ptree-python/CONTRIBUTING.md)
+- [Future Plans](ptree-python/FUTURE_PLANS.md)
