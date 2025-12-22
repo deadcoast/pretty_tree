@@ -252,12 +252,12 @@
     - Add link to docs/INDEX.md
     - _Requirements: 1.1_
 
-- [ ] 24. Update ptree-syntax/README.md
-  - [ ] 24.1 Add playground section to extension README
+- [x] 24. Update ptree-syntax/README.md
+  - [x] 24.1 Add playground section to extension README
     - Document playground folder structure
     - Add instructions for testing with playground
     - _Requirements: 13.1, 13.4_
-  - [ ] 24.2 Document new semantic token types
+  - [x] 24.2 Document new semantic token types
     - Add ptreeAttribute, ptreeAttributeKey, ptreeAttributeValue, ptreeInlineComment
     - _Requirements: 4.1_
 

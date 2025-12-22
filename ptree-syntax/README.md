@@ -127,11 +127,41 @@ You can customize colors via:
       "ptreeScaffold": {},
       "ptreeDir.nt_high_type": {},
       "ptreeFile.nt_smol_type": {},
-      "ptreeDir.mismatch": {}
+      "ptreeDir.mismatch": {},
+      "ptreeAttribute": {},
+      "ptreeAttributeKey": {},
+      "ptreeAttributeValue": {},
+      "ptreeInlineComment": {}
     }
   }
 }
 ```
+
+### Semantic Token Types
+
+The extension provides 19 semantic token types for fine-grained highlighting:
+
+| Token Type | Description |
+|------------|-------------|
+| `ptreeScaffold` | Tree structure characters (`│`, `├──`, `└──`) |
+| `ptreeDirective` | Directive keys (`@ptree`, `@style`, etc.) |
+| `ptreeDirectiveValue` | Directive values |
+| `ptreeRoot` | Root label name |
+| `ptreeDir` | Directory names |
+| `ptreeFile` | File names (stem) |
+| `ptreeExtension` | File extensions |
+| `ptreeMeta` | Meta markers (`/`, `//`, quotes) |
+| `ptreeSemver` | Semantic version strings |
+| `ptreeNameType` | NAME_TYPE identifiers in directives |
+| `ptreeNumeral` | Roman numeral prefixes (`I_`, `II_`, etc.) |
+| `ptreeIndex` | Index file prefix `(index)` |
+| `ptreeSymlink` | Symlink source names |
+| `ptreeSymlinkArrow` | Symlink arrow (` -> `) |
+| `ptreeSymlinkTarget` | Symlink target paths |
+| `ptreeAttribute` | Bracket attribute delimiters `[ ]` |
+| `ptreeAttributeKey` | Attribute keys in `[key=value]` |
+| `ptreeAttributeValue` | Attribute values in `[key=value]` |
+| `ptreeInlineComment` | Inline comments (`# comment`) |
 
 See also:
 
@@ -255,6 +285,63 @@ npm run compile
 ```
 
 Then press **F5** in VS Code to launch an Extension Development Host.
+
+---
+
+## Playground
+
+The `playground/` folder provides a pre-configured testing environment for exploring all ptree features. It's the fastest way to see syntax highlighting, validation, and the fixer in action.
+
+### Playground Structure
+
+```
+playground/
+├── .vscode/
+│   ├── settings.json          # Semantic token color customizations
+│   └── extensions.json        # Recommended extensions
+├── QUICKSTART.md              # 2-minute getting started guide
+├── README.md                  # Playground overview
+├── demos/                     # Feature demonstrations
+│   ├── 01-basic-tree.ptree
+│   ├── 02-name-types.ptree
+│   ├── 03-roman-numerals.ptree
+│   ├── 04-index-files.ptree
+│   ├── 05-symlinks.ptree
+│   ├── 06-inline-metadata.ptree
+│   ├── 07-summary-lines.ptree
+│   └── 08-all-features.ptree
+├── profiles/                  # Profile comparison
+│   ├── default-profile.ptree
+│   ├── spec-profile.ptree
+│   └── README.md
+├── rules/                     # Rule test files (PT001-PT009)
+│   ├── pt001-root-marker.ptree
+│   ├── pt002-dir-marker.ptree
+│   └── ...
+├── config/                    # Configuration examples
+│   ├── .ptreerc.json
+│   ├── strict-config.ptree
+│   └── relaxed-config.ptree
+├── themes/                    # Theme testing
+│   └── all-tokens.ptree
+└── scripts/                   # CLI test scripts
+    ├── test-validate.sh
+    ├── test-gen.sh
+    ├── test-fix.sh
+    └── test-diff.sh
+```
+
+### Testing with the Playground
+
+1. **Open the playground folder** in VS Code (or open it as a workspace)
+2. **See syntax highlighting** immediately in any `.ptree` file
+3. **Check validation** in the Problems panel (Ctrl+Shift+M / Cmd+Shift+M)
+4. **Test the fixer** with `ptree: Fix Document` command
+
+For extension development:
+- Press **F5** to launch the Extension Development Host with the playground pre-loaded
+- Edit files in `demos/` to see real-time highlighting and validation
+- Use `rules/` files to test specific validation rules
 
 ---
 
