@@ -13,12 +13,79 @@ Note: 0.0.5 is the current draft. Wording and docs may evolve while the feature 
 
 - `ptree-syntax/PLAN.md` to hold roadmap and planning notes outside the changelog.
 
+#### Playground Environment
+
+A comprehensive testing playground at `ptree-syntax/playground/` for learning and experimenting with ptree features:
+
+- **demos/**: 8 feature demonstration files
+  - `01-basic-tree.ptree` - Basic tree structure with scaffold characters
+  - `02-name-types.ptree` - NAME_TYPE validation for ROOT, DIR, FILE
+  - `03-roman-numerals.ptree` - NUMERAL prefix patterns (I_, II_, III_)
+  - `04-index-files.ptree` - (index) prefix convention
+  - `05-symlinks.ptree` - Symlink syntax with ` -> ` arrows
+  - `06-inline-metadata.ptree` - Bracket attributes and inline comments
+  - `07-summary-lines.ptree` - Summary line format
+  - `08-all-features.ptree` - Comprehensive demo of all features
+- **profiles/**: Profile comparison files
+  - `default-profile.ptree` - Default profile example
+  - `spec-profile.ptree` - Spec profile with canonical headers
+  - `README.md` - Profile differences documentation
+- **rules/**: Rule test files (PT001-PT009)
+  - Files that intentionally trigger each validation rule
+  - Inline comments explaining rule behavior
+- **config/**: Configuration testing
+  - `.ptreerc.json` - Example user configuration
+  - `strict-config.ptree` and `relaxed-config.ptree` - Config examples
+- **themes/**: Theme testing
+  - `all-tokens.ptree` - File exercising all 19 semantic token types
+- **scripts/**: CLI test scripts
+  - `test-validate.sh`, `test-gen.sh`, `test-fix.sh`, `test-diff.sh`
+- `QUICKSTART.md` - Step-by-step guide for testing features
+- `README.md` - Playground overview and feature list
+
+#### Property-Based Testing
+
+4 new property-based tests using fast-check:
+
+- **Property 1: Documentation Link Validity** - Validates all internal links in docs/ point to existing files
+- **Property 2: Semantic Token Documentation Completeness** - Ensures all token types in source code are documented
+- **Property 3: Profile Validation Difference** - Verifies spec profile produces additional errors for missing headers
+- **Property 4: Rule Test File Validation** - Confirms rule test files trigger expected diagnostics
+
+#### Documentation Alignment
+
+- Fixed 15 broken links in `docs/ptree-spec/README.md` (changed `ptree-training/` to correct relative paths)
+- Updated canonical header examples in `docs/ptree-spec/00_PTREE.md` and `docs/ptree-python/SPEC.md`
+  - Added EXT, META, NUMERAL entity mappings
+  - Fixed spelling: `separation_delimiters` (was `seperation_delimiters`)
+- Documented all six entity types: ROOT, DIR, FILE, EXT, META, NUMERAL
+- Complete UniRule documentation (UniRule_1 through UniRule_6) in `docs/ptree-python/GRAMMAR.md`
+  - Rule IDs PT001-PT015 with correct/incorrect examples
+- Updated `docs/ptree-python/SPEC.md`:
+  - Symlink syntax documentation (` -> ` arrow)
+  - Inline metadata syntax (`[key=value]`, `# comment`)
+  - Summary line format (`N directories, M files`)
+- Error handling documentation with all rule IDs PT000-PT015
+
+#### Semantic Token Documentation
+
+Updated `docs/ptree-python/SEMANTIC_TOKENS.md` with all 19 token types:
+
+- Core tokens: ptreeScaffold, ptreeDirective, ptreeDirectiveValue, ptreeRoot, ptreeDir, ptreeFile, ptreeExtension, ptreeMeta, ptreeSemver
+- NAME_TYPE tokens: ptreeNameType, ptreeNumeral, ptreeIndex
+- Symlink tokens: ptreeSymlink, ptreeSymlinkArrow, ptreeSymlinkTarget
+- Metadata tokens: ptreeAttribute, ptreeAttributeKey, ptreeAttributeValue, ptreeInlineComment
+- Documented modifiers: nt_index_type, nt_numeral, mismatch
+- Theme customization examples for all token types
+
 ### Changed
 
 - Repository extension folder renamed to `ptree-syntax/` for a stable, non-versioned path.
 - Changelog now tracks releases only; roadmap content moved to `ptree-syntax/PLAN.md`.
 - Bumped extension and Python wrapper versions to 0.0.5.
 - Updated docs and scripts to reference `ptree-syntax/` paths.
+- Updated `ptree-syntax/.vscode/launch.json` with "Run Extension with Playground" configuration
+- Updated sample files with comprehensive feature demonstrations
 
 ## [0.0.4] - 2024-12-17
 

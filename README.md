@@ -36,16 +36,44 @@ my-project/
     └── index.ts
 ```
 
-## Specs & Grammar
-- `ptree-syntax/docs/SPEC.md` — the ptree format specification.
-- `ptree-syntax/docs/GRAMMAR.md` — naming grammar + lint rules.
+## Documentation
+
+- [docs/INDEX.md](docs/INDEX.md) — Complete documentation index
+- [docs/ptree-spec/](docs/ptree-spec/) — The ptree format specification suite
+- [docs/ptree-python/SPEC.md](docs/ptree-python/SPEC.md) — Implementation specification
+- [docs/ptree-python/GRAMMAR.md](docs/ptree-python/GRAMMAR.md) — Naming grammar + lint rules
+- [docs/ptree-python/SEMANTIC_TOKENS.md](docs/ptree-python/SEMANTIC_TOKENS.md) — Semantic token customization guide
 
 ## What's Here
-- `ptree-syntax/` — VS Code extension + optional CLI (TypeScript).
-- `ptree-syntax/src/` — extension entry, CLI, core parser/validator/fixer.
-- `ptree-syntax/syntaxes/` — TextMate grammar for static highlighting.
-- `ptree-syntax/config/` — default/spec profiles and JSON schema.
-- `ptree-syntax/docs/` — format spec and grammar.
+- `ptree-syntax/` — VS Code extension + optional CLI (TypeScript)
+- `ptree-syntax/src/` — extension entry, CLI, core parser/validator/fixer
+- `ptree-syntax/syntaxes/` — TextMate grammar for static highlighting
+- `ptree-syntax/config/` — default/spec profiles and JSON schema
+- `ptree-syntax/playground/` — testing environment with demos and examples
+- `docs/` — format specification and implementation guides
+
+## Playground
+
+The playground (`ptree-syntax/playground/`) is a dedicated testing environment for exploring ptree features interactively.
+
+### Quick Start
+
+1. Open `ptree-syntax/playground/` in VS Code
+2. Open `demos/08-all-features.ptree` to see syntax highlighting
+3. Open `rules/pt006-no-spaces.ptree` and check the Problems panel to see validation
+
+### What's in the Playground
+
+| Directory | Purpose |
+|-----------|---------|
+| `demos/` | Feature demonstrations (basic trees, name types, symlinks, etc.) |
+| `profiles/` | Profile comparison (default vs spec) |
+| `rules/` | Files that trigger each validation rule (PT001-PT009) |
+| `config/` | Configuration examples |
+| `themes/` | Theme testing with all token types |
+| `scripts/` | CLI test scripts |
+
+See [playground/QUICKSTART.md](ptree-syntax/playground/QUICKSTART.md) for detailed instructions.
 
 ## Build & Run (Extension)
 From `ptree-syntax/`:

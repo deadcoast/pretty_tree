@@ -233,3 +233,44 @@
 
 - [x] 21. Final Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 22. Update CHANGELOG with Documentation Alignment Work
+  - [x] 22.1 Update ptree-syntax/CHANGELOG.md with 0.0.5 changes
+    - Add playground environment section (demos, profiles, rules, config, themes, scripts)
+    - Add documentation alignment section (fixed links, updated canonical headers, UniRule docs)
+    - Add property-based testing section (4 new property tests)
+    - Add semantic token documentation updates (19 token types)
+    - _Requirements: 13.1, 14.1, 19.1_
+
+- [x] 23. Update Root README.md
+  - [x] 23.1 Add playground section to README.md
+    - Document playground location and purpose
+    - Add quick start instructions for testing features
+    - _Requirements: 13.4, 18.1_
+  - [x] 23.2 Update documentation links in README.md
+    - Fix paths to point to correct docs locations
+    - Add link to docs/INDEX.md
+    - _Requirements: 1.1_
+
+- [ ] 24. Update ptree-syntax/README.md
+  - [ ] 24.1 Add playground section to extension README
+    - Document playground folder structure
+    - Add instructions for testing with playground
+    - _Requirements: 13.1, 13.4_
+  - [ ] 24.2 Document new semantic token types
+    - Add ptreeAttribute, ptreeAttributeKey, ptreeAttributeValue, ptreeInlineComment
+    - _Requirements: 4.1_
+
+- [ ] 25. Update docs/INDEX.md
+  - [ ] 25.1 Add implementation documentation links
+    - Add links to ptree-python docs (SPEC.md, GRAMMAR.md, SEMANTIC_TOKENS.md, CONTRIBUTING.md)
+    - _Requirements: 1.1_
+
+- [ ] 26. Verify install.sh is Up to Date
+  - [ ] 26.1 Review and update install.sh if needed
+    - Ensure it compiles and runs tests correctly
+    - Add playground setup if needed
+    - _Requirements: 21.1_
+
+- [ ] 27. Final Documentation Review Checkpoint
+  - Ensure all documentation is consistent and up to date, ask the user if questions arise.
