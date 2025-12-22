@@ -192,8 +192,8 @@
     - Demonstrate META nodes with // suffix
     - _Requirements: 14.4_
 
-- [ ] 17. Update CLI Documentation
-  - [ ] 17.1 Update ptree-syntax/README.md CLI section
+- [x] 17. Update CLI Documentation
+  - [x] 17.1 Update ptree-syntax/README.md CLI section
     - Document --format json option
     - Document --diff option
     - Document --name-type option with available NAME_TYPEs

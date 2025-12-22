@@ -279,6 +279,115 @@ node bin/ptree.js validate samples/example.ptree
 node bin/ptree.js validate samples/example.ptree --fix --write
 ```
 
+### CLI Options Reference
+
+#### `gen` Command
+
+Generate a ptree from the filesystem.
+
+```
+ptree gen [path] [options]
+```
+
+| Option | Description |
+|--------|-------------|
+| `--profile default\|spec` | Profile to use (default: `default`) |
+| `--style unicode\|ascii` | Tree style (default: `unicode`) |
+| `--max-depth N` | Maximum directory depth (default: `25`) |
+| `--version X` | Version string for root label |
+| `--name-type ENTITY:TYPE,...` | Naming conventions (see below) |
+
+#### `validate` Command
+
+Validate a ptree file against the configured rules.
+
+```
+ptree validate <file.ptree> [options]
+```
+
+| Option | Description |
+|--------|-------------|
+| `--profile default\|spec` | Force a profile (auto-detects from `@ptree:` if omitted) |
+| `--workspace-root DIR` | Directory for config lookup |
+| `--fix` | Apply safe mechanical fixes |
+| `--write` | Write fixes in-place (requires `--fix`) |
+| `--format text\|json` | Output format (default: `text`) |
+| `--diff` | Preview fixes as unified diff without applying |
+
+### JSON Output (`--format json`)
+
+For CI/CD integration and machine-readable output, use `--format json`:
+
+```bash
+node bin/ptree.js validate samples/example.ptree --format json
+```
+
+Output format:
+
+```json
+[
+  {
+    "file": "samples/example.ptree",
+    "line": 5,
+    "column": 1,
+    "code": "PT002",
+    "severity": "ERROR",
+    "message": "Directory node must end with '/'"
+  }
+]
+```
+
+An empty array `[]` indicates no validation errors.
+
+### Diff Preview (`--diff`)
+
+Preview what fixes would be applied without modifying the file:
+
+```bash
+node bin/ptree.js validate samples/example.ptree --diff
+```
+
+Output is a unified diff showing proposed changes:
+
+```diff
+--- a/samples/example.ptree
++++ b/samples/example.ptree
+@@ -5,3 +5,3 @@
+-├── Src
++├── Src/
+```
+
+Combine with `--format json` for structured diff output:
+
+```bash
+node bin/ptree.js validate samples/example.ptree --diff --format json
+```
+
+### NAME_TYPE Specification (`--name-type`)
+
+Control naming conventions for generated trees using `--name-type`:
+
+```bash
+# Specify DIR and FILE naming conventions
+node bin/ptree.js gen . --name-type DIR:High_Type,FILE:smol-type
+
+# Use with spec profile (overrides defaults)
+node bin/ptree.js gen . --profile spec --name-type DIR:CamelType,FILE:snake_type
+```
+
+Available NAME_TYPEs:
+
+| NAME_TYPE | Pattern | Example |
+|-----------|---------|---------|
+| `SCREAM_TYPE` | `UPPER_SNAKE_CASE` | `MY_PROJECT`, `CONFIG_FILE` |
+| `High_Type` | `Title_Snake_Case` | `My_Project`, `Config_File` |
+| `Cap-Type` | `Title-Kebab-Case` | `My-Project`, `Config-File` |
+| `CamelType` | `PascalCase` | `MyProject`, `ConfigFile` |
+| `smol-type` | `lower-kebab-case` | `my-project`, `config-file` |
+| `snake_type` | `lower_snake_case` | `my_project`, `config_file` |
+
+Format: `ENTITY:TYPE,ENTITY:TYPE` where ENTITY is `DIR` or `FILE`.
+
 ---
 
 ## License
