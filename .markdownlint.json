@@ -1,5 +1,4 @@
 {
-    "$schema": "https://raw.githubusercontent.com/DavidAnson/markdownlint/main/schema/markdownlint-config-schema.json",
     "default": true,
     "MD001": true,
     "MD003": { "style": "consistent" },
@@ -14,6 +13,7 @@
     "MD024": { "siblings_only": true },
     "MD025": { "level": 1 },
     "MD026": { "punctuation": ".,;:!" },
+    "MD028": false,
     "MD029": { "style": "ordered" },
     "MD030": { "ul_single": 1, "ol_single": 1, "ul_multi": 1, "ol_multi": 1 },
     "MD031": false,
@@ -38,5 +38,6 @@
     "MD050": { "style": "asterisk" },
     "MD051": false,
     "MD052": false,
-    "MD053": false
+    "MD053": false,
+    "MD060": false
 }
