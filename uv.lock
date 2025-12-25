@@ -13,7 +13,7 @@ wheels = [
 [[package]]
 name = "ptree"
 version = "0.0.5"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "hookify" },
 ]

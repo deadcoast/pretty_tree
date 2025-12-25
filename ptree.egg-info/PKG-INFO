@@ -1,7 +1,126 @@
 Metadata-Version: 2.4
 Name: ptree
 Version: 0.0.5
-Summary: Add your description here
+Summary: Pretty Tree is a VS Code extension for pretty tree directory data structures.
 Requires-Python: >=3.13
 Description-Content-Type: text/markdown
 Requires-Dist: hookify>=0.0.1
+
+# ptree — Directory Tree Language
+
+ptree is a plain-text, standardized directory tree format (`.ptree`) with a VS Code extension and optional CLI. Its first priority is syntax highlighting for directory trees across editors and docs; Markdown is a common host, not the goal. Spec 1.0.0 is the current draft, implemented by extension/CLI 0.0.5.
+
+  [![Website](https://img.shields.io/badge/website-ptree-blue)](https://deadcoast.github.io/pretty_tree)
+
+## Why ptree
+- Directory trees are usually pasted as bland text with no structure or labels.
+- ptree adds stable markers so editors can highlight folders, files, and extensions.
+- Defaults stay simple; strict validation is opt-in.
+
+## Vision (draft)
+- Make directory trees a first-class syntax highlight target (goal).
+- Keep the format simple for humans; complexity is opt-in.
+- Provide a stable spec so tools and themes can treat trees consistently.
+
+## Example
+
+```ptree
+@ptree: 1.0
+@style: unicode
+@root: ./
+
+MY_PROJECT-0.0.0//
+├── README.md
+└── src/
+    └── parser.ts
+```
+
+Minimal (no directives):
+
+```ptree
+my-project/
+├── README.md
+└── src/
+    └── index.ts
+```
+
+## Documentation
+
+- [docs/INDEX.md](docs/INDEX.md) — Complete documentation index
+- [docs/ptree-spec/](docs/ptree-spec/) — The ptree format specification suite
+- [docs/ptree-python/SPEC.md](docs/ptree-python/SPEC.md) — Implementation specification
+- [docs/ptree-python/GRAMMAR.md](docs/ptree-python/GRAMMAR.md) — Naming grammar + lint rules
+- [docs/ptree-python/SEMANTIC_TOKENS.md](docs/ptree-python/SEMANTIC_TOKENS.md) — Semantic token customization guide
+
+## What's Here
+- `ptree-syntax/` — VS Code extension + optional CLI (TypeScript)
+- `ptree-syntax/src/` — extension entry, CLI, core parser/validator/fixer
+- `ptree-syntax/syntaxes/` — TextMate grammar for static highlighting
+- `ptree-syntax/config/` — default/spec profiles and JSON schema
+- `ptree-syntax/playground/` — testing environment with demos and examples
+- `docs/` — format specification and implementation guides
+
+## Playground
+
+The playground (`ptree-syntax/playground/`) is a dedicated testing environment for exploring ptree features interactively.
+
+### Quick Start
+
+1. Open `ptree-syntax/playground/` in VS Code
+2. Open `demos/08-all-features.ptree` to see syntax highlighting
+3. Open `rules/pt006-no-spaces.ptree` and check the Problems panel to see validation
+
+### What's in the Playground
+
+| Directory | Purpose |
+|-----------|---------|
+| `demos/` | Feature demonstrations (basic trees, name types, symlinks, etc.) |
+| `profiles/` | Profile comparison (default vs spec) |
+| `rules/` | Files that trigger each validation rule (PT001-PT009) |
+| `config/` | Configuration examples |
+| `themes/` | Theme testing with all token types |
+| `scripts/` | CLI test scripts |
+
+See [playground/QUICKSTART.md](ptree-syntax/playground/QUICKSTART.md) for detailed instructions.
+
+## Build & Run (Extension)
+From `ptree-syntax/`:
+
+```bash
+npm install
+npm run compile
+```
+
+Open `ptree-syntax/` in VS Code and press `F5` to launch the Extension Development Host.
+
+## Configuration
+The extension reads a workspace config (first match wins):
+
+- `.ptreerc.json`
+- `.ptree.json`
+- `ptree.config.json`
+
+## CLI (optional)
+
+### Node.js CLI
+From `ptree-syntax/` after compiling:
+
+```bash
+node bin/ptree.js gen . --style unicode --max-depth 3
+node bin/ptree.js validate samples/example.ptree
+node bin/ptree.js validate samples/example.ptree --fix --write
+```
+
+### Python Wrapper
+A thin Python wrapper is available for convenience:
+
+```bash
+pip install -e .
+ptree gen . --style unicode --max-depth 3
+ptree validate ptree-syntax/samples/example.ptree
+```
+
+The wrapper requires Node.js and the compiled TypeScript (`npm run compile` in `ptree-syntax/`).
+
+## License
+MIT — see `LICENSE`.
